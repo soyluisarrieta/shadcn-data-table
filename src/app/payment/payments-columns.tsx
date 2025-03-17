@@ -1,6 +1,6 @@
+import { type CustomColumnDef } from '@/components/commons/data-table'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDownIcon, MoreHorizontalIcon } from 'lucide-react'
 
 export type Payment = {
@@ -10,13 +10,15 @@ export type Payment = {
   email: string
 }
 
-export const paymentsColumns: ColumnDef<Payment>[] = [
+export const paymentsColumns: CustomColumnDef<Payment>[] = [
   {
     accessorKey: 'status',
     header: 'Status'
   },
   {
     accessorKey: 'email',
+    width: '100%',
+    minWidth: 300,
     enableHiding: false,
     header: ({ column }) => {
       return (
@@ -45,7 +47,7 @@ export const paymentsColumns: ColumnDef<Payment>[] = [
   },
   {
     id: 'actions',
-    size: 0,
+    width: 'auto',
     enableHiding: false,
     cell: ({ row }) => {
       const payment = row.original

@@ -1,5 +1,5 @@
 import {
-  ColumnDef,
+  type ColumnDef,
   ColumnFiltersState,
   flexRender,
   getCoreRowModel,
@@ -20,11 +20,18 @@ import {
   TableRow
 } from '@/components/ui/table'
 import DataTableFooter from '@/components/commons/data-table-footer'
-import { useState } from 'react'
+import { type CSSProperties, useState } from 'react'
 import DataTableToolbar from '@/components/commons/data-table-toolbar'
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
+type CustomColumnDefProps = {
+  width?: string | number
+  minWidth?: string | number
+}
+
+export type CustomColumnDef<TData> = ColumnDef<TData> & CustomColumnDefProps
+
+export interface DataTableProps<TData, TValue> {
+  columns: Array<ColumnDef<TData, TValue> & CustomColumnDefProps>
   data: TData[]
 }
 
@@ -53,17 +60,25 @@ export function DataTable<TData, TValue> ({
     }
   })
 
+  const widthExists = columns.some((column) => column.width)
+  const minWidthExists = columns.some((column) => column.width)
+
   return (
     <>
       <DataTableToolbar table={table} />
       <div className="rounded-md border">
-        <Table>
+        <Table className={!widthExists ? 'w-auto' : 'w-full'}>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
+                  const column = header.column.columnDef as CustomColumnDef<TData>
+                  const columnStyle: CSSProperties = {
+                    width: widthExists ? (column.width === 'auto' ? 0 : column.width) : '100%',
+                    minWidth: minWidthExists ? column.minWidth : undefined
+                  }
                   return (
-                    <TableHead key={header.id} style={{ width: header.getSize(), maxWidth: header.getSize() }}>
+                    <TableHead key={header.id} style={columnStyle}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -83,11 +98,17 @@ export function DataTable<TData, TValue> ({
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} style={{ width: cell.column.getSize(), maxWidth: cell.column.getSize() }}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
+                  {row.getVisibleCells().map((cell) => {
+                    const column = cell.column.columnDef as CustomColumnDef<TData>
+                    const columnStyle: CSSProperties = {
+                      width: widthExists ? (column.width === 'auto' ? 0 : column.width) : '100%',
+                      minWidth: minWidthExists ? column.minWidth : undefined
+                    }
+                    return (
+                      <TableCell key={cell.id} style={columnStyle}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    )})}
                 </TableRow>
               ))
             ) : (
