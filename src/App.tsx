@@ -1,9 +1,9 @@
-import { Button } from '@/components/ui/button'
+import PaymentsDemo from '@/app/payment/payments-demo'
 
 export default function App () {
   return (
-    <div className="flex flex-col items-center justify-center min-h-svh bg-background">
-      <Button>Hi Shadcn UI + TailwindCSS 4</Button>
+    <div className='container mx-auto p-4'>
+      <PaymentsDemo />
     </div>
   )
 }
