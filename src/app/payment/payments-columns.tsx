@@ -34,6 +34,7 @@ export const paymentsColumns: ColumnDef<Payment>[] = [
   },
   {
     id: 'actions',
+    size: 0,
     cell: ({ row }) => {
       const payment = row.original
       return (
