@@ -17,6 +17,7 @@ export const paymentsColumns: ColumnDef<Payment>[] = [
   },
   {
     accessorKey: 'email',
+    enableHiding: false,
     header: ({ column }) => {
       return (
         <Button
@@ -45,6 +46,7 @@ export const paymentsColumns: ColumnDef<Payment>[] = [
   {
     id: 'actions',
     size: 0,
+    enableHiding: false,
     cell: ({ row }) => {
       const payment = row.original
       return (
