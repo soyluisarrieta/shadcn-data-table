@@ -19,9 +19,9 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import DataTableFooter from '@/components/commons/data-table-footer'
 import { type CSSProperties, useState } from 'react'
 import DataTableToolbar from '@/components/commons/data-table-toolbar'
+import DataTableFooter from '@/components/commons/data-table-footer'
 
 type CustomColumnDefProps = {
   width?: string | number
