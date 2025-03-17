@@ -15,18 +15,18 @@
 
 **LISTA DE TAREA:**
 
-- [ ] Paginación con navegación por botones
+- [x] Paginación con navegación
 - [ ] Selección de filas con acciones
 - [ ] Búsqueda global en la tabla
 - [ ] Búsqueda por columnas específicas
-- [ ] Ordenación de columnas
+- [x] Ordenación de columnas
 - [ ] Filtrado por múltiples valores
 - [ ] Filtrado por valor único
 - [ ] Filtrado por día, mes o año
 - [ ] Filtrado por rango de fechas
-- [ ] Mostrar u ocultar columnas
+- [x] Mostrar u ocultar columnas
 - [ ] Exportar registros a diferentes formatos
-- [ ] Resaltar filas seleccionadas
+- [x] Resaltar filas seleccionadas
 - [ ] Header fijo al hacer scroll
 - [ ] Esqueleto de carga de datos
 - [ ] Pestañas para diferentes tablas

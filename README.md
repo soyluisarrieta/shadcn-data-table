@@ -15,18 +15,18 @@
 
 **TASK LIST:**
 
-- [ ] Pagination with button navigation
+- [x] Pagination with button navigation
 - [ ] Row selection with actions
 - [ ] Global search in the table
 - [ ] Search by specific columns
-- [ ] Column sorting
+- [x] Column sorting
 - [ ] Filtering by multiple values
 - [ ] Filtering by single value
 - [ ] Filtering by day, month, or year
 - [ ] Filtering by date range
-- [ ] Show or hide columns
+- [x] Show or hide columns
 - [ ] Export records to different formats
-- [ ] Highlight selected rows
+- [x] Highlight selected rows
 - [ ] Fixed header on scroll
 - [ ] Data loading skeleton
 - [ ] Tabs for different tables
