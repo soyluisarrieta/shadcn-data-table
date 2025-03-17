@@ -1,8 +1,9 @@
 import { type CustomColumnDef } from '@/components/commons/data-table'
+import { DataTableColumnHeader } from '@/components/commons/data-table-column-header'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { ArrowUpDownIcon, MoreHorizontalIcon } from 'lucide-react'
+import { MoreHorizontalIcon } from 'lucide-react'
 
 export type Payment = {
   id: string
@@ -45,17 +46,9 @@ export const paymentsColumns: CustomColumnDef<Payment>[] = [
     width: '100%',
     minWidth: 300,
     enableHiding: false,
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Email
-          <ArrowUpDownIcon className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    }
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Email" />
+    )
   },
   {
     accessorKey: 'amount',
