@@ -1,5 +1,5 @@
-import { type CustomColumnDef } from '@/components/commons/data-table'
-import { DataTableColumnHeader } from '@/components/commons/data-table-column-header'
+import { type CustomColumnDef } from '@/components/commons/data-table/data-table'
+import { DataTableColumnHeader } from '@/components/commons/data-table/data-table-column-header'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'

@@ -1,5 +1,5 @@
 import { paymentsColumns, Payment } from '@/app/payment/payments-columns'
-import { DataTable } from '@/components/commons/data-table'
+import { DataTable } from '@/components/commons/data-table/data-table'
 import { PAYMENT_MOCK } from '@/app/payment/payments-mock'
 import { useEffect, useState } from 'react'
 

@@ -1,4 +1,4 @@
-import { DataTableColumnVisibility } from '@/components/commons/data-table-column-visibility'
+import { DataTableColumnVisibility } from '@/components/commons/data-table/data-table-column-visibility'
 import { Input } from '@/components/ui/input'
 import { Table } from '@tanstack/react-table'
 

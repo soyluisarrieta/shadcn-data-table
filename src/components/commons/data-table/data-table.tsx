@@ -20,8 +20,8 @@ import {
   TableRow
 } from '@/components/ui/table'
 import { type CSSProperties, useState } from 'react'
-import DataTableToolbar from '@/components/commons/data-table-toolbar'
-import DataTableFooter from '@/components/commons/data-table-footer'
+import DataTableToolbar from '@/components/commons/data-table/data-table-toolbar'
+import DataTableFooter from '@/components/commons/data-table/data-table-footer'
 
 type CustomColumnDefProps = {
   width?: string | number
