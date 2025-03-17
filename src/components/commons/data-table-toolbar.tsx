@@ -1,5 +1,4 @@
-import { Button } from '@/components/ui/button'
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { DataTableColumnVisibility } from '@/components/commons/data-table-column-visibility'
 import { Input } from '@/components/ui/input'
 import { Table } from '@tanstack/react-table'
 
@@ -18,34 +17,8 @@ export default function DataTableToolbar<TData> ({ table }: DataTableToolBarProp
         }
         className="max-w-sm"
       />
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="ml-auto">
-            Columns
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          {table
-            .getAllColumns()
-            .filter(
-              (column) => column.getCanHide()
-            )
-            .map((column) => {
-              return (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) =>
-                    column.toggleVisibility(!!value)
-                  }
-                >
-                  {column.id}
-                </DropdownMenuCheckboxItem>
-              )
-            })}
-        </DropdownMenuContent>
-      </DropdownMenu>
+
+      <DataTableColumnVisibility table={table} />
     </div>
   )
 }

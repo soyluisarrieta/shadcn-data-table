@@ -69,6 +69,7 @@ export function DataTable<TData, TValue> ({
   return (
     <>
       <DataTableToolbar table={table} />
+
       <div className="rounded-md border">
         <Table className={!widthExists ? 'w-auto' : 'w-full'}>
           <TableHeader>
