@@ -2,6 +2,7 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
   useReactTable
 } from '@tanstack/react-table'
 
@@ -13,6 +14,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
+import DataTableFooter from '@/components/commons/data-table-footer'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -26,7 +28,8 @@ export function DataTable<TData, TValue> ({
   const table = useReactTable({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel()
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel()
   })
 
   return (
@@ -75,6 +78,7 @@ export function DataTable<TData, TValue> ({
           )}
         </TableBody>
       </Table>
+      <DataTableFooter table={table} />
     </div>
   )
 }
