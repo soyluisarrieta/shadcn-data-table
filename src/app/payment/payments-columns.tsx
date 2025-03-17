@@ -1,5 +1,6 @@
 import { type CustomColumnDef } from '@/components/commons/data-table'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { ArrowUpDownIcon, MoreHorizontalIcon } from 'lucide-react'
 
@@ -11,6 +12,30 @@ export type Payment = {
 }
 
 export const paymentsColumns: CustomColumnDef<Payment>[] = [
+  {
+    id: 'select',
+    header: ({ table }) => (
+      <Checkbox
+        className='mr-2'
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        className='mr-2'
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false
+  },
   {
     accessorKey: 'status',
     header: 'Status'
