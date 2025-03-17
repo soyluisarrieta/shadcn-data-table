@@ -1,4 +1,4 @@
-import { columns, Payment } from '@/app/payment/payments-columns'
+import { paymentsColumns, Payment } from '@/app/payment/payments-columns'
 import { DataTable } from '@/components/commons/data-table'
 import { PAYMENT_MOCK } from '@/app/payment/payments-mock'
 import { useEffect, useState } from 'react'
@@ -17,6 +17,6 @@ export default function Payments () {
   },[])
 
   return (
-    <DataTable columns={columns} data={payments} />
+    <DataTable columns={paymentsColumns} data={payments} />
   )
 }
