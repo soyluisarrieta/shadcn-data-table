@@ -25,6 +25,7 @@ export const paymentsColumns: CustomColumnDef<Payment>[] = [
   },
   {
     accessorKey: 'amount',
+    label: 'Amount',
     header: () => <div className="text-right">Amount</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue('amount'))

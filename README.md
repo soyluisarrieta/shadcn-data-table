@@ -17,8 +17,8 @@
 
 - [x] Pagination with button navigation
 - [x] Row selection with custom actions
-- [ ] Global search in the table
-- [ ] Search by specific columns
+- [x] Global search in the table
+- [x] Search by specific columns
 - [x] Column sorting
 - [ ] Filtering by multiple values
 - [ ] Filtering by single value

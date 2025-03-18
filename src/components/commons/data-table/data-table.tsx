@@ -27,8 +27,10 @@ import { DataTableColumnSelection } from '@/components/commons/data-table/data-t
 import DataTableSelectionActions from '@/components/commons/data-table/data-table-selection-actions'
 
 type CustomColumnDefProps = {
+  accessorKey?: string;
   width?: string | number;
   minWidth?: string | number;
+  label?: string;
 };
 
 type OnClickActionBase<TData, TReturn = void> = (rows: TData[], cleanRowSelection: () => void) => TReturn
@@ -44,12 +46,12 @@ export interface DataTableActions<TData> {
   customActions?: Array<SelectionActionProps<TData> | { component: OnClickActionBase<TData, React.JSX.Element> }>
 }
 
-export type CustomColumnDef<TData> = ColumnDef<TData> & CustomColumnDefProps;
+export type CustomColumnDef<TData> = ColumnDef<TData> & CustomColumnDefProps
 
 export interface DataTableProps<TData, TValue> {
   columns: Array<ColumnDef<TData, TValue> & CustomColumnDefProps>;
   data: TData[];
-  disableInputSearch?: boolean
+  disableInputSearch?: boolean;
   disableRowSelection?: boolean;
   actions?: DataTableActions<TData>
 }
@@ -58,6 +60,7 @@ export function DataTable<TData, TValue> ({
   columns,
   data,
   disableRowSelection = false,
+  disableInputSearch = false,
   actions = {}
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
@@ -65,15 +68,25 @@ export function DataTable<TData, TValue> ({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
 
+  const extendedColumn = useMemo(() => {
+    return columns.map(column => {
+      const assesorFn = (originalRow: TData) => originalRow[column.accessorKey as keyof TData]?.toString()
+      return {
+        accessorFn: column.accessorKey ? assesorFn : undefined,
+        ...column
+      }
+    })
+  }, [columns])
+
   const memorizedColumns = useMemo(() => {
     if (!disableRowSelection) {
       return [
         DataTableColumnSelection<TData>(),
-        ...columns
+        ...extendedColumn
       ]
     }
-    return columns
-  }, [columns, disableRowSelection])
+    return extendedColumn
+  }, [extendedColumn, disableRowSelection])
 
   const table = useReactTable({
     data,
@@ -101,7 +114,7 @@ export function DataTable<TData, TValue> ({
 
   return (
     <>
-      <DataTableToolbar table={table} hideSearch={disableRowSelection} />
+      <DataTableToolbar table={table} hideSearch={disableInputSearch} />
 
       <div className="rounded-md border relative">
         <Table className={!widthExists ? 'w-auto' : 'w-full'}>
@@ -145,7 +158,7 @@ export function DataTable<TData, TValue> ({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell colSpan={columns.length + 1} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>

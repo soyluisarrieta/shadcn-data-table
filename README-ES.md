@@ -17,8 +17,8 @@
 
 - [x] Paginación con navegación
 - [x] Selección de filas con acciones personaliazadas
-- [ ] Búsqueda global en la tabla
-- [ ] Búsqueda por columnas específicas
+- [x] Búsqueda global en la tabla
+- [x] Búsqueda por columnas específicas
 - [x] Ordenación de columnas
 - [ ] Filtrado por múltiples valores
 - [ ] Filtrado por valor único
