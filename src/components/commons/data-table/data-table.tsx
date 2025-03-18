@@ -31,8 +31,17 @@ type CustomColumnDefProps = {
   minWidth?: string | number;
 };
 
+type OnClickAction<TData> = (rows: TData[], cleanRowSelection: () => void) => void
+
+type CustomSelectionAction<TData> = {
+  label?: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  onClick: OnClickAction<TData>;
+}
+
 export interface DataTableActions<TData> {
-  onRemoveRows?: (rows: TData[], cleanRowSelection: () => void) => void
+  onRemoveRows?: OnClickAction<TData>
+  customActions?: CustomSelectionAction<TData>[]
 }
 
 export type CustomColumnDef<TData> = ColumnDef<TData> & CustomColumnDefProps;
@@ -54,8 +63,6 @@ export function DataTable<TData, TValue> ({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
-
-  const { onRemoveRows } = actions
 
   const memorizedColumns = useMemo(() => {
     if (!disableRowSelection) {
@@ -148,7 +155,7 @@ export function DataTable<TData, TValue> ({
         <DataTableSelectionActions
           table={table}
           selectedRows={selectedRows}
-          onRemoveRows={onRemoveRows}
+          actions={actions}
         />
       </div>
 
