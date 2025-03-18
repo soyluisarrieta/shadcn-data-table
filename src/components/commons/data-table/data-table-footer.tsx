@@ -1,9 +1,9 @@
 import { Table } from '@tanstack/react-table'
 import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronsLeftIcon,
+  ChevronsRightIcon
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -22,20 +22,23 @@ interface DataTableFooterProps<TData> {
 export default function DataTableFooter<TData> ({
   table
 }: DataTableFooterProps<TData>) {
+  const startRowNumber = table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1
+  const endRowNumber = Math.min(
+    (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
+    table.getFilteredRowModel().rows.length
+  )
+
   return (
-    <div className="flex items-center justify-between p-3 border-t">
-      <div className="flex-1 text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} of{' '}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
+    <div className='flex items-center justify-between border-t p-2'>
+      <div className="hidden lg:inline-block flex-1 text-sm text-muted-foreground">
+        Showing {startRowNumber}-{endRowNumber} of {table.getFilteredRowModel().rows.length} rows
       </div>
-      <div className="flex items-center space-x-6 lg:space-x-8">
+      <div className="flex flex-1 lg:flex-none justify-between items-center space-x-4">
         <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Rows per page</p>
+          <p className="text-sm font-medium text-muted-foreground">Rows per page:</p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
-            onValueChange={(value) => {
-              table.setPageSize(Number(value))
-            }}
+            onValueChange={(value) => table.setPageSize(Number(value))}
           >
             <SelectTrigger className="h-8 w-[70px]">
               <SelectValue placeholder={table.getState().pagination.pageSize} />
@@ -49,10 +52,6 @@ export default function DataTableFooter<TData> ({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          Page {table.getState().pagination.pageIndex + 1} of{' '}
-          {table.getPageCount()}
-        </div>
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
@@ -61,7 +60,7 @@ export default function DataTableFooter<TData> ({
             disabled={!table.getCanPreviousPage()}
           >
             <span className="sr-only">Go to first page</span>
-            <ChevronsLeft />
+            <ChevronsLeftIcon />
           </Button>
           <Button
             variant="outline"
@@ -70,8 +69,11 @@ export default function DataTableFooter<TData> ({
             disabled={!table.getCanPreviousPage()}
           >
             <span className="sr-only">Go to previous page</span>
-            <ChevronLeft />
+            <ChevronLeftIcon />
           </Button>
+          <div className="flex px-2 items-center justify-center text-sm font-medium text-muted-foreground">
+            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+          </div>
           <Button
             variant="outline"
             className="h-8 w-8 p-0"
@@ -79,7 +81,7 @@ export default function DataTableFooter<TData> ({
             disabled={!table.getCanNextPage()}
           >
             <span className="sr-only">Go to next page</span>
-            <ChevronRight />
+            <ChevronRightIcon />
           </Button>
           <Button
             variant="outline"
@@ -87,8 +89,8 @@ export default function DataTableFooter<TData> ({
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">Go to last page</span>
-            <ChevronsRight />
+            <span className="sr-only">Got to last page</span>
+            <ChevronsRightIcon />
           </Button>
         </div>
       </div>
