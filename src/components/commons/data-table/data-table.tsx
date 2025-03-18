@@ -22,6 +22,7 @@ import {
 import { type CSSProperties, useState } from 'react'
 import DataTableToolbar from '@/components/commons/data-table/data-table-toolbar'
 import DataTableFooter from '@/components/commons/data-table/data-table-footer'
+import { DataTableColumnHeader } from '@/components/commons/data-table/data-table-column-header'
 
 type CustomColumnDefProps = {
   width?: string | number
@@ -83,12 +84,7 @@ export function DataTable<TData, TValue> ({
                   }
                   return (
                     <TableHead key={header.id} style={columnStyle}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      <DataTableColumnHeader className='mr-1' header={header}/>
                     </TableHead>
                   )
                 })}

@@ -1,5 +1,4 @@
 import { type CustomColumnDef } from '@/components/commons/data-table/data-table'
-import { DataTableColumnHeader } from '@/components/commons/data-table/data-table-column-header'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
@@ -39,16 +38,15 @@ export const paymentsColumns: CustomColumnDef<Payment>[] = [
   },
   {
     accessorKey: 'status',
-    header: 'Status'
+    header: 'Status',
+    enableSorting: false
   },
   {
     accessorKey: 'email',
     width: '100%',
     minWidth: 300,
     enableHiding: false,
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Email" />
-    )
+    header: 'Email'
   },
   {
     accessorKey: 'amount',
