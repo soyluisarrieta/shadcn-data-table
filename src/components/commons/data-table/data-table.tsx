@@ -49,6 +49,7 @@ export type CustomColumnDef<TData> = ColumnDef<TData> & CustomColumnDefProps;
 export interface DataTableProps<TData, TValue> {
   columns: Array<ColumnDef<TData, TValue> & CustomColumnDefProps>;
   data: TData[];
+  disableInputSearch?: boolean
   disableRowSelection?: boolean;
   actions?: DataTableActions<TData>
 }
@@ -100,7 +101,7 @@ export function DataTable<TData, TValue> ({
 
   return (
     <>
-      <DataTableToolbar table={table} />
+      <DataTableToolbar table={table} hideSearch={disableRowSelection} />
 
       <div className="rounded-md border relative">
         <Table className={!widthExists ? 'w-auto' : 'w-full'}>
