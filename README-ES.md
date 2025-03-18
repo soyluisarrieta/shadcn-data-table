@@ -16,7 +16,7 @@
 **LISTA DE TAREA:**
 
 - [x] Paginación con navegación
-- [ ] Selección de filas con acciones
+- [x] Selección de filas con acciones personaliazadas
 - [ ] Búsqueda global en la tabla
 - [ ] Búsqueda por columnas específicas
 - [x] Ordenación de columnas

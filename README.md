@@ -16,7 +16,7 @@
 **TASK LIST:**
 
 - [x] Pagination with button navigation
-- [ ] Row selection with actions
+- [x] Row selection with custom actions
 - [ ] Global search in the table
 - [ ] Search by specific columns
 - [x] Column sorting

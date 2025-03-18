@@ -1,4 +1,4 @@
-import { DataTableActions } from '@/components/commons/data-table/data-table'
+import { DataTableActions, SelectionActionProps } from '@/components/commons/data-table/data-table'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Table } from '@tanstack/react-table'
@@ -23,27 +23,29 @@ export default function DataTableSelectionActions<TData> ({ table, selectedRows,
           <span className='font-semibold'>{selectedRows} item{selectedRows > 1 && 's'}</span>
         </div>
         <div className='w-px h-6 mx-2 bg-border' />
-        {customActions?.map(({ label, icon: Icon, onClick })=>(
-          <Fragment key={label}>
-            <div className='flex items-center gap-2 mx-0'>
-              <Button
-                variant='ghost'
-                size={label ? 'sm' : 'icon'}
-                onClick={()=> onClick(
-                  table
-                    .getSelectedRowModel()
-                    .flatRows
-                    .map((row) => row.original),
-                  table.resetRowSelection
-                )}
-              >
-                {Icon && <Icon />}
-                {label && <span className='font-semibold'>{label}</span>}
-              </Button>
-            </div>
-            <div className='w-px h-6 mx-2 bg-border' />
-          </Fragment>
-        ))}
+        {customActions?.map((action, i) => {
+          const rows =  table.getSelectedRowModel().flatRows.map((row) => row.original)
+          if ('component' in action && action.component) {
+            return <Fragment key={i}>{action.component(rows, table.resetRowSelection)}</Fragment>
+          }
+
+          const { label, icon: Icon, onClick } = action as SelectionActionProps<TData>
+          return (
+            <Fragment key={i}>
+              <div className='flex items-center gap-2 mx-0'>
+                <Button
+                  variant='ghost'
+                  size={label ? 'sm' : 'icon'}
+                  onClick={()=> onClick(rows, table.resetRowSelection)}
+                >
+                  {Icon && <Icon />}
+                  {label && <span className='font-semibold'>{label}</span>}
+                </Button>
+              </div>
+              <div className='w-px h-6 mx-2 bg-border' />
+            </Fragment>
+          )
+        })}
         {onRemoveRows && (
           <>
             <div className='flex items-center gap-2 mx-0'>

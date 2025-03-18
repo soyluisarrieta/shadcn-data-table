@@ -31,17 +31,17 @@ type CustomColumnDefProps = {
   minWidth?: string | number;
 };
 
-type OnClickAction<TData> = (rows: TData[], cleanRowSelection: () => void) => void
+type OnClickActionBase<TData, TReturn = void> = (rows: TData[], cleanRowSelection: () => void) => TReturn
 
-type CustomSelectionAction<TData> = {
+export type SelectionActionProps<TData> = {
   label?: string;
   icon?: React.ComponentType<{ className?: string }>;
-  onClick: OnClickAction<TData>;
+  onClick: OnClickActionBase<TData>;
 }
 
 export interface DataTableActions<TData> {
-  onRemoveRows?: OnClickAction<TData>
-  customActions?: CustomSelectionAction<TData>[]
+  onRemoveRows?: OnClickActionBase<TData>
+  customActions?: Array<SelectionActionProps<TData> | { component: OnClickActionBase<TData, React.JSX.Element> }>
 }
 
 export type CustomColumnDef<TData> = ColumnDef<TData> & CustomColumnDefProps;
