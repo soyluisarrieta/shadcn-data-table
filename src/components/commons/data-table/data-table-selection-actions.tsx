@@ -35,7 +35,7 @@ export default function DataTableSelectionActions<TData> ({ table, selectedRows,
                 )}
               >
                 <TrashIcon />
-                <span className='font-semibold'>Remove</span>
+                <span className='font-semibold'>Remove all</span>
               </Button>
             </div>
             <div className='w-px h-6 mx-2 bg-border' />
