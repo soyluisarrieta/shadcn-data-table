@@ -171,9 +171,9 @@ export function DataTable<TData, TValue> ({
           selectedRows={selectedRows}
           actions={actions}
         />
-      </div>
 
-      <DataTableFooter table={table} />
+        <DataTableFooter table={table} />
+      </div>
     </>
   )
 }
