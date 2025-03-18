@@ -36,7 +36,7 @@ export default function DataTableSelectionActions<TData> ({ table, selectedRows,
                 <Button
                   variant='ghost'
                   size={label ? 'sm' : 'icon'}
-                  onClick={()=> onClick(rows, table.resetRowSelection)}
+                  onClick={() => onClick(rows, table.resetRowSelection)}
                 >
                   {Icon && <Icon />}
                   {label && <span className='font-semibold'>{label}</span>}
@@ -53,7 +53,7 @@ export default function DataTableSelectionActions<TData> ({ table, selectedRows,
                 className='hover:bg-destructive hover:text-destructive-foreground'
                 variant='ghost'
                 size='sm'
-                onClick={()=> onRemoveRows(
+                onClick={() => onRemoveRows(
                   table
                     .getSelectedRowModel()
                     .flatRows
@@ -73,7 +73,7 @@ export default function DataTableSelectionActions<TData> ({ table, selectedRows,
             className='gap-1.5'
             variant='secondary'
             size='sm'
-            onClick={()=> table.resetRowSelection()}
+            onClick={() => table.resetRowSelection()}
           >
             <XIcon /> Cancel
           </Button>

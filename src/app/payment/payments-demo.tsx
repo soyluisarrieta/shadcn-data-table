@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 export default function Payments () {
   const [payments, setPayments] = useState<Payment[]>([])
 
-  useEffect(()=>{
+  useEffect(() => {
     const fetchData = async () => {
       setTimeout(() => {
         setPayments(PAYMENT_MOCK)

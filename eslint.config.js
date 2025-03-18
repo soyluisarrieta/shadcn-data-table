@@ -53,6 +53,7 @@ export default tseslint.config(
       'no-trailing-spaces': 'error',                                            // No permite espacios al final de las líneas
       'react/jsx-indent': ['error', 2],                                         // Indentación de JSX de 2 espacios
       'react/react-in-jsx-scope': 'off',                                        // Permite JSX sin importar React
+      "arrow-spacing": ["error", { "before": true, "after": true }],            // Requiere espacios antes y despues de flechas
 
       // Requiere espacios al final de las etiquetas JSX
       "react/jsx-tag-spacing": [
