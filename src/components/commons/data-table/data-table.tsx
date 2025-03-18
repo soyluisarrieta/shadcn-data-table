@@ -24,11 +24,16 @@ import DataTableToolbar from '@/components/commons/data-table/data-table-toolbar
 import DataTableFooter from '@/components/commons/data-table/data-table-footer'
 import { DataTableColumnHeader } from '@/components/commons/data-table/data-table-column-header'
 import { DataTableColumnSelection } from '@/components/commons/data-table/data-table-column-selection'
+import DataTableSelectionActions from '@/components/commons/data-table/data-table-selection-actions'
 
 type CustomColumnDefProps = {
   width?: string | number;
   minWidth?: string | number;
 };
+
+export interface DataTableActions<TData> {
+  onRemoveRows?: (rows: TData[], cleanRowSelection: () => void) => void
+}
 
 export type CustomColumnDef<TData> = ColumnDef<TData> & CustomColumnDefProps;
 
@@ -36,17 +41,21 @@ export interface DataTableProps<TData, TValue> {
   columns: Array<ColumnDef<TData, TValue> & CustomColumnDefProps>;
   data: TData[];
   disableRowSelection?: boolean;
+  actions?: DataTableActions<TData>
 }
 
 export function DataTable<TData, TValue> ({
   columns,
   data,
-  disableRowSelection = false
+  disableRowSelection = false,
+  actions = {}
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
+
+  const { onRemoveRows } = actions
 
   const memorizedColumns = useMemo(() => {
     if (!disableRowSelection) {
@@ -80,11 +89,13 @@ export function DataTable<TData, TValue> ({
   const widthExists = columns.some((column) => column.width)
   const minWidthExists = columns.some((column) => column.width)
 
+  const selectedRows = table.getFilteredSelectedRowModel().rows.length
+
   return (
     <>
       <DataTableToolbar table={table} />
 
-      <div className="rounded-md border">
+      <div className="rounded-md border relative">
         <Table className={!widthExists ? 'w-auto' : 'w-full'}>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -133,8 +144,15 @@ export function DataTable<TData, TValue> ({
             )}
           </TableBody>
         </Table>
-        <DataTableFooter table={table} />
+
+        <DataTableSelectionActions
+          table={table}
+          selectedRows={selectedRows}
+          onRemoveRows={onRemoveRows}
+        />
       </div>
+
+      <DataTableFooter table={table} />
     </>
   )
 }

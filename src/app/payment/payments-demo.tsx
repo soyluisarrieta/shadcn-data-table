@@ -1,5 +1,5 @@
 import { paymentsColumns, Payment } from '@/app/payment/payments-columns'
-import { DataTable } from '@/components/commons/data-table/data-table'
+import { DataTable, DataTableActions } from '@/components/commons/data-table/data-table'
 import { PAYMENT_MOCK } from '@/app/payment/payments-mock'
 import { useEffect, useState } from 'react'
 
@@ -16,11 +16,18 @@ export default function Payments () {
     fetchData()
   },[])
 
+  const dataTableActions: DataTableActions<Payment> = {
+    onRemoveRows: (rows, cleanRowSelection) => {
+      console.log('Remove rows:',rows)
+      cleanRowSelection()
+    }
+  }
+
   return (
     <DataTable
-      disableRowSelection
       columns={paymentsColumns}
       data={payments}
+      actions={dataTableActions}
     />
   )
 }
