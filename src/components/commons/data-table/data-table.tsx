@@ -19,35 +19,48 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { type CSSProperties, useState } from 'react'
+import { type CSSProperties, useMemo, useState } from 'react'
 import DataTableToolbar from '@/components/commons/data-table/data-table-toolbar'
 import DataTableFooter from '@/components/commons/data-table/data-table-footer'
 import { DataTableColumnHeader } from '@/components/commons/data-table/data-table-column-header'
+import { DataTableColumnSelection } from '@/components/commons/data-table/data-table-column-selection'
 
 type CustomColumnDefProps = {
-  width?: string | number
-  minWidth?: string | number
-}
+  width?: string | number;
+  minWidth?: string | number;
+};
 
-export type CustomColumnDef<TData> = ColumnDef<TData> & CustomColumnDefProps
+export type CustomColumnDef<TData> = ColumnDef<TData> & CustomColumnDefProps;
 
 export interface DataTableProps<TData, TValue> {
-  columns: Array<ColumnDef<TData, TValue> & CustomColumnDefProps>
-  data: TData[]
+  columns: Array<ColumnDef<TData, TValue> & CustomColumnDefProps>;
+  data: TData[];
+  disableRowSelection?: boolean;
 }
 
 export function DataTable<TData, TValue> ({
   columns,
-  data
+  data,
+  disableRowSelection = false
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
 
+  const memorizedColumns = useMemo(() => {
+    if (!disableRowSelection) {
+      return [
+        DataTableColumnSelection<TData>(),
+        ...columns
+      ]
+    }
+    return columns
+  }, [columns, disableRowSelection])
+
   const table = useReactTable({
     data,
-    columns,
+    columns: memorizedColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
@@ -84,7 +97,7 @@ export function DataTable<TData, TValue> ({
                   }
                   return (
                     <TableHead key={header.id} style={columnStyle}>
-                      <DataTableColumnHeader className='mr-1' header={header}/>
+                      <DataTableColumnHeader className='mr-1' header={header} />
                     </TableHead>
                   )
                 })}

@@ -17,6 +17,10 @@ export default function Payments () {
   },[])
 
   return (
-    <DataTable columns={paymentsColumns} data={payments} />
+    <DataTable
+      disableRowSelection
+      columns={paymentsColumns}
+      data={payments}
+    />
   )
 }
