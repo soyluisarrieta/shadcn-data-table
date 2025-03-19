@@ -4,6 +4,7 @@ import { PAYMENT_MOCK } from '@/app/payment/payments-mock'
 import { useEffect, useState } from 'react'
 import { TestTubeDiagonalIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { filterableColumns } from '@/app/payment/payments-filters'
 
 export default function Payments () {
   const [payments, setPayments] = useState<Payment[]>([])
@@ -54,6 +55,7 @@ export default function Payments () {
     <DataTable
       columns={paymentsColumns}
       data={payments}
+      filterableColumns={filterableColumns}
       actions={dataTableActions}
     />
   )

@@ -20,7 +20,7 @@
 - [x] Global search in the table
 - [x] Search by specific columns
 - [x] Column sorting
-- [ ] Filtering by multiple values
+- [x] Filtering by multiple values
 - [ ] Filtering by single value
 - [ ] Filtering by day, month, or year
 - [ ] Filtering by date range

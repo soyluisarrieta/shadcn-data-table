@@ -20,7 +20,7 @@
 - [x] Búsqueda global en la tabla
 - [x] Búsqueda por columnas específicas
 - [x] Ordenación de columnas
-- [ ] Filtrado por múltiples valores
+- [x] Filtrado por múltiples valores
 - [ ] Filtrado por valor único
 - [ ] Filtrado por día, mes o año
 - [ ] Filtrado por rango de fechas

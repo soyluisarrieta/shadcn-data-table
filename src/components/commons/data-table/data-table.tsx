@@ -1,5 +1,6 @@
 import {
   type ColumnDef,
+  type Row,
   ColumnFiltersState,
   flexRender,
   getCoreRowModel,
@@ -26,14 +27,25 @@ import { DataTableColumnHeader } from '@/components/commons/data-table/data-tabl
 import { DataTableColumnSelection } from '@/components/commons/data-table/data-table-column-selection'
 import DataTableSelectionActions from '@/components/commons/data-table/data-table-selection-actions'
 
-type CustomColumnDefProps = {
-  accessorKey?: string;
+type CustomColumnDefProps<TData> = {
+  accessorKey?: keyof TData;
   width?: string | number;
   minWidth?: string | number;
   label?: string;
-};
-
+}
 type OnClickActionBase<TData, TReturn = void> = (rows: TData[], cleanRowSelection: () => void) => TReturn
+
+type FilterableOption = {
+  label: string;
+  value: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  count?: number;
+}
+export interface FilterableColumn<TData> {
+  columnKey: keyof TData;
+  label?: string;
+  options: FilterableOption[]
+}
 
 export type SelectionActionProps<TData> = {
   label?: string;
@@ -46,14 +58,15 @@ export interface DataTableActions<TData> {
   customActions?: Array<SelectionActionProps<TData> | { component: OnClickActionBase<TData, React.JSX.Element> }>
 }
 
-export type CustomColumnDef<TData> = ColumnDef<TData> & CustomColumnDefProps
+export type CustomColumnDef<TData> = ColumnDef<TData> & CustomColumnDefProps<TData>
 
 export interface DataTableProps<TData, TValue> {
-  columns: Array<ColumnDef<TData, TValue> & CustomColumnDefProps>;
+  columns: Array<ColumnDef<TData, TValue> & CustomColumnDefProps<TData>>;
   data: TData[];
   disableInputSearch?: boolean;
   disableRowSelection?: boolean;
   actions?: DataTableActions<TData>
+  filterableColumns?: Array<FilterableColumn<TData>>
 }
 
 export function DataTable<TData, TValue> ({
@@ -61,7 +74,8 @@ export function DataTable<TData, TValue> ({
   data,
   disableRowSelection = false,
   disableInputSearch = false,
-  actions = {}
+  actions = {},
+  filterableColumns
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -70,13 +84,22 @@ export function DataTable<TData, TValue> ({
 
   const extendedColumn = useMemo(() => {
     return columns.map(column => {
+      const filterExists = filterableColumns?.find((field) => field.columnKey === column.accessorKey)
+      if (filterExists) {
+        column.filterFn = (row: Row<TData>, columnId: string, filterValue: string[]) => {
+          if (!filterValue || filterValue.length === 0) return true
+          return filterValue.includes(row.getValue(columnId))
+        }
+      }
+
       const assesorFn = (originalRow: TData) => originalRow[column.accessorKey as keyof TData]?.toString()
+
       return {
         accessorFn: column.accessorKey ? assesorFn : undefined,
         ...column
       }
     })
-  }, [columns])
+  }, [columns, filterableColumns])
 
   const memorizedColumns = useMemo(() => {
     if (!disableRowSelection) {
@@ -127,9 +150,14 @@ export function DataTable<TData, TValue> ({
                     width: widthExists ? (column.width === 'auto' ? 0 : column.width) : '100%',
                     minWidth: minWidthExists ? column.minWidth : undefined
                   }
+                  const filterableColumn = filterableColumns?.find((field) => field.columnKey === header.column.id)
                   return (
                     <TableHead key={header.id} style={columnStyle}>
-                      <DataTableColumnHeader className='mr-1' header={header} />
+                      <DataTableColumnHeader
+                        className='mr-1'
+                        header={header}
+                        filterableColumn={filterableColumn}
+                      />
                     </TableHead>
                   )
                 })}
