@@ -1,15 +1,16 @@
-import { CustomColumnDef } from '@/components/commons/data-table/data-table'
+import { type CustomColumnDef } from '@/components/commons/data-table/data-table'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Table } from '@tanstack/react-table'
-import { SearchIcon, Settings2Icon, XCircleIcon } from 'lucide-react'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { type Table } from '@tanstack/react-table'
+import { Settings2Icon, XCircleIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { cn } from '@/lib/utils'
 
 interface DataTableToolBarProps <TData> {
   table: Table<TData>;
-  hideSearch?: boolean
+  hideSearch?: boolean;
 }
 
 export default function DataTableToolbar<TData> ({ table, hideSearch }: DataTableToolBarProps<TData>) {
@@ -27,7 +28,7 @@ export default function DataTableToolbar<TData> ({ table, hideSearch }: DataTabl
   }, [searchBy, table])
 
   return (
-    <div className="flex items-center py-4">
+    <div className="flex items-center py-3">
       <div className='flex-1'>
         {!hideSearch && (
           <div className='flex'>
@@ -36,27 +37,29 @@ export default function DataTableToolbar<TData> ({ table, hideSearch }: DataTabl
                 <SelectValue placeholder="Global" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Global</SelectItem>
-                <SelectSeparator />
-                {table.getAllColumns().map((column) => {
-                  if (!column.getCanFilter()) { return null }
-                  const col = column.columnDef as CustomColumnDef<TData>
-                  const label = (col?.label) ?? col.header
-                  if (!label || typeof label !== 'string') {
-                    throw new Error(`The \`${column.id}\` column header is not a string. Add the \`label\` property if the \`header\` value does not contain a string.`)
-                  }
-                  return (
-                    <SelectItem key={column.id} value={column.id}>
-                      {label}
-                    </SelectItem>
+                <SelectGroup>
+                  <SelectLabel>Search by</SelectLabel>
+                  <SelectSeparator />
+                  <SelectItem value="all">Global</SelectItem>
+                  {table.getAllColumns().map((column) => {
+                    if (!column.getCanFilter()) { return null }
+                    const col = column.columnDef as CustomColumnDef<TData>
+                    const label = (col?.label) ?? col.header
+                    if (!label || typeof label !== 'string') {
+                      throw new Error(`The \`${column.id}\` column header is not a string. Add the \`label\` property if the \`header\` value does not contain a string.`)
+                    }
+                    return (
+                      <SelectItem key={column.id} value={column.id}>
+                        {label}
+                      </SelectItem>
+                    )}
                   )}
-                )}
+                </SelectGroup>
               </SelectContent>
             </Select>
-            <div className="relative flex-1 w-full lg:max-w-sm">
-              <SearchIcon className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+            <div className="relative flex-1 w-full lg:max-w-72">
               <Input
-                className="w-full px-9 rounded-l-none"
+                className="w-full pr-9 rounded-l-none"
                 placeholder="Search..."
                 value={searchBy.value}
                 onChange={(e) => setSearchBy((prev) => ({ ...prev, value: e.target.value }))}
@@ -82,7 +85,7 @@ export default function DataTableToolbar<TData> ({ table, hideSearch }: DataTabl
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
-              className="ml-auto hidden h-8 lg:flex"
+              className="ml-auto hidden lg:flex"
             >
               <Settings2Icon />
               View
@@ -93,17 +96,15 @@ export default function DataTableToolbar<TData> ({ table, hideSearch }: DataTabl
             <DropdownMenuSeparator />
             {table
               .getAllColumns()
-              .filter(
-                (column) =>
-                  typeof column.accessorFn !== 'undefined' && column.getCanHide()
-              )
+              .filter((column) => column.id !== 'select' && column.id !== 'actions')
               .map((column) => {
                 return (
                   <DropdownMenuCheckboxItem
                     key={column.id}
-                    className="capitalize"
+                    className={cn('capitalize', !column.getIsVisible() && 'line-through')}
+                    disabled={!column.getCanHide()}
                     checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                    onCheckedChange={(value: boolean) => column.toggleVisibility(!!value)}
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
