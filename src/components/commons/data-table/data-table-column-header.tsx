@@ -66,7 +66,7 @@ export function DataTableColumnHeader<TData> ({
                 selectedValues.size
                   ? (
                     <Badge className='size-4 rounded-full p-0 flex justify-center items-center text-[10px] text-center'>
-                      {selectedValues.size > 3 ? '+9' : selectedValues.size}
+                      {selectedValues.size > 9 ? '+9' : selectedValues.size}
                     </Badge>)
                   : <ChevronDownIcon />)
             )}
