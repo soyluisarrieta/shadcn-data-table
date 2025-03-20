@@ -21,7 +21,7 @@
 - [x] Búsqueda por columnas específicas
 - [x] Ordenación de columnas
 - [x] Filtrado por múltiples valores
-- [ ] Filtrado por valor único
+- [x] Filtrado por valor único
 - [ ] Filtrado por día, mes o año
 - [ ] Filtrado por rango de fechas
 - [x] Mostrar u ocultar columnas

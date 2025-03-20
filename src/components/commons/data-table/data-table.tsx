@@ -44,6 +44,7 @@ type FilterableOption = {
 export interface FilterableColumn<TData> {
   columnKey: keyof TData;
   label?: string;
+  selection?: 'multiple' | 'single';
   options: FilterableOption[]
 }
 

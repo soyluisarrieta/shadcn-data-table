@@ -6,6 +6,7 @@ export const filterableColumns: FilterableColumn<Payment>[]  = [
   {
     columnKey: 'status',
     label: 'Status',
+    selection: 'single',
     options: [
       { label: 'pending', value: 'pending', icon: ClockFadingIcon  },
       { label: 'processing', value: 'processing', icon: TimerIcon },

@@ -21,7 +21,7 @@
 - [x] Search by specific columns
 - [x] Column sorting
 - [x] Filtering by multiple values
-- [ ] Filtering by single value
+- [x] Filtering by single value
 - [ ] Filtering by day, month, or year
 - [ ] Filtering by date range
 - [x] Show or hide columns

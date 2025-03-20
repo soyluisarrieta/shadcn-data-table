@@ -26,6 +26,8 @@ export function DataTableColumnHeader<TData> ({
   className,
   filterableColumn
 }: DataTableColumnHeaderProps<TData>) {
+  const isSingleSelection = filterableColumn?.selection === 'single'
+
   const column = header.column
   const canSort = column.getCanSort()
   const canHide = column.getCanHide()
@@ -68,12 +70,12 @@ export function DataTableColumnHeader<TData> ({
                     <Badge className='size-4 rounded-full p-0 flex justify-center items-center text-[10px] text-center'>
                       {selectedValues.size > 9 ? '+9' : selectedValues.size}
                     </Badge>)
-                  : <ChevronDownIcon />)
+                  : <ChevronDownIcon />
+              )
             )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
-
           {filterableColumn && (
             <>
               <Command>
@@ -89,10 +91,15 @@ export function DataTableColumnHeader<TData> ({
                             key={option.value}
                             className='cursor-pointer'
                             onSelect={() => {
-                              if (isSelected) {
-                                selectedValues.delete(option.value)
-                              } else {
+                              if (isSingleSelection) {
+                                selectedValues.clear()
                                 selectedValues.add(option.value)
+                              } else {
+                                if (isSelected) {
+                                  selectedValues.delete(option.value)
+                                } else {
+                                  selectedValues.add(option.value)
+                                }
                               }
                               const filterValues = Array.from(selectedValues)
                               column?.setFilterValue(
@@ -103,6 +110,7 @@ export function DataTableColumnHeader<TData> ({
                             <div
                               className={cn(
                                 'flex size-4 items-center justify-center rounded-sm border border-primary cursor-pointer',
+                                isSingleSelection && 'rounded-full outline outline-offset-1',
                                 isSelected
                                   ? 'bg-primary text-primary-foreground'
                                   : 'opacity-50 [&_svg]:invisible'
