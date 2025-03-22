@@ -8,6 +8,7 @@ export type Payment = {
   amount: number
   status: 'pending' | 'processing' | 'success' | 'failed'
   email: string
+  date: string
 }
 
 export const paymentsColumns: CustomColumnDef<Payment>[] = [
@@ -22,6 +23,12 @@ export const paymentsColumns: CustomColumnDef<Payment>[] = [
     minWidth: 300,
     enableHiding: false,
     header: 'Email'
+  },
+  {
+    accessorKey: 'date',
+    width: 'auto',
+    enableHiding: false,
+    header: 'Fecha'
   },
   {
     accessorKey: 'amount',
