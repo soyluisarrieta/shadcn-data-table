@@ -7,6 +7,7 @@ import { type Table } from '@tanstack/react-table'
 import { Settings2Icon, XCircleIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
+import { DatePicker } from '@/components/commons/date-picker'
 
 interface DataTableToolBarProps<TData> {
   table: Table<TData>;
@@ -15,6 +16,7 @@ interface DataTableToolBarProps<TData> {
 
 export default function DataTableToolbar<TData> ({ table, hideSearch }: DataTableToolBarProps<TData>) {
   const [searchBy, setSearchBy] = useState({ column: 'all', value: '' })
+  const [dateFilter, setDateFilter] = useState<string | null>(null)
 
   useEffect(() => {
     const { column, value } = searchBy
@@ -25,7 +27,10 @@ export default function DataTableToolbar<TData> ({ table, hideSearch }: DataTabl
     } else {
       table.getColumn(column)?.setFilterValue(value)
     }
-  }, [searchBy, table])
+    if (dateFilter) {
+      table.getColumn('date')?.setFilterValue(dateFilter)
+    }
+  }, [searchBy, table, dateFilter])
 
   return (
     <div className="flex items-center py-3">
@@ -81,6 +86,12 @@ export default function DataTableToolbar<TData> ({ table, hideSearch }: DataTabl
         )}
       </div>
       <div className='hidden lg:flex gap-1'>
+        <DatePicker
+          date={dateFilter ? new Date(dateFilter) : undefined}
+          onDateChange={(value) => setDateFilter(value ? value.toISOString().split('T')[0] : null)}
+          onReset={() => { setDateFilter(null) }}
+          placeholder='Filter by date'
+        />
         <DropdownMenu>
           <Button
             variant="outline"
