@@ -8,7 +8,7 @@ import { Settings2Icon, XCircleIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 
-interface DataTableToolBarProps <TData> {
+interface DataTableToolBarProps<TData> {
   table: Table<TData>;
   hideSearch?: boolean;
 }
@@ -80,11 +80,11 @@ export default function DataTableToolbar<TData> ({ table, hideSearch }: DataTabl
           </div>
         )}
       </div>
-      <div className='flex gap-1'>
+      <div className='hidden lg:flex gap-1'>
         <DropdownMenu>
           <Button
             variant="outline"
-            className="ml-auto hidden lg:flex"
+            className="ml-auto flex"
             asChild
           >
             <DropdownMenuTrigger>

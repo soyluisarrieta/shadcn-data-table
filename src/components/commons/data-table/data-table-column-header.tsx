@@ -14,6 +14,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { FilterableColumn } from '@/components/commons/data-table/data-table'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
+import { FilterType } from '@/components/commons/data-table/data-table-filters'
 
 interface DataTableColumnHeaderProps<TData>
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -26,7 +27,7 @@ export function DataTableColumnHeader<TData> ({
   className,
   filterableColumn
 }: DataTableColumnHeaderProps<TData>) {
-  const isSingleSelection = filterableColumn?.selection === 'single'
+  const isSingleSelection = filterableColumn?.type === FilterType.SingleSelection
 
   const column = header.column
   const canSort = column.getCanSort()
@@ -77,7 +78,7 @@ export function DataTableColumnHeader<TData> ({
           </DropdownMenuTrigger>
         </Button>
         <DropdownMenuContent align="start">
-          {filterableColumn && (
+          {filterableColumn && filterableColumn?.options && (
             <>
               <Command>
                 {filterableColumn.options.length > 7 && <CommandInput placeholder='Search' />}

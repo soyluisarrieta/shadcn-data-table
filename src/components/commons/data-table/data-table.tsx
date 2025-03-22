@@ -1,6 +1,5 @@
 import {
   type ColumnDef,
-  type Row,
   ColumnFiltersState,
   flexRender,
   getCoreRowModel,
@@ -26,6 +25,7 @@ import DataTableFooter from '@/components/commons/data-table/data-table-footer'
 import { DataTableColumnHeader } from '@/components/commons/data-table/data-table-column-header'
 import { DataTableColumnSelection } from '@/components/commons/data-table/data-table-column-selection'
 import DataTableSelectionActions from '@/components/commons/data-table/data-table-selection-actions'
+import { FILTERS, FilterType } from '@/components/commons/data-table/data-table-filters'
 
 type CustomColumnDefProps<TData> = {
   accessorKey?: keyof TData;
@@ -41,11 +41,12 @@ type FilterableOption = {
   icon?: React.ComponentType<{ className?: string }>;
   count?: number;
 }
+
 export interface FilterableColumn<TData> {
   columnKey: keyof TData;
   label?: string;
-  selection?: 'multiple' | 'single';
-  options: FilterableOption[]
+  type: `${FilterType}`;
+  options?: FilterableOption[]
 }
 
 export type SelectionActionProps<TData> = {
@@ -85,13 +86,8 @@ export function DataTable<TData, TValue> ({
 
   const extendedColumn = useMemo(() => {
     return columns.map(column => {
-      const filterExists = filterableColumns?.find((field) => field.columnKey === column.accessorKey)
-      if (filterExists) {
-        column.filterFn = (row: Row<TData>, columnId: string, filterValue: string[]) => {
-          if (!filterValue || filterValue.length === 0) return true
-          return filterValue.includes(row.getValue(columnId))
-        }
-      }
+      const filter = filterableColumns?.find((field) => field.columnKey === column.accessorKey)
+      if (filter) { column.filterFn = FILTERS[filter.type] }
 
       const assesorFn = (originalRow: TData) => originalRow[column.accessorKey as keyof TData]?.toString()
 

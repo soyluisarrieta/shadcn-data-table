@@ -1,12 +1,13 @@
 import { Payment } from '@/app/payment/payments-columns'
 import { FilterableColumn } from '@/components/commons/data-table/data-table'
+import { FilterType } from '@/components/commons/data-table/data-table-filters'
 import { CheckCircle2Icon, CircleXIcon, ClockFadingIcon, TimerIcon } from 'lucide-react'
 
 export const filterableColumns: FilterableColumn<Payment>[]  = [
   {
     columnKey: 'status',
     label: 'Status',
-    selection: 'single',
+    type: 'single-selection',
     options: [
       { label: 'pending', value: 'pending', icon: ClockFadingIcon  },
       { label: 'processing', value: 'processing', icon: TimerIcon },
@@ -17,6 +18,7 @@ export const filterableColumns: FilterableColumn<Payment>[]  = [
   {
     columnKey: 'email',
     label: 'Email',
+    type: FilterType.MultiSelection,
     options: [
       { label: 'user 17', value: 'user17@example.com' },
       { label: 'user 18', value: 'user18@example.com' },
