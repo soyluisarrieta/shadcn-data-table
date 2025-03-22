@@ -32,5 +32,10 @@ export const filterableColumns: FilterableColumn<Payment>[]  = [
       { label: 'user 26', value: 'user26@example.com' },
       { label: 'user 27', value: 'user27@example.com' }
     ]
+  },
+  {
+    columnKey: 'date',
+    label: 'Date',
+    type: 'single-date'
   }
 ]

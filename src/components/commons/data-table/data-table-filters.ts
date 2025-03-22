@@ -1,6 +1,7 @@
 export enum FilterType {
   MultiSelection = 'multiple-selection',
-  SingleSelection = 'single-selection'
+  SingleSelection = 'single-selection',
+  SingleDate = 'single-date',
 }
 
 interface Row<TData> {
@@ -30,7 +31,13 @@ const singleSelectionFilterFn = <TData>({ row, columnId, filterValue }: FilterPa
   return row.getValue(columnId) === filterValue
 }
 
+const singleDateFilterFn = <TData>({ row, columnId, filterValue }: FilterParams<TData>) => {
+  const rowDate = new Date(row.getValue(columnId) as unknown as string).toISOString().split('T')[0]
+  return rowDate === filterValue
+}
+
 export const FILTERS = {
   [FilterType.MultiSelection]: createFilter(multiSelectionFilterFn),
-  [FilterType.SingleSelection]: createFilter(singleSelectionFilterFn)
+  [FilterType.SingleSelection]: createFilter(singleSelectionFilterFn),
+  [FilterType.SingleDate]: createFilter(singleDateFilterFn)
 }
