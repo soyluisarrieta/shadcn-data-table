@@ -82,15 +82,16 @@ export default function DataTableToolbar<TData> ({ table, hideSearch }: DataTabl
       </div>
       <div className='flex gap-1'>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              className="ml-auto hidden lg:flex"
-            >
+          <Button
+            variant="outline"
+            className="ml-auto hidden lg:flex"
+            asChild
+          >
+            <DropdownMenuTrigger>
               <Settings2Icon />
               View
-            </Button>
-          </DropdownMenuTrigger>
+            </DropdownMenuTrigger>
+          </Button>
           <DropdownMenuContent align="end" className="w-[150px]">
             <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
             <DropdownMenuSeparator />

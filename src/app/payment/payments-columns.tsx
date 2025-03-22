@@ -45,12 +45,12 @@ export const paymentsColumns: CustomColumnDef<Payment>[] = [
       const payment = row.original
       return (
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="size-8 p-0">
+          <Button variant="ghost" className="size-8 p-0" asChild>
+            <DropdownMenuTrigger>
               <span className="sr-only">Open menu</span>
               <MoreHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
+            </DropdownMenuTrigger>
+          </Button>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem

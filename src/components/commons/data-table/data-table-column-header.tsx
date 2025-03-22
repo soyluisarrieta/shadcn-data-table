@@ -47,12 +47,13 @@ export function DataTableColumnHeader<TData> ({
   return (
     <div className={cn('flex items-center space-x-2', className)}>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant={isFilteredColumn ? 'secondary' : 'ghost'}
-            size="sm"
-            className={cn('-ml-3 h-8 data-[state=open]:bg-accent text-xs', isFilteredColumn && 'font-bold')}
-          >
+        <Button
+          variant={isFilteredColumn ? 'secondary' : 'ghost'}
+          size="sm"
+          className={cn('-ml-3 h-8 data-[state=open]:bg-accent text-xs', isFilteredColumn && 'font-bold')}
+          asChild
+        >
+          <DropdownMenuTrigger>
             {header.isPlaceholder
               ? null
               : flexRender(
@@ -73,8 +74,8 @@ export function DataTableColumnHeader<TData> ({
                   : <ChevronDownIcon />
               )
             )}
-          </Button>
-        </DropdownMenuTrigger>
+          </DropdownMenuTrigger>
+        </Button>
         <DropdownMenuContent align="start">
           {filterableColumn && (
             <>
