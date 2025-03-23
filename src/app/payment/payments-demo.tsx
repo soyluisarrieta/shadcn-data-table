@@ -1,7 +1,7 @@
 import { paymentsColumns, Payment } from '@/app/payment/payments-columns'
 import { DataTable, DataTableActions } from '@/components/commons/data-table/data-table'
 import { PAYMENT_MOCK } from '@/app/payment/payments-mock'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { TestTubeDiagonalIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { filterableColumns } from '@/app/payment/payments-filters'
@@ -52,6 +52,10 @@ export default function Payments () {
     ]
   }
 
+  const copyToClipboard = useCallback((text: string) => {
+    navigator.clipboard.writeText(text)
+  }, [])
+
   return (
     <div>
       <PageHeader
@@ -65,6 +69,13 @@ export default function Payments () {
           export: {
             label: 'Export',
             onClick: (format) => alert('Export payments.' + format)
+          },
+          copy: {
+            onClick: () => {
+              const text = 'Payments Number: ' + Math.floor(Math.random() * 100)
+              copyToClipboard(text)
+              console.log(text)
+            }
           }
         }}
       />

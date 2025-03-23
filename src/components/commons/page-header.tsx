@@ -2,8 +2,9 @@ import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Separator } from '@/components/ui/separator'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { ChevronDownIcon, DownloadIcon, PlusIcon } from 'lucide-react'
-import { useState } from 'react'
+import { cn } from '@/lib/utils'
+import { CheckIcon, ChevronDownIcon, CopyIcon, DownloadIcon, PlusIcon } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 type ToggleGroupFormat = 'pdf' | 'csv' | 'json' | 'xlsx'
 
@@ -14,16 +15,29 @@ interface PageHeaderProps {
     add: {
       label?: string
       onClick: () => void
-    }
+    },
     export: {
       label?: string
       onClick: (format: ToggleGroupFormat) => void
+    },
+    copy?: {
+      label?: string
+      onClick: () => void
     }
   }
 }
 
 export default function PageHeader ({ title, description, actions  }: PageHeaderProps) {
   const [toggleGroupFormat, setToggleGroupFormat] = useState<ToggleGroupFormat>('pdf')
+  const [hasCopied, setHasCopied] = useState(false)
+
+  useEffect(() => {
+    if (hasCopied) {
+      setTimeout(() => {
+        setHasCopied(false)
+      }, 2000)
+    }
+  },[hasCopied])
 
   return (
     <div className='flex justify-between items-end mb-4'>
@@ -65,18 +79,34 @@ export default function PageHeader ({ title, description, actions  }: PageHeader
                 >
                   <ToggleGroupItem value="pdf">PDF</ToggleGroupItem>
                   <ToggleGroupItem value="csv">CSV</ToggleGroupItem>
-                  <ToggleGroupItem value="xlsx">Excel</ToggleGroupItem>
+                  <ToggleGroupItem value="xlsx">EXCEL</ToggleGroupItem>
                   <ToggleGroupItem value="json">JSON</ToggleGroupItem>
                 </ToggleGroup>
 
                 <Separator />
 
-                <div className='px-4 mb-3 flex justify-between gap-1'>
+                <div className={cn('w-full px-4 mb-3 flex justify-between gap-1', !actions?.copy && 'justify-end')}>
+                  {actions?.copy && (
+                    <Button
+                      size='sm'
+                      variant='ghost'
+                      disabled={hasCopied}
+                      onClick={() => {
+                        actions?.copy?.onClick()
+                        setHasCopied(true)
+                      }}
+                    >
+                      {hasCopied
+                        ? (<><CheckIcon />{'Copied!'}</>)
+                        : (<><CopyIcon />{actions?.copy?.label ?? 'Copy JSON'}</>)
+                      }
+                    </Button>
+                  )}
                   <Button
                     size='sm'
                     onClick={() => actions?.export?.onClick(toggleGroupFormat)}
                   >
-                    Export file
+                    Download
                   </Button>
                 </div>
               </div>
