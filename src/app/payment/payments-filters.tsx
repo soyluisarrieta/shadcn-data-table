@@ -36,6 +36,6 @@ export const filterableColumns: FilterableColumn<Payment>[]  = [
   {
     columnKey: 'date',
     label: 'Date',
-    type: 'single-date'
+    type: 'date'
   }
 ]

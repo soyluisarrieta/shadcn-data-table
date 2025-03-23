@@ -24,44 +24,60 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
 
-type DatePickerModes = 'single' | 'range'
+enum DatePickerModes {
+  Duo = 'duo',
+  Single = 'single',
+  Range = 'range'
+}
 
-interface DatePickerProps {
+type DateRangeValue = { from?: Date, to?: Date }
+export type DateValue = Date | DateRangeValue
+
+type DatePickerRange = {
+  mode?: `${DatePickerModes.Range}`
+  defaultValue?: DateRangeValue
+  onDateChange?: (date: DateRangeValue | undefined) => void
+}
+
+type DatePickerSingle = {
+  mode?: `${DatePickerModes.Single}`
   defaultValue?: Date
   onDateChange?: (date: Date | undefined) => void
+}
+
+type DatePickerBase = {
+  defaultValue?: DateValue
+  onDateChange?: (date: DateValue | undefined) => void
   onReset?: () => void
   placeholder?: string
-  mode?: DatePickerModes
-  dateRange?: { from: Date | undefined; to: Date | undefined }
-  onRangeChange?: (range: { from: Date | undefined; to: Date | undefined }) => void
-  onModeChange?: (mode: DatePickerModes) => void
+  onModeChange?: (mode: `${DatePickerModes}`) => void
 }
+
+type DatePickerProps = DatePickerBase & (DatePickerSingle | DatePickerRange | { mode?: `${DatePickerModes.Duo}` })
 
 export function DatePicker ({
   defaultValue,
   onDateChange,
   onReset,
   placeholder,
-  mode,
-  dateRange,
-  onRangeChange,
+  mode = 'duo',
   onModeChange
 }: DatePickerProps) {
-  const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(defaultValue)
-  const [currentMonth, setCurrentMonth] = React.useState<Date>(defaultValue || new Date())
+  const [selectedDate, setSelectedDate] = React.useState<DateValue | undefined>(defaultValue)
+  const [currentMonth, setCurrentMonth] = React.useState<DateValue>(defaultValue || new Date())
   const [isOpen, setIsOpen] = React.useState(false)
   const [view, setView] = React.useState<'days' | 'years'>('days')
   const [isRangeMode, setIsRangeMode] = React.useState(mode === 'range')
 
   // Range selection states
-  const [rangeStart, setRangeStart] = React.useState<Date | undefined>(dateRange?.from)
-  const [rangeEnd, setRangeEnd] = React.useState<Date | undefined>(dateRange?.to)
+  const [rangeStart, setRangeStart] = React.useState<Date | undefined>(undefined)
+  const [rangeEnd, setRangeEnd] = React.useState<Date | undefined>(undefined)
   const [rangeHover, setRangeHover] = React.useState<Date | undefined>(undefined)
 
   // Get the current year for the accordion default value
-  const currentYear = currentMonth.getFullYear()
+  const currentYear = currentMonth instanceof Date ? currentMonth.getFullYear() : new Date().getFullYear()
   const currentYearValue = `year-${currentYear}`
-  const currentMonthIndex = currentMonth.getMonth()
+  const currentMonthIndex = currentMonth instanceof Date ? currentMonth.getMonth() : new Date().getMonth()
 
   // Reference to the current year's accordion item
   const currentYearRef = React.useRef<HTMLDivElement>(null)
@@ -72,11 +88,14 @@ export function DatePicker ({
   }, [defaultValue])
 
   React.useEffect(() => {
-    if (dateRange) {
-      setRangeStart(dateRange.from)
-      setRangeEnd(dateRange.to)
+    if (defaultValue && typeof defaultValue !== 'object') {
+      setRangeStart(defaultValue)
+      setRangeEnd(undefined)
+    } else if (defaultValue && 'from' in defaultValue) {
+      setRangeStart(defaultValue.from)
+      setRangeEnd(defaultValue.to)
     }
-  }, [dateRange])
+  }, [defaultValue])
 
   // Reset view when popover closes, but only after animation completes
   React.useEffect(() => {
@@ -111,9 +130,7 @@ export function DatePicker ({
     if (!isRangeMode) {
       setSelectedDate(day)
       setCurrentMonth(day)
-      if (onDateChange) {
-        onDateChange(day)
-      }
+      onDateChange?.(day)
       setIsOpen(false)
     } else if (isRangeMode) {
       // If no start date is selected or if both start and end are already selected
@@ -134,12 +151,10 @@ export function DatePicker ({
           setRangeStart(day)
         }
 
-        if (onRangeChange) {
-          onRangeChange({
-            from: isAfterStart ? rangeStart : day,
-            to: isAfterStart ? day : rangeStart
-          })
-        }
+        (onDateChange as DatePickerRange['onDateChange'])?.({
+          from: isAfterStart ? rangeStart : day,
+          to: isAfterStart ? day : rangeStart
+        })
         setIsOpen(false)
       }
     }
@@ -154,12 +169,12 @@ export function DatePicker ({
 
   // Navigate to previous month
   const previousMonth = () => {
-    setCurrentMonth(subMonths(currentMonth, 1))
+    setCurrentMonth(subMonths(currentMonth instanceof Date ? currentMonth : new Date(), 1))
   }
 
   // Navigate to next month
   const nextMonth = () => {
-    setCurrentMonth(addMonths(currentMonth, 1))
+    setCurrentMonth(addMonths(currentMonth instanceof Date ? currentMonth : new Date(), 1))
   }
 
   // Toggle between days and years view
@@ -169,7 +184,7 @@ export function DatePicker ({
 
   // Handle month selection
   const handleMonthSelect = (year: number, monthIndex: number) => {
-    const newDate = setMonth(setYear(currentMonth, year), monthIndex)
+    const newDate = setMonth(setYear(currentMonth instanceof Date ? currentMonth : new Date(), year), monthIndex)
     setCurrentMonth(newDate)
     setView('days')
   }
@@ -197,8 +212,8 @@ export function DatePicker ({
 
   // Generate calendar days
   const calendarDays = React.useMemo(() => {
-    const daysInMonth = getDaysInMonth(currentMonth)
-    const startDay = getDay(startOfMonth(currentMonth))
+    const daysInMonth = getDaysInMonth(currentMonth instanceof Date ? currentMonth : new Date())
+    const startDay = getDay(startOfMonth(currentMonth instanceof Date ? currentMonth : new Date()))
     const days = []
 
     // Add empty cells for days before the start of the month
@@ -208,7 +223,7 @@ export function DatePicker ({
 
     // Add days of the month
     for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
+      const date = new Date(currentMonth instanceof Date ? currentMonth.getFullYear() : new Date().getFullYear(), currentMonth instanceof Date ? currentMonth.getMonth() : new Date().getMonth(), day)
       days.push(date)
     }
 
@@ -256,7 +271,7 @@ export function DatePicker ({
   const formatDisplayText = () => {
     const placeholderText = placeholder ? placeholder : `Pick a ${isRangeMode ? 'date range' : 'date'}`
     if (!isRangeMode) {
-      return selectedDate ? format(selectedDate, 'PPP') : placeholderText
+      return selectedDate ? format(selectedDate instanceof Date ? selectedDate : new Date(), 'PPP') : placeholderText
     } else if (isRangeMode) {
       if (rangeStart && rangeEnd) {
         return `${format(rangeStart, 'PP')} - ${format(rangeEnd, 'PP')}`
@@ -274,16 +289,15 @@ export function DatePicker ({
 
     if (!isRangeMode) {
       setSelectedDate(undefined)
-      if (onDateChange) {
-        onDateChange(undefined)
-      }
+      onDateChange?.(undefined)
     } else if (isRangeMode) {
       setRangeStart(undefined)
       setRangeEnd(undefined)
-      setRangeHover(undefined)
-      if (onRangeChange) {
-        onRangeChange({ from: undefined, to: undefined })
-      }
+      setRangeHover(undefined);
+      (onDateChange as DatePickerRange['onDateChange'])?.({
+        from: undefined,
+        to: undefined
+      })
     }
 
     // setIsOpen(false)
@@ -314,7 +328,7 @@ export function DatePicker ({
               onClick={toggleView}
               data-state={view === 'years' ? 'open' : 'closed'}
             >
-              {format(currentMonth, 'MMMM yyyy')}
+              {format(currentMonth instanceof Date ? currentMonth : new Date(), 'MMMM yyyy')}
               <ChevronDown className="ml-1 h-4 w-4 transition-transform duration-200" />
             </Button>
             <div className="flex items-center">
@@ -355,8 +369,8 @@ export function DatePicker ({
                           isToday(day) && 'bg-accent hover:bg-secondary text-accent-foreground rounded-full',
                           !isRangeMode &&
                             selectedDate &&
-                            isSameDay(day, selectedDate) &&
-                            'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground',
+                            isSameDay(day, selectedDate instanceof Date ? selectedDate : new Date()) &&
+                            'bg-primary text-primary-foreground hover:bg-primary dark:hover:bg-primary hover:text-primary-foreground',
                           isRangeMode && isInRange(day) && 'bg-primary/10 dark:bg-primary/20 rounded-none',
                           isRangeMode &&
                             isRangeStart(day) &&
@@ -417,14 +431,23 @@ export function DatePicker ({
                 </Accordion>
               </ScrollArea>
             </div>
-            {!mode && (
+            {mode === 'duo' && (
               <div className='flex justify-between items-center border-t py-2 text-sm font-medium'>
                 Range mode
                 <Switch
                   checked={isRangeMode}
-                  onCheckedChange={(value) => {
-                    !mode && setIsRangeMode(value)
-                    onModeChange?.(value ? 'range' : 'single')
+                  onCheckedChange={(isChecked) => {
+                    setIsRangeMode(isChecked)
+                    if (isChecked) {
+                      onDateChange?.(
+                        rangeStart && rangeEnd
+                          ? { from: rangeStart,to: rangeEnd }
+                          : undefined
+                      )
+                    } else {
+                      selectedDate && onDateChange?.(selectedDate)
+                    }
+                    onModeChange?.(isChecked ? 'range' : 'single')
                   }}
                 />
               </div>

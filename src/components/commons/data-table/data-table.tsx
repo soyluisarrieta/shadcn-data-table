@@ -35,7 +35,7 @@ type CustomColumnDefProps<TData> = {
 }
 type OnClickActionBase<TData, TReturn = void> = (rows: TData[], cleanRowSelection: () => void) => TReturn
 
-type FilterableOption = {
+export type FilterableOption = {
   label: string;
   value: string;
   icon?: React.ComponentType<{ className?: string }>;

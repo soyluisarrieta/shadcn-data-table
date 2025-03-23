@@ -1,43 +1,56 @@
+import { FilterableOption } from '@/components/commons/data-table/data-table'
+
 export enum FilterType {
   MultiSelection = 'multiple-selection',
   SingleSelection = 'single-selection',
-  SingleDate = 'single-date',
+  DatePicker = 'date',
 }
 
 interface Row<TData> {
   getValue(columnId: string): TData;
 }
 
-interface FilterParams<TData> {
-  row: Row<TData>;
+interface FilterParams<TValue> {
+  row: Row<FilterableOption['value']>;
   columnId: string;
-  filterValue: string | string[];
+  filterValue: TValue;
 }
 
-type FilterFunction<TData> = (params: FilterParams<TData>) => boolean;
+type FilterFunction<TValue> = (params: FilterParams<TValue>) => boolean;
 
-const createFilter = <TData>(filterFn: FilterFunction<TData>) => {
-  return (row: Row<TData>, columnId: string, filterValue: string | string[]) => {
+const createFilter = <TValue>(filterFn: FilterFunction<TValue>) => {
+  return (row: Row<string>, columnId: string, filterValue: TValue) => {
     return filterFn({ row, columnId, filterValue })
   }
 }
 
-const multiSelectionFilterFn = <TData>({ row, columnId, filterValue }: FilterParams<TData>) => {
-  if (!filterValue || (filterValue as string[]).length === 0) return true
-  return (filterValue as string[]).includes(row.getValue(columnId) as unknown as string)
+const multiSelectionFilterFn = ({ row, columnId, filterValue }: FilterParams<string[]>) => {
+  if (!filterValue || filterValue.length === 0) return true
+  return filterValue.includes(row.getValue(columnId))
 }
 
-const singleSelectionFilterFn = <TData>({ row, columnId, filterValue }: FilterParams<TData>) => {
+const singleSelectionFilterFn = ({ row, columnId, filterValue }: FilterParams<string>) => {
   return row.getValue(columnId) === filterValue
 }
 
-const singleDateFilterFn = <TData>({ row, columnId, filterValue }: FilterParams<TData>) => {
-  const rowDate = new Date(row.getValue(columnId) as unknown as string).toISOString().split('T')[0]
-  return rowDate === filterValue
+const formatDate = (date: Date) => date.toISOString().split('T')[0]
+const datePickerFilterFn = ({ row, columnId, filterValue }: FilterParams<Date | { from: Date, to: Date }>) => {
+  const date = row.getValue(columnId)
+  if (filterValue instanceof Date) {
+    return date === formatDate(filterValue)
+  }
+
+  const fromDate = filterValue.from
+  const toDate = filterValue.to
+
+  if (formatDate(fromDate) === date) return true
+  if (formatDate(toDate) === date) return true
+
+  return new Date(date) >= fromDate && new Date(date) <= toDate
 }
 
 export const FILTERS = {
   [FilterType.MultiSelection]: createFilter(multiSelectionFilterFn),
   [FilterType.SingleSelection]: createFilter(singleSelectionFilterFn),
-  [FilterType.SingleDate]: createFilter(singleDateFilterFn)
+  [FilterType.DatePicker]: createFilter(datePickerFilterFn)
 }
