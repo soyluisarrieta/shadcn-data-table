@@ -22,7 +22,7 @@
 - [x] Column sorting
 - [x] Filtering by multiple values
 - [x] Filtering by single value
-- [ ] Filtering by day, month, or year
+- [x] Filtering by single date
 - [ ] Filtering by date range
 - [x] Show or hide columns
 - [ ] Export records to different formats
