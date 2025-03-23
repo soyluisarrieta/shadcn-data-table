@@ -27,7 +27,7 @@ import { Switch } from '@/components/ui/switch'
 type DatePickerModes = 'single' | 'range'
 
 interface DatePickerProps {
-  date?: Date
+  defaultValue?: Date
   onDateChange?: (date: Date | undefined) => void
   onReset?: () => void
   placeholder?: string
@@ -38,7 +38,7 @@ interface DatePickerProps {
 }
 
 export function DatePicker ({
-  date,
+  defaultValue,
   onDateChange,
   onReset,
   placeholder,
@@ -47,8 +47,8 @@ export function DatePicker ({
   onRangeChange,
   onModeChange
 }: DatePickerProps) {
-  const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(date)
-  const [currentMonth, setCurrentMonth] = React.useState<Date>(date || new Date())
+  const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(defaultValue)
+  const [currentMonth, setCurrentMonth] = React.useState<Date>(defaultValue || new Date())
   const [isOpen, setIsOpen] = React.useState(false)
   const [view, setView] = React.useState<'days' | 'years'>('days')
   const [isRangeMode, setIsRangeMode] = React.useState(mode === 'range')
@@ -68,8 +68,8 @@ export function DatePicker ({
 
   // Update internal state when props change
   React.useEffect(() => {
-    setSelectedDate(date)
-  }, [date])
+    setSelectedDate(defaultValue)
+  }, [defaultValue])
 
   React.useEffect(() => {
     if (dateRange) {
