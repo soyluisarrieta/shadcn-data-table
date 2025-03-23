@@ -41,7 +41,7 @@ export function DatePicker ({
   date,
   onDateChange,
   onReset,
-  placeholder = 'Pick a date',
+  placeholder,
   mode,
   dateRange,
   onRangeChange,
@@ -254,15 +254,16 @@ export function DatePicker ({
 
   // Format the display text for the date picker button
   const formatDisplayText = () => {
+    const placeholderText = placeholder ? placeholder : `Pick a ${isRangeMode ? 'date range' : 'date'}`
     if (!isRangeMode) {
-      return selectedDate ? format(selectedDate, 'PPP') : placeholder
+      return selectedDate ? format(selectedDate, 'PPP') : placeholderText
     } else if (isRangeMode) {
       if (rangeStart && rangeEnd) {
         return `${format(rangeStart, 'PP')} - ${format(rangeEnd, 'PP')}`
       } else if (rangeStart) {
         return `${format(rangeStart, 'PP')} - ?`
       } else {
-        return placeholder
+        return placeholderText
       }
     }
   }
