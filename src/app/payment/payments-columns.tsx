@@ -28,7 +28,12 @@ export const paymentsColumns: CustomColumnDef<Payment>[] = [
     accessorKey: 'date',
     width: 'auto',
     enableHiding: false,
-    header: 'Fecha'
+    header: 'Fecha',
+    cell: ({ row }) => {
+      const date = new Date(row.getValue('date'))
+      date.setMinutes(date.getMinutes() + date.getTimezoneOffset())
+      return <div>{date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+    }
   },
   {
     accessorKey: 'amount',
