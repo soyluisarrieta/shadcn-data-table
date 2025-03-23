@@ -23,7 +23,7 @@
 - [x] Filtering by multiple values
 - [x] Filtering by single value
 - [x] Filtering by single date
-- [ ] Filtering by date range
+- [x] Filtering by date range
 - [x] Show or hide columns
 - [ ] Export records to different formats
 - [x] Highlight selected rows

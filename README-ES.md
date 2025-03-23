@@ -23,7 +23,7 @@
 - [x] Filtrado por múltiples valores
 - [x] Filtrado por valor único
 - [x] Filtrado por fecha única
-- [ ] Filtrado por rango de fechas
+- [x] Filtrado por rango de fechas
 - [x] Mostrar u ocultar columnas
 - [ ] Exportar registros a diferentes formatos
 - [x] Resaltar filas seleccionadas
