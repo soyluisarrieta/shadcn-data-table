@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { TestTubeDiagonalIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { filterableColumns } from '@/app/payment/payments-filters'
+import PageHeader from '@/components/commons/page-header'
 
 export default function Payments () {
   const [payments, setPayments] = useState<Payment[]>([])
@@ -52,11 +53,27 @@ export default function Payments () {
   }
 
   return (
-    <DataTable
-      columns={paymentsColumns}
-      data={payments}
-      filterableColumns={filterableColumns}
-      actions={dataTableActions}
-    />
+    <div>
+      <PageHeader
+        title='Payments'
+        description='This is what my data table would look like if I received donations.'
+        actions={{
+          add: {
+            label: 'Add Payments',
+            onClick: () => alert('Add')
+          },
+          export: {
+            label: 'Export',
+            onClick: (format) => alert('Export payments.' + format)
+          }
+        }}
+      />
+      <DataTable
+        columns={paymentsColumns}
+        data={payments}
+        filterableColumns={filterableColumns}
+        actions={dataTableActions}
+      />
+    </div>
   )
 }
