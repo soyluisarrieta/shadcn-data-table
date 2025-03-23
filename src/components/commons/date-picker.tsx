@@ -10,7 +10,11 @@ import {
   startOfMonth,
   getDay,
   isToday,
-  isSameDay
+  isSameDay,
+  isAfter,
+  endOfDay,
+  startOfDay,
+  isWithinInterval
 } from 'date-fns'
 
 import { cn } from '@/lib/utils'
@@ -18,19 +22,41 @@ import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Switch } from '@/components/ui/switch'
+
+type DatePickerModes = 'single' | 'range'
 
 interface DatePickerProps {
   date?: Date
   onDateChange?: (date: Date | undefined) => void
   onReset?: () => void
   placeholder?: string
+  mode?: DatePickerModes
+  dateRange?: { from: Date | undefined; to: Date | undefined }
+  onRangeChange?: (range: { from: Date | undefined; to: Date | undefined }) => void
+  onModeChange?: (mode: DatePickerModes) => void
 }
 
-export function DatePicker ({ date, onDateChange, onReset, placeholder = 'Pick a date' }: DatePickerProps) {
+export function DatePicker ({
+  date,
+  onDateChange,
+  onReset,
+  placeholder = 'Pick a date',
+  mode,
+  dateRange,
+  onRangeChange,
+  onModeChange
+}: DatePickerProps) {
   const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(date)
   const [currentMonth, setCurrentMonth] = React.useState<Date>(date || new Date())
   const [isOpen, setIsOpen] = React.useState(false)
   const [view, setView] = React.useState<'days' | 'years'>('days')
+  const [isRangeMode, setIsRangeMode] = React.useState(mode === 'range')
+
+  // Range selection states
+  const [rangeStart, setRangeStart] = React.useState<Date | undefined>(dateRange?.from)
+  const [rangeEnd, setRangeEnd] = React.useState<Date | undefined>(dateRange?.to)
+  const [rangeHover, setRangeHover] = React.useState<Date | undefined>(undefined)
 
   // Get the current year for the accordion default value
   const currentYear = currentMonth.getFullYear()
@@ -39,6 +65,18 @@ export function DatePicker ({ date, onDateChange, onReset, placeholder = 'Pick a
 
   // Reference to the current year's accordion item
   const currentYearRef = React.useRef<HTMLDivElement>(null)
+
+  // Update internal state when props change
+  React.useEffect(() => {
+    setSelectedDate(date)
+  }, [date])
+
+  React.useEffect(() => {
+    if (dateRange) {
+      setRangeStart(dateRange.from)
+      setRangeEnd(dateRange.to)
+    }
+  }, [dateRange])
 
   // Reset view when popover closes, but only after animation completes
   React.useEffect(() => {
@@ -69,13 +107,49 @@ export function DatePicker ({ date, onDateChange, onReset, placeholder = 'Pick a
   }, [view])
 
   // Handle date selection
-  const handleSelect = (date: Date) => {
-    setSelectedDate(date)
-    setCurrentMonth(date)
-    if (onDateChange) {
-      onDateChange(date)
+  const handleSelect = (day: Date) => {
+    if (!isRangeMode) {
+      setSelectedDate(day)
+      setCurrentMonth(day)
+      if (onDateChange) {
+        onDateChange(day)
+      }
+      setIsOpen(false)
+    } else if (isRangeMode) {
+      // If no start date is selected or if both start and end are already selected
+      if (!rangeStart || (rangeStart && rangeEnd)) {
+        setRangeStart(day)
+        setRangeEnd(undefined)
+        setRangeHover(undefined)
+      }
+      // If only start date is selected and the clicked date is after start
+      else if (rangeStart && !rangeEnd) {
+        // Ensure proper order (earlier date first)
+        const isAfterStart = isAfter(day, rangeStart)
+
+        if (isAfterStart) {
+          setRangeEnd(day)
+        } else {
+          setRangeEnd(rangeStart)
+          setRangeStart(day)
+        }
+
+        if (onRangeChange) {
+          onRangeChange({
+            from: isAfterStart ? rangeStart : day,
+            to: isAfterStart ? day : rangeStart
+          })
+        }
+        setIsOpen(false)
+      }
     }
-    setIsOpen(false)
+  }
+
+  // Handle mouse hover for range selection
+  const handleDayHover = (day: Date) => {
+    if (isRangeMode && rangeStart && !rangeEnd) {
+      setRangeHover(day)
+    }
   }
 
   // Navigate to previous month
@@ -144,15 +218,89 @@ export function DatePicker ({ date, onDateChange, onReset, placeholder = 'Pick a
   // Day names
   const dayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 
+  // Check if a date is within the selected range
+  const isInRange = (day: Date) => {
+    if (!isRangeMode || !day) return false
+
+    if (rangeStart && rangeEnd) {
+      return isWithinInterval(day, {
+        start: startOfDay(rangeStart),
+        end: endOfDay(rangeEnd)
+      })
+    }
+
+    if (rangeStart && rangeHover) {
+      const isHoverAfterStart = isAfter(rangeHover, rangeStart)
+      return isWithinInterval(day, {
+        start: startOfDay(isHoverAfterStart ? rangeStart : rangeHover),
+        end: endOfDay(isHoverAfterStart ? rangeHover : rangeStart)
+      })
+    }
+
+    return false
+  }
+
+  // Check if a date is the start of the range
+  const isRangeStart = (day: Date) => {
+    if (!isRangeMode || !rangeStart || !day) return false
+    return isSameDay(day, rangeStart)
+  }
+
+  // Check if a date is the end of the range
+  const isRangeEnd = (day: Date) => {
+    if (!isRangeMode || !rangeEnd || !day) return false
+    return isSameDay(day, rangeEnd)
+  }
+
+  // Format the display text for the date picker button
+  const formatDisplayText = () => {
+    if (!isRangeMode) {
+      return selectedDate ? format(selectedDate, 'PPP') : placeholder
+    } else if (isRangeMode) {
+      if (rangeStart && rangeEnd) {
+        return `${format(rangeStart, 'PP')} - ${format(rangeEnd, 'PP')}`
+      } else if (rangeStart) {
+        return `${format(rangeStart, 'PP')} - ?`
+      } else {
+        return placeholder
+      }
+    }
+  }
+
+  // Handle reset
+  const handleReset = () => {
+    if (!onReset) return
+
+    if (!isRangeMode) {
+      setSelectedDate(undefined)
+      if (onDateChange) {
+        onDateChange(undefined)
+      }
+    } else if (isRangeMode) {
+      setRangeStart(undefined)
+      setRangeEnd(undefined)
+      setRangeHover(undefined)
+      if (onRangeChange) {
+        onRangeChange({ from: undefined, to: undefined })
+      }
+    }
+
+    // setIsOpen(false)
+    onReset()
+  }
+
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <Button
         variant="outline"
-        className={cn('w-[180px] justify-start text-left font-normal', !selectedDate && 'text-muted-foreground')}
+        className={cn(
+          'w-auto min-w-[180px] justify-start text-left font-normal',
+          (!isRangeMode && !selectedDate) || (isRangeMode && !rangeStart) ? 'text-muted-foreground' : ''
+        )}
         asChild
       >
         <PopoverTrigger>
-          <span className='flex-1'>{selectedDate ? format(selectedDate, 'PPP') : placeholder}</span>
+          <span className="flex-1">{formatDisplayText()}</span>
           <CalendarIcon className="ml-2 h-4 w-4 text-muted-foreground" />
         </PopoverTrigger>
       </Button>
@@ -194,22 +342,34 @@ export function DatePicker ({ date, onDateChange, onReset, placeholder = 'Pick a
                   </div>
                 ))}
               </div>
-              <div className="mt-1 grid grid-cols-7 gap-1">
+              <div className="mt-1 grid grid-cols-7">
                 {calendarDays.map((day, i) => (
                   <div key={i}>
                     {day ? (
                       <Button
                         variant="ghost"
+                        title={isToday(day) ? 'Today' : undefined}
                         className={cn(
-                          'h-8 w-8 p-0 font-normal',
-                          isToday(day) && 'bg-accent text-accent-foreground',
-                          selectedDate &&
-                              isSameDay(day, selectedDate) &&
-                              'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground'
+                          'h-8 w-8 p-0 font-normal relative',
+                          isToday(day) && 'bg-accent hover:bg-secondary text-accent-foreground rounded-full',
+                          !isRangeMode &&
+                            selectedDate &&
+                            isSameDay(day, selectedDate) &&
+                            'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground',
+                          isRangeMode && isInRange(day) && 'bg-primary/10 dark:bg-primary/20 rounded-none',
+                          isRangeMode &&
+                            isRangeStart(day) &&
+                            'bg-primary dark:bg-primary hover:bg-primary dark:hover:bg-primary text-primary-foreground hover:text-primary-foreground dark:hover:text-primary-foreground rounded-l-md rounded-r-none',
+                          isRangeMode &&
+                            isRangeEnd(day) &&
+                            'bg-primary dark:bg-primary hover:bg-primary dark:hover:bg-primary text-primary-foreground hover:text-primary-foreground dark:hover:text-primary-foreground rounded-r-md rounded-l-none',
+                          isRangeMode && isRangeStart(day) && isRangeEnd(day) && 'rounded-md'
                         )}
                         onClick={() => handleSelect(day)}
+                        onMouseEnter={() => handleDayHover(day)}
                       >
                         {day.getDate()}
+                        {isToday(day) && <span className='size-1 bg-primary absolute bottom-0.5 left-1/2 -translate-x-1/2 rounded-full' />}
                       </Button>
                     ) : (
                       <div className="h-8 w-8" />
@@ -232,7 +392,7 @@ export function DatePicker ({ date, onDateChange, onReset, placeholder = 'Pick a
                       <AccordionItem value={`year-${year}`}>
                         <AccordionTrigger className="text-sm py-2 [&>svg]:last:hidden hover:no-underline border-t rounded-none text-foreground/70 hover:text-foreground">
                           <ChevronDownIcon className="text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200" />
-                          <span className='flex-1'>{year}</span>
+                          <span className="flex-1">{year}</span>
                         </AccordionTrigger>
                         <AccordionContent>
                           <div className="grid grid-cols-4 gap-2">
@@ -240,7 +400,7 @@ export function DatePicker ({ date, onDateChange, onReset, placeholder = 'Pick a
                               <Button
                                 key={month.name}
                                 variant={index === currentMonthIndex && year === currentYear ? 'default' : 'outline'}
-                                size='sm'
+                                size="sm"
                                 className="text-sm"
                                 title={month.full}
                                 onClick={() => handleMonthSelect(year, index)}
@@ -256,19 +416,25 @@ export function DatePicker ({ date, onDateChange, onReset, placeholder = 'Pick a
                 </Accordion>
               </ScrollArea>
             </div>
+            {!mode && (
+              <div className='flex justify-between items-center border-t py-2 text-sm font-medium'>
+                Range mode
+                <Switch
+                  checked={isRangeMode}
+                  onCheckedChange={(value) => {
+                    !mode && setIsRangeMode(value)
+                    onModeChange?.(value ? 'range' : 'single')
+                  }}
+                />
+              </div>
+            )}
           </div>
-          {selectedDate && (
-            <Button
-              className='w-full'
-              variant='ghost'
-              onClick={() => {
-                setSelectedDate(undefined)
-                setIsOpen(false)
-                onReset?.()
-              }}
-            >
-              Clear date
-            </Button>
+          {onReset && ((!isRangeMode && selectedDate) || (isRangeMode && (rangeStart || rangeEnd))) && (
+            <div className='border-t'>
+              <Button className="w-full mt-2" variant="secondary" onClick={handleReset}>
+                Clear {isRangeMode ? 'range' : 'date'}
+              </Button>
+            </div>
           )}
         </div>
       </PopoverContent>
