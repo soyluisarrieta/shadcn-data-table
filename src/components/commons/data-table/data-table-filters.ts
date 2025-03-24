@@ -33,7 +33,7 @@ const singleSelectionFilterFn = ({ row, columnId, filterValue }: FilterParams<st
   return row.getValue(columnId) === filterValue
 }
 
-const formatDate = (date: Date) => date.toISOString().split('T')[0]
+const formatDate = (date: Date) => date?.toISOString().split('T')[0]
 const datePickerFilterFn = ({ row, columnId, filterValue }: FilterParams<Date | { from: Date, to: Date }>) => {
   const date = row.getValue(columnId)
   if (filterValue instanceof Date) {
