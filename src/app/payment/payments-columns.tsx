@@ -43,7 +43,8 @@ export const paymentsColumns: CustomColumnDef<Payment>[] = [
       const amount = parseFloat(row.getValue('amount'))
       const formatted = new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'USD'
+        currency: 'USD',
+        minimumFractionDigits: 0
       }).format(amount)
 
       return <div className="text-right font-medium">{formatted}</div>
