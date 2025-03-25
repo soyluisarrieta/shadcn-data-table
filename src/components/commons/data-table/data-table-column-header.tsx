@@ -1,8 +1,12 @@
-import { flexRender, Header } from '@tanstack/react-table'
-import { ArrowDown, ArrowUp, CheckIcon, ChevronDownIcon, ChevronsUpDown, EyeOff, RotateCcwIcon } from 'lucide-react'
-
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import {
+  ArrowDown,
+  ArrowUp,
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronsUpDown,
+  EyeOff,
+  RotateCcwIcon
+} from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,23 +14,31 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator
+} from '@/components/ui/command'
+import { flexRender, Header } from '@tanstack/react-table'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 import type { FilterableColumn } from '@/components/commons/data-table/data-table-types'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
 import { FilterType } from '@/components/commons/data-table/data-table-filters'
 
-interface DataTableColumnHeaderProps<TData>
-  extends React.HTMLAttributes<HTMLDivElement> {
-  header:  Header<TData, unknown>
-  filterableColumn?: FilterableColumn<TData>
-}
-
 export function DataTableColumnHeader<TData> ({
   header,
   className,
   filterableColumn
-}: DataTableColumnHeaderProps<TData>) {
+}: React.HTMLAttributes<HTMLDivElement> & {
+  header:  Header<TData, unknown>
+  filterableColumn?: FilterableColumn<TData>
+}) {
   const isSingleSelection = filterableColumn?.type === FilterType.SingleSelection
 
   const column = header.column
