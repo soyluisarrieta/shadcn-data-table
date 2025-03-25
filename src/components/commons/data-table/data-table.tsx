@@ -1,3 +1,4 @@
+import * as React from 'react'
 import {
   type ColumnDef,
   ColumnFiltersState,
@@ -18,7 +19,6 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { type CSSProperties, useMemo, useState } from 'react'
 import { DataTableLeftToolbar, DataTableRightToolbar, DataTableToolbar } from '@/components/commons/data-table/data-table-toolbar'
 import DataTableFooter from '@/components/commons/data-table/data-table-footer'
 import { DataTableColumnHeader } from '@/components/commons/data-table/data-table-column-header'
@@ -76,12 +76,12 @@ export function DataTable<TData, TValue> ({
   actions = {},
   filterableColumns
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = useState({})
+  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = React.useState({})
 
-  const extendedColumn = useMemo(() => {
+  const extendedColumn = React.useMemo(() => {
     return columns.map(column => {
       const filter = filterableColumns?.find((field) => field.columnKey === column.accessorKey)
       if (filter) { column.filterFn = FILTERS[filter.type] }
@@ -95,7 +95,7 @@ export function DataTable<TData, TValue> ({
     })
   }, [columns, filterableColumns])
 
-  const memorizedColumns = useMemo(() => {
+  const memorizedColumns = React.useMemo(() => {
     if (!disableRowSelection) {
       return [
         DataTableColumnSelection<TData>(),
@@ -143,7 +143,7 @@ export function DataTable<TData, TValue> ({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   const column = header.column.columnDef as CustomColumnDef<TData>
-                  const columnStyle: CSSProperties = {
+                  const columnStyle: React.CSSProperties = {
                     width: widthExists ? (column.width === 'auto' ? 0 : column.width) : '100%',
                     minWidth: minWidthExists ? column.minWidth : undefined
                   }
@@ -170,7 +170,7 @@ export function DataTable<TData, TValue> ({
                 >
                   {row.getVisibleCells().map((cell) => {
                     const column = cell.column.columnDef as CustomColumnDef<TData>
-                    const columnStyle: CSSProperties = {
+                    const columnStyle: React.CSSProperties = {
                       width: widthExists ? (column.width === 'auto' ? 0 : column.width) : '100%',
                       minWidth: minWidthExists ? column.minWidth : undefined
                     }
