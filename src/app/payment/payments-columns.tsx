@@ -1,4 +1,4 @@
-import { type CustomColumnDef } from '@/components/commons/data-table/data-table'
+import { CustomColumnDef } from '@/components/commons/data-table/data-table-types'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { MoreHorizontalIcon } from 'lucide-react'

@@ -1,6 +1,6 @@
 import { Payment } from '@/app/payment/payments-columns'
-import { FilterableColumn } from '@/components/commons/data-table/data-table'
 import { FilterType } from '@/components/commons/data-table/data-table-filters'
+import type { FilterableColumn } from '@/components/commons/data-table/data-table-types'
 import { CheckCircle2Icon, CircleXIcon, ClockFadingIcon, TimerIcon } from 'lucide-react'
 
 export const filterableColumns: FilterableColumn<Payment>[]  = [

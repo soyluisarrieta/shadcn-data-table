@@ -1,11 +1,12 @@
 import { paymentsColumns, Payment } from '@/app/payment/payments-columns'
-import { DataTable, DataTableActions } from '@/components/commons/data-table/data-table'
+import { DataTable } from '@/components/commons/data-table/data-table'
 import { PAYMENT_MOCK } from '@/app/payment/payments-mock'
 import { useCallback, useEffect, useState } from 'react'
 import { TestTubeDiagonalIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { filterableColumns } from '@/app/payment/payments-filters'
 import PageHeader from '@/components/commons/page-header'
+import type { DataTableActions } from '@/components/commons/data-table/data-table-types'
 
 export default function Payments () {
   const [payments, setPayments] = useState<Payment[]>([])
