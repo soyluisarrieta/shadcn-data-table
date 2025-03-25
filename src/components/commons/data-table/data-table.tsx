@@ -19,7 +19,7 @@ import {
   TableRow
 } from '@/components/ui/table'
 import { type CSSProperties, useMemo, useState } from 'react'
-import { DataTableToolbar } from '@/components/commons/data-table/data-table-toolbar'
+import { DataTableLeftToolbar, DataTableRightToolbar, DataTableToolbar } from '@/components/commons/data-table/data-table-toolbar'
 import DataTableFooter from '@/components/commons/data-table/data-table-footer'
 import { DataTableColumnHeader } from '@/components/commons/data-table/data-table-column-header'
 import { DataTableColumnSelection } from '@/components/commons/data-table/data-table-column-selection'
@@ -131,7 +131,10 @@ export function DataTable<TData, TValue> ({
 
   return (
     <>
-      <DataTableToolbar table={table} />
+      <DataTableToolbar>
+        <DataTableLeftToolbar table={table} />
+        <DataTableRightToolbar table={table} />
+      </DataTableToolbar>
 
       <div className="rounded-md border relative">
         <Table className={!widthExists ? 'w-auto' : 'w-full'}>

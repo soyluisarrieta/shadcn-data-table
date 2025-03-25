@@ -91,42 +91,54 @@ function DataTableSearchInput ({
   )
 }
 
-function DataTableSearchFiltering<TData> ({
-  table,
-  searchBy,
-  setSearchBy,
-  searchValue,
-  setSearchValue
+function DataTableDropdownView<TData> ({
+  table
 }: {
   table: Table<TData>
-  searchBy: string
-  setSearchBy: (column: string) => void
-  searchValue: string
-  setSearchValue: (value: string) => void
 }) {
   return (
-    <div className='flex'>
-      <DataTableSelectSearch
-        columns={table.getAllLeafColumns()}
-        value={searchBy}
-        onValueChange={setSearchBy}
-      />
-      <DataTableSearchInput
-        value={searchValue}
-        onValueChange={setSearchValue}
-      />
-    </div>
+    <DropdownMenu>
+      <Button
+        variant="outline"
+        className="ml-auto flex"
+        asChild
+      >
+        <DropdownMenuTrigger>
+          <Settings2Icon />
+          View
+        </DropdownMenuTrigger>
+      </Button>
+      <DropdownMenuContent align="end" className="w-[150px]">
+        <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {table
+          .getAllColumns()
+          .filter((column) => column.id !== 'select' && column.id !== 'actions')
+          .map((column) => {
+            return (
+              <DropdownMenuCheckboxItem
+                key={column.id}
+                className={cn('capitalize', !column.getIsVisible() && 'line-through')}
+                disabled={!column.getCanHide()}
+                checked={column.getIsVisible()}
+                onCheckedChange={(value: boolean) => column.toggleVisibility(!!value)}
+              >
+                {column.id}
+              </DropdownMenuCheckboxItem>
+            )
+          })}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 
-export function DataTableToolbar<TData> ({
+function DataTableLeftToolbar<TData> ({
   table
 }: {
   table: Table<TData>
 }) {
   const [searchBy, setSearchBy] = useState('all')
   const [searchValue, setSearchValue] = useState('')
-  const [dateFilter, setDateFilter] = useState<DateValue>()
 
   useEffect(() => {
     table.resetGlobalFilter()
@@ -136,60 +148,68 @@ export function DataTableToolbar<TData> ({
     } else {
       table.getColumn(searchBy)?.setFilterValue(searchValue)
     }
-    if (dateFilter) {
-      table.getColumn('date')?.setFilterValue(dateFilter)
-    }
-  }, [dateFilter, searchBy, searchValue, table])
+  }, [table, searchBy, searchValue])
 
   return (
-    <div className="flex items-center py-3">
-      <div className='flex-1'>
-        <DataTableSearchFiltering
-          table={table}
-          searchBy={searchBy}
-          setSearchBy={setSearchBy}
-          searchValue={searchValue}
-          setSearchValue={setSearchValue}
+    <div className='flex-1'>
+      <div className='flex'>
+        <DataTableSelectSearch
+          columns={table.getAllLeafColumns()}
+          value={searchBy}
+          onValueChange={setSearchBy}
         />
-      </div>
-      <div className='hidden lg:flex gap-1'>
-        <DatePicker
-          onDateChange={(date) => setDateFilter(date)}
-          onReset={() => { setDateFilter(undefined) }}
+        <DataTableSearchInput
+          value={searchValue}
+          onValueChange={setSearchValue}
         />
-        <DropdownMenu>
-          <Button
-            variant="outline"
-            className="ml-auto flex"
-            asChild
-          >
-            <DropdownMenuTrigger>
-              <Settings2Icon />
-              View
-            </DropdownMenuTrigger>
-          </Button>
-          <DropdownMenuContent align="end" className="w-[150px]">
-            <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {table
-              .getAllColumns()
-              .filter((column) => column.id !== 'select' && column.id !== 'actions')
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className={cn('capitalize', !column.getIsVisible() && 'line-through')}
-                    disabled={!column.getCanHide()}
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value: boolean) => column.toggleVisibility(!!value)}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
     </div>
   )
+}
+
+function DataTableRightToolbar<TData> ({
+  table
+}: {
+  table: Table<TData>
+}) {
+  const [dateFilter, setDateFilter] = useState<DateValue>()
+
+  useEffect(() => {
+    table.resetGlobalFilter()
+    table.resetColumnFilters()
+    if (dateFilter) {
+      table.getColumn('date')?.setFilterValue(dateFilter)
+    }
+  }, [dateFilter, table])
+
+  return (
+    <div className='hidden lg:flex gap-1'>
+      <DatePicker
+        onDateChange={(date) => setDateFilter(date)}
+        onReset={() => { setDateFilter(undefined) }}
+      />
+      <DataTableDropdownView table={table} />
+    </div>
+  )
+}
+
+function DataTableToolbar ({
+  children
+}: {
+  children?: React.ReactNode
+}) {
+  return (
+    <div className="flex items-center py-3">
+      {children}
+    </div>
+  )
+}
+
+export {
+  DataTableToolbar,
+  DataTableLeftToolbar,
+  DataTableRightToolbar,
+  DataTableSelectSearch,
+  DataTableSearchInput,
+  DataTableDropdownView
 }
