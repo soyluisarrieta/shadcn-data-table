@@ -10,7 +10,6 @@ import {
   useReactTable,
   VisibilityState
 } from '@tanstack/react-table'
-
 import {
   Table,
   TableBody,
@@ -20,7 +19,7 @@ import {
   TableRow
 } from '@/components/ui/table'
 import { type CSSProperties, useMemo, useState } from 'react'
-import DataTableToolbar from '@/components/commons/data-table/data-table-toolbar'
+import { DataTableToolbar } from '@/components/commons/data-table/data-table-toolbar'
 import DataTableFooter from '@/components/commons/data-table/data-table-footer'
 import { DataTableColumnHeader } from '@/components/commons/data-table/data-table-column-header'
 import { DataTableColumnSelection } from '@/components/commons/data-table/data-table-column-selection'
@@ -65,7 +64,6 @@ export type CustomColumnDef<TData> = ColumnDef<TData> & CustomColumnDefProps<TDa
 export interface DataTableProps<TData, TValue> {
   columns: Array<ColumnDef<TData, TValue> & CustomColumnDefProps<TData>>;
   data: TData[];
-  disableInputSearch?: boolean;
   disableRowSelection?: boolean;
   actions?: DataTableActions<TData>
   filterableColumns?: Array<FilterableColumn<TData>>
@@ -75,7 +73,6 @@ export function DataTable<TData, TValue> ({
   columns,
   data,
   disableRowSelection = false,
-  disableInputSearch = false,
   actions = {},
   filterableColumns
 }: DataTableProps<TData, TValue>) {
@@ -134,7 +131,7 @@ export function DataTable<TData, TValue> ({
 
   return (
     <>
-      <DataTableToolbar table={table} hideSearch={disableInputSearch} />
+      <DataTableToolbar table={table} />
 
       <div className="rounded-md border relative">
         <Table className={!widthExists ? 'w-auto' : 'w-full'}>

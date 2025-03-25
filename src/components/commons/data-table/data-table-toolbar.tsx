@@ -1,89 +1,156 @@
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
+import { Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 import { type CustomColumnDef } from '@/components/commons/data-table/data-table'
+import { type Column, type Table } from '@tanstack/react-table'
+import { type DateValue, DatePicker } from '@/components/commons/date-picker'
 import { Button } from '@/components/ui/button'
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { type Table } from '@tanstack/react-table'
 import { Settings2Icon, XCircleIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
-import { DatePicker, DateValue } from '@/components/commons/date-picker'
 
-interface DataTableToolBarProps<TData> {
-  table: Table<TData>;
-  hideSearch?: boolean;
+function DataTableSelectSearch<TData> ({
+  columns,
+  value,
+  onValueChange
+}: {
+  columns: Column<TData>[],
+  value: string,
+  onValueChange: (column: string) => void
+}) {
+  return (
+    <Select value={value} onValueChange={onValueChange}>
+      <SelectTrigger className="w-[120px] rounded-r-none border-r-0 bg-muted/50 text-muted-foreground">
+        <SelectValue placeholder="Global" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>Search by</SelectLabel>
+          <SelectSeparator />
+          <SelectItem value="all">Global</SelectItem>
+          {columns.map((column) => {
+            if (!column.getCanFilter()) { return null }
+            const col = column.columnDef as CustomColumnDef<TData>
+            const label = (col?.label) ?? col.header
+            if (!label || typeof label !== 'string') {
+              throw new Error(`The \`${column.id}\` column header is not a string. Add the \`label\` property if the \`header\` value does not contain a string.`)
+            }
+            return (
+              <SelectItem key={column.id} value={column.id}>
+                {label}
+              </SelectItem>
+            )}
+          )}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  )
 }
 
-export default function DataTableToolbar<TData> ({ table, hideSearch }: DataTableToolBarProps<TData>) {
-  const [searchBy, setSearchBy] = useState({ column: 'all', value: '' })
+function DataTableSearchInput ({
+  value,
+  onValueChange
+}: {
+  value: string
+  onValueChange: (value: string) => void
+}) {
+  return (
+    <div className="relative flex-1 w-full lg:max-w-72">
+      <Input
+        className="w-full pr-9 rounded-l-none"
+        placeholder="Search..."
+        value={value}
+        onChange={(e) => onValueChange(e.target.value)}
+      />
+      {value && (
+        <Button
+          className="h-8 px-2 lg:px-2 absolute right-0 top-1/2 -translate-y-1/2 text-foreground/50 hover:text-foreground"
+          variant="link"
+          size="icon"
+          onClick={() => onValueChange('')}
+        >
+          <XCircleIcon />
+        </Button>
+      )}
+    </div>
+  )
+}
+
+function DataTableSearchFiltering<TData> ({
+  table,
+  searchBy,
+  setSearchBy,
+  searchValue,
+  setSearchValue
+}: {
+  table: Table<TData>
+  searchBy: string
+  setSearchBy: (column: string) => void
+  searchValue: string
+  setSearchValue: (value: string) => void
+}) {
+  return (
+    <div className='flex'>
+      <DataTableSelectSearch
+        columns={table.getAllLeafColumns()}
+        value={searchBy}
+        onValueChange={setSearchBy}
+      />
+      <DataTableSearchInput
+        value={searchValue}
+        onValueChange={setSearchValue}
+      />
+    </div>
+  )
+}
+
+export function DataTableToolbar<TData> ({
+  table
+}: {
+  table: Table<TData>
+}) {
+  const [searchBy, setSearchBy] = useState('all')
+  const [searchValue, setSearchValue] = useState('')
   const [dateFilter, setDateFilter] = useState<DateValue>()
 
   useEffect(() => {
-    const { column, value } = searchBy
     table.resetGlobalFilter()
     table.resetColumnFilters()
-    if (column === 'all') {
-      table.setGlobalFilter(value)
+    if (searchBy === 'all') {
+      table.setGlobalFilter(searchValue)
     } else {
-      table.getColumn(column)?.setFilterValue(value)
+      table.getColumn(searchBy)?.setFilterValue(searchValue)
     }
     if (dateFilter) {
       table.getColumn('date')?.setFilterValue(dateFilter)
     }
-  }, [searchBy, table, dateFilter])
+  }, [dateFilter, searchBy, searchValue, table])
 
   return (
     <div className="flex items-center py-3">
       <div className='flex-1'>
-        {!hideSearch && (
-          <div className='flex'>
-            <Select value={searchBy.column} onValueChange={(value) => setSearchBy((prev) => ({ ...prev, column: value }))}>
-              <SelectTrigger className="w-[120px] rounded-r-none border-r-0 bg-muted/50 text-muted-foreground">
-                <SelectValue placeholder="Global" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Search by</SelectLabel>
-                  <SelectSeparator />
-                  <SelectItem value="all">Global</SelectItem>
-                  {table.getAllColumns().map((column) => {
-                    if (!column.getCanFilter()) { return null }
-                    const col = column.columnDef as CustomColumnDef<TData>
-                    const label = (col?.label) ?? col.header
-                    if (!label || typeof label !== 'string') {
-                      throw new Error(`The \`${column.id}\` column header is not a string. Add the \`label\` property if the \`header\` value does not contain a string.`)
-                    }
-                    return (
-                      <SelectItem key={column.id} value={column.id}>
-                        {label}
-                      </SelectItem>
-                    )}
-                  )}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <div className="relative flex-1 w-full lg:max-w-72">
-              <Input
-                className="w-full pr-9 rounded-l-none"
-                placeholder="Search..."
-                value={searchBy.value}
-                onChange={(e) => setSearchBy((prev) => ({ ...prev, value: e.target.value }))}
-              />
-              {searchBy.value && (
-                <Button
-                  className="h-8 px-2 lg:px-2 absolute right-0 top-1/2 -translate-y-1/2 text-foreground/50 hover:text-foreground"
-                  variant="link"
-                  size="icon"
-                  onClick={() => {
-                    setSearchBy((prev) => ({ ...prev, value: '' }))
-                  }}
-                >
-                  <XCircleIcon />
-                </Button>
-              )}
-            </div>
-          </div>
-        )}
+        <DataTableSearchFiltering
+          table={table}
+          searchBy={searchBy}
+          setSearchBy={setSearchBy}
+          searchValue={searchValue}
+          setSearchValue={setSearchValue}
+        />
       </div>
       <div className='hidden lg:flex gap-1'>
         <DatePicker
