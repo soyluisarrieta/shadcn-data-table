@@ -1,4 +1,4 @@
-import { CustomColumnDef } from '@/components/commons/data-table/data-table'
+import type { CustomColumnDef } from '@/components/commons/data-table/data-table-types'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Row, type Table } from '@tanstack/react-table'
 

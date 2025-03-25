@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command'
-import { FilterableColumn } from '@/components/commons/data-table/data-table'
+import type { FilterableColumn } from '@/components/commons/data-table/data-table-types'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
 import { FilterType } from '@/components/commons/data-table/data-table-filters'

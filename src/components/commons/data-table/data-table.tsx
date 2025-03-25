@@ -24,50 +24,8 @@ import DataTableFooter from '@/components/commons/data-table/data-table-footer'
 import { DataTableColumnHeader } from '@/components/commons/data-table/data-table-column-header'
 import { DataTableColumnSelection } from '@/components/commons/data-table/data-table-column-selection'
 import DataTableSelectionActions from '@/components/commons/data-table/data-table-selection-actions'
-import { FILTERS, FilterType } from '@/components/commons/data-table/data-table-filters'
-
-type CustomColumnDefProps<TData> = {
-  accessorKey?: keyof TData;
-  width?: string | number;
-  minWidth?: string | number;
-  label?: string;
-}
-type OnClickActionBase<TData, TReturn = void> = (rows: TData[], cleanRowSelection: () => void) => TReturn
-
-export type FilterableOption = {
-  label: string;
-  value: string;
-  icon?: React.ComponentType<{ className?: string }>;
-  count?: number;
-}
-
-export interface FilterableColumn<TData> {
-  columnKey: keyof TData;
-  label?: string;
-  type: `${FilterType}`;
-  options?: FilterableOption[]
-}
-
-export type SelectionActionProps<TData> = {
-  label?: string;
-  icon?: React.ComponentType<{ className?: string }>;
-  onClick: OnClickActionBase<TData>;
-}
-
-export interface DataTableActions<TData> {
-  onRemoveRows?: OnClickActionBase<TData>
-  customActions?: Array<SelectionActionProps<TData> | { component: OnClickActionBase<TData, React.JSX.Element> }>
-}
-
-export type CustomColumnDef<TData> = ColumnDef<TData> & CustomColumnDefProps<TData>
-
-export interface DataTableProps<TData, TValue> {
-  columns: Array<ColumnDef<TData, TValue> & CustomColumnDefProps<TData>>;
-  data: TData[];
-  disableRowSelection?: boolean;
-  actions?: DataTableActions<TData>
-  filterableColumns?: Array<FilterableColumn<TData>>
-}
+import { FILTERS } from '@/components/commons/data-table/data-table-filters'
+import type { CustomColumnDef, CustomColumnDefProps, DataTableActions, FilterableColumn } from '@/components/commons/data-table/data-table-types'
 
 export function DataTable<TData, TValue> ({
   columns,
@@ -75,7 +33,13 @@ export function DataTable<TData, TValue> ({
   disableRowSelection = false,
   actions = {},
   filterableColumns
-}: DataTableProps<TData, TValue>) {
+}: {
+  columns: Array<ColumnDef<TData, TValue> & CustomColumnDefProps<TData>>;
+  data: TData[];
+  disableRowSelection?: boolean;
+  actions?: DataTableActions<TData>
+  filterableColumns?: Array<FilterableColumn<TData>>
+}) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})

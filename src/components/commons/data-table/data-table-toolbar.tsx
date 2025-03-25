@@ -15,7 +15,7 @@ import { Select,
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { type CustomColumnDef } from '@/components/commons/data-table/data-table'
+import type { CustomColumnDef } from '@/components/commons/data-table/data-table-types'
 import { type Column, type Table } from '@tanstack/react-table'
 import { type DateValue, DatePicker } from '@/components/commons/date-picker'
 import { Button } from '@/components/ui/button'

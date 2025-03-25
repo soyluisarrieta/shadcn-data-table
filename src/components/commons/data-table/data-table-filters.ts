@@ -1,4 +1,4 @@
-import { FilterableOption } from '@/components/commons/data-table/data-table'
+import type { FilterableOption } from '@/components/commons/data-table/data-table-types'
 
 export enum FilterType {
   MultiSelection = 'multiple-selection',
