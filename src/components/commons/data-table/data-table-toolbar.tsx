@@ -185,7 +185,8 @@ function DataTableRightToolbar<TData> ({
   return (
     <div className='hidden lg:flex gap-1'>
       <DatePicker
-        onDateChange={(date) => setDateFilter(date)}
+        value={dateFilter}
+        onValueChange={setDateFilter}
         onReset={() => { setDateFilter(undefined) }}
       />
       <DataTableDropdownView table={table} />
