@@ -132,23 +132,13 @@ function DataTableDropdownView<TData> ({
   )
 }
 
-function DataTableLeftToolbar<TData> ({
-  table
-}: {
-  table: Table<TData>
-}) {
+function DataTableLeftToolbar<TData> ({ table }: { table: Table<TData> }) {
   const [searchBy, setSearchBy] = useState('all')
   const [searchValue, setSearchValue] = useState('')
 
   useEffect(() => {
-    table.resetGlobalFilter()
-    table.resetColumnFilters()
-    if (searchBy === 'all') {
-      table.setGlobalFilter(searchValue)
-    } else {
-      table.getColumn(searchBy)?.setFilterValue(searchValue)
-    }
-  }, [table, searchBy, searchValue])
+    table.setGlobalFilter({ searchBy, searchValue })
+  }, [searchBy, searchValue, table])
 
   return (
     <div className='flex-1'>

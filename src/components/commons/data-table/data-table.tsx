@@ -48,12 +48,15 @@ export function DataTable<TData, TValue> ({
   const extendedColumn = React.useMemo(() => {
     return columns.map(column => {
       const filter = filterableColumns?.find((field) => field.columnKey === column.accessorKey)
-      if (filter) { column.filterFn = FILTERS[filter.type] }
-
-      const assesorFn = (originalRow: TData) => originalRow[column.accessorKey as keyof TData]?.toString()
-
+      if (filter) {
+        column.filterFn = FILTERS[filter.type]
+      } else if (!column.filterFn) {
+        column.filterFn = FILTERS.partialMatch
+      }
+      const accessorFn = (originalRow: TData) =>
+        originalRow[column.accessorKey as keyof TData]?.toString()
       return {
-        accessorFn: column.accessorKey ? assesorFn : undefined,
+        accessorFn: column.accessorKey ? accessorFn : undefined,
         ...column
       }
     })
@@ -72,6 +75,8 @@ export function DataTable<TData, TValue> ({
   const table = useReactTable({
     data,
     columns: memorizedColumns,
+    globalFilterFn: FILTERS.globalSearch,
+    defaultColumn: { filterFn: FILTERS.partialMatch },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
@@ -89,7 +94,7 @@ export function DataTable<TData, TValue> ({
   })
 
   const widthExists = columns.some((column) => column.width)
-  const minWidthExists = columns.some((column) => column.width)
+  const minWidthExists = columns.some((column) => column.minWidth)
 
   const selectedRows = table.getFilteredSelectedRowModel().rows.length
 
@@ -142,7 +147,8 @@ export function DataTable<TData, TValue> ({
                       <TableCell key={cell.id} style={columnStyle}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
-                    )})}
+                    )
+                  })}
                 </TableRow>
               ))
             ) : (
