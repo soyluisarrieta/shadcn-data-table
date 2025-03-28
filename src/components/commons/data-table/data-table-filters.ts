@@ -52,21 +52,13 @@ const partialMatchFilterFn = <TData>({
   return String(rowValue).toLowerCase().includes(String(filterValue).toLowerCase())
 }
 
-const multiSelectionFilterFn = <TData>({
+const selectionFilterFn = <TData>({
   row,
   columnId,
   filterValue
 }: FilterParams<TData, string[]>) => {
   if (!filterValue || filterValue.length === 0) return true
   return filterValue.includes(row.getValue(columnId))
-}
-
-const singleSelectionFilterFn = <TData>({
-  row,
-  columnId,
-  filterValue
-}: FilterParams<TData, string>) => {
-  return row.getValue(columnId) === filterValue
 }
 
 const formatDate = (date: Date) => date.toISOString().split('T')[0]
@@ -99,7 +91,7 @@ const datePickerFilterFn = <TData>({
 export const FILTERS = {
   partialMatch: createFilter(partialMatchFilterFn),
   globalSearch: createFilter(globalFilterFn),
-  [FilterType.MultiSelection]: createFilter(multiSelectionFilterFn),
-  [FilterType.SingleSelection]: createFilter(singleSelectionFilterFn),
+  [FilterType.MultiSelection]: createFilter(selectionFilterFn),
+  [FilterType.SingleSelection]: createFilter(selectionFilterFn),
   [FilterType.DatePicker]: createFilter(datePickerFilterFn)
 }
