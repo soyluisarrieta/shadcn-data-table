@@ -157,19 +157,17 @@ function DataTableLeftToolbar<TData> ({ table }: { table: Table<TData> }) {
   )
 }
 
-function DataTableRightToolbar<TData> ({
-  table
-}: {
-  table: Table<TData>
-}) {
+function DataTableRightToolbar<TData> ({ table }: { table: Table<TData> }) {
   const [dateFilter, setDateFilter] = useState<DateValue>()
 
   useEffect(() => {
-    table.resetGlobalFilter()
-    table.resetColumnFilters()
-    if (dateFilter) {
-      table.getColumn('date')?.setFilterValue(dateFilter)
-    }
+    table.setColumnFilters(oldFilters => {
+      const otherFilters = oldFilters.filter(filter => filter.id !== 'date')
+      if (dateFilter) {
+        return [...otherFilters, { id: 'date', value: dateFilter }]
+      }
+      return otherFilters
+    })
   }, [dateFilter, table])
 
   return (
