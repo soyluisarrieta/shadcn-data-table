@@ -2,11 +2,39 @@ import { Button } from '@/components/ui/button'
 import { TestTubeDiagonalIcon } from 'lucide-react'
 import type { Payment } from '@/app/payment/payments-columns'
 import type { DataTableActions } from '@/components/commons/data-table/data-table-types'
+import { generateTablePDF, type PDFColumn } from '@/lib/pdf-utils'
 
 export const paymentsActions: DataTableActions<Payment> = {
   onExport: (rows, format) => {
-    console.log('Export:', rows, format)
-    alert(`Exported ${rows.length} rows as ${format}`)
+    if (format === 'pdf') {
+      const columns: PDFColumn[] = [
+        { id: 'email', header: 'Email', width: 60 },
+        { id: 'status', header: 'Status', width: 30 },
+        { id: 'amount', header: 'Amount', width: 30 },
+        { id: 'date', header: 'Date', width: 40 }
+      ]
+
+      generateTablePDF(rows, columns, {
+        title: 'Payments Report',
+        filename: 'payments-report.pdf'
+      })
+
+      return null
+    }
+
+    if (format === 'csv') {
+      // generate CSV file here
+    }
+
+    if (format === 'xlsx') {
+      // generate Excel file here
+    }
+
+    if (format === 'json') {
+      // generate JSON file here
+    }
+
+    alert(`[SIMULATION]:\nExported ${rows.length} rows as ${format}`)
   },
 
   onRemoveRows: (rows, cleanRowSelection) => {

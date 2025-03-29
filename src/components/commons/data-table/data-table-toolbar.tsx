@@ -173,7 +173,7 @@ function DataTableRightToolbar<TData> ({
   const [dateFilter, setDateFilter] = useState<DateValue>()
   const [openExportPopover, setOpenExportPopover] = useState(false)
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat>('pdf')
-  const [onlyFiltered, setOnlyFiltered] = useState(true)
+  const [filteredOnly, setFilteredOnly] = useState(true)
   const [hasCopied, setHasCopied] = useState(false)
 
   useEffect(() => {
@@ -186,9 +186,9 @@ function DataTableRightToolbar<TData> ({
     })
   }, [dateFilter, table])
 
-  const getRows = () => onlyFiltered
+  const getRows = () => filteredOnly
     ? table.getFilteredRowModel().flatRows.map(row => row.original)
-    : table.getRowModel().flatRows.map(row => row.original)
+    : table.getCoreRowModel().flatRows.map(row => row.original)
 
   const handleCopy = () => {
     const formattedRowsJSON = JSON.stringify(getRows(), null, 2)
@@ -217,6 +217,7 @@ function DataTableRightToolbar<TData> ({
             >
               <PopoverTrigger>
                 <DownloadIcon className="text-muted-foreground" size={16} strokeWidth={2} />
+                Export
               </PopoverTrigger>
             </Button>
             <PopoverContent className='w-auto p-0' align='end'>
@@ -236,10 +237,13 @@ function DataTableRightToolbar<TData> ({
                 </ToggleGroup>
 
                 <div className='flex justify-between items-center gap-2 px-4 text-sm text-mute'>
-                  Only filtered
+                  <div>
+                    Filtered only
+                    <span className='text-xs text-muted-foreground ml-2'>({getRows().length}/{table.getCoreRowModel().rows.length} rows)</span>
+                  </div>
                   <Switch
-                    checked={onlyFiltered}
-                    onCheckedChange={setOnlyFiltered}
+                    checked={filteredOnly}
+                    onCheckedChange={setFilteredOnly}
                   />
                 </div>
 
@@ -266,7 +270,7 @@ function DataTableRightToolbar<TData> ({
                       setOpenExportPopover(false)
                     }}
                   >
-                    Download
+                    Generate
                   </Button>
                 </div>
               </div>
