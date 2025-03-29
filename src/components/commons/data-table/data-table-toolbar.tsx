@@ -186,6 +186,7 @@ function DataTableRightToolbar<TData> ({
     })
   }, [dateFilter, table])
 
+  // Obtener las filas filtradas o todas las filas existentes
   const getRows = () => filteredOnly
     ? table.getFilteredRowModel().flatRows.map(row => row.original)
     : table.getCoreRowModel().flatRows.map(row => row.original)
@@ -217,7 +218,6 @@ function DataTableRightToolbar<TData> ({
             >
               <PopoverTrigger>
                 <DownloadIcon className="text-muted-foreground" size={16} strokeWidth={2} />
-                Export
               </PopoverTrigger>
             </Button>
             <PopoverContent className='w-auto p-0' align='end'>
@@ -237,10 +237,10 @@ function DataTableRightToolbar<TData> ({
                 </ToggleGroup>
 
                 <div className='flex justify-between items-center gap-2 px-4 text-sm text-mute'>
-                  <div>
+                  <span>
                     Filtered only
-                    <span className='text-xs text-muted-foreground ml-2'>({getRows().length}/{table.getCoreRowModel().rows.length} rows)</span>
-                  </div>
+                    <span className='text-xs text-muted-foreground ml-2'>({getRows().length} rows)</span>
+                  </span>
                   <Switch
                     checked={filteredOnly}
                     onCheckedChange={setFilteredOnly}
@@ -270,7 +270,7 @@ function DataTableRightToolbar<TData> ({
                       setOpenExportPopover(false)
                     }}
                   >
-                    Generate
+                    {selectedFormat === 'pdf' ? 'Abrir' : 'Download'}
                   </Button>
                 </div>
               </div>
