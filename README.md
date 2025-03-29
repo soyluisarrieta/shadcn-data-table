@@ -25,7 +25,7 @@
 - [x] Filtering by single date
 - [x] Filtering by date range
 - [x] Show or hide columns
-- [ ] Export records to different formats
+- [x] Export records to different formats
 - [x] Highlight selected rows
 - [ ] Fixed header on scroll
 - [ ] Data loading skeleton

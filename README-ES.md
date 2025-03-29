@@ -25,7 +25,7 @@
 - [x] Filtrado por fecha única
 - [x] Filtrado por rango de fechas
 - [x] Mostrar u ocultar columnas
-- [ ] Exportar registros a diferentes formatos
+- [x] Exportar registros a diferentes formatos
 - [x] Resaltar filas seleccionadas
 - [ ] Header fijo al hacer scroll
 - [ ] Esqueleto de carga de datos
