@@ -15,14 +15,17 @@ import { Select,
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import type { CustomColumnDef } from '@/components/commons/data-table/data-table-types'
+import type { CustomColumnDef, ExportFormat } from '@/components/commons/data-table/data-table-types'
 import { type Column, type Table } from '@tanstack/react-table'
 import { type DateValue, DatePicker } from '@/components/commons/date-picker'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Settings2Icon, XCircleIcon } from 'lucide-react'
+import { CheckIcon, CopyIcon, DownloadIcon, Settings2Icon, XCircleIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { Separator } from '@/components/ui/separator'
 
 function DataTableSelectSearch<TData> ({
   columns,
@@ -157,8 +160,19 @@ function DataTableLeftToolbar<TData> ({ table }: { table: Table<TData> }) {
   )
 }
 
-function DataTableRightToolbar<TData> ({ table }: { table: Table<TData> }) {
+function DataTableRightToolbar<TData> ({
+  table,
+  onExport,
+  disableCopyJSON = false
+}: {
+  table: Table<TData>
+  onExport?: (data: TData[], format: ExportFormat) => void
+  disableCopyJSON?: boolean
+}) {
   const [dateFilter, setDateFilter] = useState<DateValue>()
+  const [openExportPopover, setOpenExportPopover] = useState(false)
+  const [selectedFormat, setSelectedFormat] = useState<ExportFormat>('pdf')
+  const [hasCopied, setHasCopied] = useState(false)
 
   useEffect(() => {
     table.setColumnFilters(oldFilters => {
@@ -170,6 +184,20 @@ function DataTableRightToolbar<TData> ({ table }: { table: Table<TData> }) {
     })
   }, [dateFilter, table])
 
+  const handleExport = (format: ExportFormat) => {
+    const data = table.getFilteredRowModel().flatRows.map(row => row.original)
+    onExport?.(data, format)
+  }
+
+  const handleCopy = () => {
+    const data = table.getFilteredRowModel().flatRows.map(row => row.original)
+    navigator.clipboard.writeText(JSON.stringify(data))
+    setHasCopied(true)
+    setTimeout(() => {
+      setHasCopied(false)
+    }, 2000)
+  }
+
   return (
     <div className='hidden lg:flex gap-1'>
       <DatePicker
@@ -178,6 +206,65 @@ function DataTableRightToolbar<TData> ({ table }: { table: Table<TData> }) {
         onReset={() => { setDateFilter(undefined) }}
       />
       <DataTableDropdownView table={table} />
+      {onExport && (
+        <div className='flex items-center'>
+          <Popover open={openExportPopover} onOpenChange={setOpenExportPopover}>
+            <Button
+              className="rounded-none first:rounded-s-lg last:rounded-e-lg"
+              variant='outline'
+              asChild
+            >
+              <PopoverTrigger>
+                <DownloadIcon className="text-muted-foreground" size={16} strokeWidth={2} />
+              </PopoverTrigger>
+            </Button>
+            <PopoverContent className='w-auto p-0' align='end'>
+              <div className="space-y-3">
+                <h4 className="font-medium leading-none px-4 mt-4">Formats</h4>
+                <ToggleGroup
+                  className='px-4 [&_button]:px-4'
+                  value={selectedFormat}
+                  type="single"
+                  onValueChange={(format: ExportFormat) => setSelectedFormat(format)}
+                  variant='outline'
+                >
+                  <ToggleGroupItem value="pdf">PDF</ToggleGroupItem>
+                  <ToggleGroupItem value="csv">CSV</ToggleGroupItem>
+                  <ToggleGroupItem value="xlsx">EXCEL</ToggleGroupItem>
+                  <ToggleGroupItem value="json">JSON</ToggleGroupItem>
+                </ToggleGroup>
+
+                <Separator />
+
+                <div className={cn('w-full px-4 mb-3 flex justify-between gap-1', disableCopyJSON && 'justify-end')}>
+                  {!disableCopyJSON && (
+                    <Button
+                      size='sm'
+                      variant='ghost'
+                      disabled={hasCopied}
+                      onClick={handleCopy}
+                    >
+                      {hasCopied
+                        ? (<><CheckIcon />Copied!</>)
+                        : (<><CopyIcon />Copy JSON</>)
+                      }
+                    </Button>
+                  )}
+                  <Button
+                    size='sm'
+                    onClick={() => {
+                      handleExport(selectedFormat)
+                      setOpenExportPopover(false)
+                    }}
+                  >
+                    Download
+                  </Button>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+      )}
     </div>
   )
 }

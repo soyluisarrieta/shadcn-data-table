@@ -32,13 +32,15 @@ export function DataTable<TData, TValue> ({
   data,
   disableRowSelection = false,
   actions = {},
-  filterableColumns
+  filterableColumns,
+  disableCopyJSON = false
 }: {
   columns: Array<ColumnDef<TData, TValue> & CustomColumnDefProps<TData>>;
   data: TData[];
   disableRowSelection?: boolean;
-  actions?: DataTableActions<TData>
-  filterableColumns?: Array<FilterableColumn<TData>>
+  actions?: DataTableActions<TData>;
+  filterableColumns?: Array<FilterableColumn<TData>>;
+  disableCopyJSON?: boolean;
 }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -102,7 +104,11 @@ export function DataTable<TData, TValue> ({
     <>
       <DataTableToolbar>
         <DataTableLeftToolbar table={table} />
-        <DataTableRightToolbar table={table} />
+        <DataTableRightToolbar
+          table={table}
+          onExport={actions?.onExport}
+          disableCopyJSON={disableCopyJSON}
+        />
       </DataTableToolbar>
 
       <div className="rounded-md border relative">

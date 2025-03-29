@@ -30,9 +30,14 @@ export type SelectionActionProps<TData> = {
   onClick: OnClickActionBase<TData>;
 }
 
+export type ExportFormat = 'pdf' | 'csv' | 'json' | 'xlsx'
+
 export interface DataTableActions<TData> {
+  onExport?: (rows: TData[], format: ExportFormat) => void
   onRemoveRows?: OnClickActionBase<TData>
   customActions?: Array<SelectionActionProps<TData> | { component: OnClickActionBase<TData, React.JSX.Element> }>
+  disableExport?: boolean
+  disableCopy?: boolean
 }
 
 export type CustomColumnDef<TData> = ColumnDef<TData> & CustomColumnDefProps<TData>
