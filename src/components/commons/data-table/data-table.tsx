@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {
   type ColumnDef,
+  type Table as TableType,
   ColumnFiltersState,
   flexRender,
   getCoreRowModel,
@@ -113,50 +114,19 @@ export function DataTable<TData, TValue> ({
 
       <div className="rounded-md border relative">
         <Table className={!widthExists ? 'w-auto' : 'w-full'}>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  const column = header.column.columnDef as CustomColumnDef<TData>
-                  const columnStyle: React.CSSProperties = {
-                    width: widthExists ? (column.width === 'auto' ? 0 : column.width) : '100%',
-                    minWidth: minWidthExists ? column.minWidth : undefined
-                  }
-                  const filterableColumn = filterableColumns?.find((field) => field.columnKey === header.column.id)
-                  return (
-                    <TableHead key={header.id} style={columnStyle}>
-                      <DataTableColumnHeader
-                        className='mr-1'
-                        header={header}
-                        filterableColumn={filterableColumn}
-                      />
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
+          <DataTableHeader
+            table={table}
+            widthExists={widthExists}
+            minWidthExists={minWidthExists}
+            filterableColumns={filterableColumns}
+          />
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
-                  {row.getVisibleCells().map((cell) => {
-                    const column = cell.column.columnDef as CustomColumnDef<TData>
-                    const columnStyle: React.CSSProperties = {
-                      width: widthExists ? (column.width === 'auto' ? 0 : column.width) : '100%',
-                      minWidth: minWidthExists ? column.minWidth : undefined
-                    }
-                    return (
-                      <TableCell key={cell.id} style={columnStyle}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    )
-                  })}
-                </TableRow>
-              ))
+              <DataTableRow
+                table={table}
+                widthExists={widthExists}
+                minWidthExists={minWidthExists}
+              />
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length + 1} className="h-24 text-center">
@@ -176,5 +146,75 @@ export function DataTable<TData, TValue> ({
         <DataTableFooter table={table} />
       </div>
     </>
+  )
+}
+
+function DataTableHeader <TData> ({
+  table,
+  widthExists,
+  minWidthExists,
+  filterableColumns
+}: {
+  table: TableType<TData>;
+  widthExists: boolean;
+  minWidthExists: boolean;
+  filterableColumns?: Array<FilterableColumn<TData>>;
+}) {
+  return (
+    <TableHeader>
+      {table.getHeaderGroups().map((headerGroup) => (
+        <TableRow key={headerGroup.id}>
+          {headerGroup.headers.map((header) => {
+            const column = header.column.columnDef as CustomColumnDef<TData>
+            const columnStyle: React.CSSProperties = {
+              width: widthExists ? (column.width === 'auto' ? 0 : column.width) : '100%',
+              minWidth: minWidthExists ? column.minWidth : undefined
+            }
+            const filterableColumn = filterableColumns?.find((field) => field.columnKey === header.column.id)
+            return (
+              <TableHead key={header.id} style={columnStyle}>
+                <DataTableColumnHeader
+                  className='mr-1'
+                  header={header}
+                  filterableColumn={filterableColumn}
+                />
+              </TableHead>
+            )
+          })}
+        </TableRow>
+      ))}
+    </TableHeader>
+  )
+}
+
+function DataTableRow <TData> ({
+  table,
+  widthExists,
+  minWidthExists
+}: {
+  table: TableType<TData>;
+  widthExists: boolean;
+  minWidthExists: boolean;
+}) {
+  return (
+    table.getRowModel().rows.map((row) => (
+      <TableRow
+        key={row.id}
+        data-state={row.getIsSelected() && 'selected'}
+      >
+        {row.getVisibleCells().map((cell) => {
+          const column = cell.column.columnDef as CustomColumnDef<TData>
+          const columnStyle: React.CSSProperties = {
+            width: widthExists ? (column.width === 'auto' ? 0 : column.width) : '100%',
+            minWidth: minWidthExists ? column.minWidth : undefined
+          }
+          return (
+            <TableCell key={cell.id} style={columnStyle}>
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </TableCell>
+          )
+        })}
+      </TableRow>
+    ))
   )
 }
