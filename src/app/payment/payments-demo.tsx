@@ -36,7 +36,6 @@ export default function Payments () {
         data={payments}
         filterableColumns={filterableColumns}
         actions={paymentsActions}
-        disableCopyJSON
       />
     </div>
   )

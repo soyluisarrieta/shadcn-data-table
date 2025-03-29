@@ -26,6 +26,7 @@ import { cn } from '@/lib/utils'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Separator } from '@/components/ui/separator'
+import { Switch } from '@/components/ui/switch'
 
 function DataTableSelectSearch<TData> ({
   columns,
@@ -172,6 +173,7 @@ function DataTableRightToolbar<TData> ({
   const [dateFilter, setDateFilter] = useState<DateValue>()
   const [openExportPopover, setOpenExportPopover] = useState(false)
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat>('pdf')
+  const [onlyFiltered, setOnlyFiltered] = useState(true)
   const [hasCopied, setHasCopied] = useState(false)
 
   useEffect(() => {
@@ -184,14 +186,13 @@ function DataTableRightToolbar<TData> ({
     })
   }, [dateFilter, table])
 
-  const handleExport = (format: ExportFormat) => {
-    const data = table.getFilteredRowModel().flatRows.map(row => row.original)
-    onExport?.(data, format)
-  }
+  const getRows = () => onlyFiltered
+    ? table.getFilteredRowModel().flatRows.map(row => row.original)
+    : table.getRowModel().flatRows.map(row => row.original)
 
   const handleCopy = () => {
-    const data = table.getFilteredRowModel().flatRows.map(row => row.original)
-    navigator.clipboard.writeText(JSON.stringify(data))
+    const formattedRowsJSON = JSON.stringify(getRows(), null, 2)
+    navigator.clipboard.writeText(formattedRowsJSON)
     setHasCopied(true)
     setTimeout(() => {
       setHasCopied(false)
@@ -222,7 +223,7 @@ function DataTableRightToolbar<TData> ({
               <div className="space-y-3">
                 <h4 className="font-medium leading-none px-4 mt-4">Formats</h4>
                 <ToggleGroup
-                  className='px-4 [&_button]:px-4'
+                  className='px-3 [&_button]:px-4'
                   value={selectedFormat}
                   type="single"
                   onValueChange={(format: ExportFormat) => setSelectedFormat(format)}
@@ -233,6 +234,14 @@ function DataTableRightToolbar<TData> ({
                   <ToggleGroupItem value="xlsx">EXCEL</ToggleGroupItem>
                   <ToggleGroupItem value="json">JSON</ToggleGroupItem>
                 </ToggleGroup>
+
+                <div className='flex justify-between items-center gap-2 px-4 text-sm text-mute'>
+                  Only filtered
+                  <Switch
+                    checked={onlyFiltered}
+                    onCheckedChange={setOnlyFiltered}
+                  />
+                </div>
 
                 <Separator />
 
@@ -253,7 +262,7 @@ function DataTableRightToolbar<TData> ({
                   <Button
                     size='sm'
                     onClick={() => {
-                      handleExport(selectedFormat)
+                      onExport?.(getRows(), selectedFormat)
                       setOpenExportPopover(false)
                     }}
                   >
