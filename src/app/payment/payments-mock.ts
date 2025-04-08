@@ -1,4 +1,4 @@
-import { Payment } from '@/app/payment/payments-columns'
+import type { Payment } from '@/app/payment/payments-columns'
 
 export const PAYMENT_MOCK: Payment[] = [
   { id: '1a2b3c4d', amount: 100, status: 'pending', email: 'user11@example.com', date: '2025-01-01' },

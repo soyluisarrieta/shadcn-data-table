@@ -1,3 +1,5 @@
+import type { FilterableColumn } from '@/components/commons/data-table/data-table-types'
+import { type Header, flexRender } from '@tanstack/react-table'
 import {
   ArrowDown,
   ArrowUp,
@@ -23,10 +25,8 @@ import {
   CommandList,
   CommandSeparator
 } from '@/components/ui/command'
-import { flexRender, Header } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import type { FilterableColumn } from '@/components/commons/data-table/data-table-types'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
 import { FilterType } from '@/components/commons/data-table/data-table-filters'

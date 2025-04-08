@@ -1,6 +1,6 @@
 import type { CustomColumnDef } from '@/components/commons/data-table/data-table-types'
+import type { Row, Table } from '@tanstack/react-table'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Row, type Table } from '@tanstack/react-table'
 
 export function DataTableColumnSelection<TData> (): CustomColumnDef<TData> {
   return {

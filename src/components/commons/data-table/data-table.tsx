@@ -2,15 +2,15 @@ import * as React from 'react'
 import {
   type ColumnDef,
   type Table as TableType,
-  ColumnFiltersState,
+  type VisibilityState,
+  type ColumnFiltersState,
+  type SortingState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
-  useReactTable,
-  VisibilityState
+  useReactTable
 } from '@tanstack/react-table'
 import {
   Table,

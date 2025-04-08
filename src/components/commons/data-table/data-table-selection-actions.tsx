@@ -1,7 +1,7 @@
 import type { DataTableActions, SelectionActionProps } from '@/components/commons/data-table/data-table-types'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Table } from '@tanstack/react-table'
+import { type Table } from '@tanstack/react-table'
 import { TrashIcon, XIcon } from 'lucide-react'
 import { Fragment } from 'react/jsx-runtime'
 

@@ -1,8 +1,8 @@
-import { Button } from '@/components/ui/button'
-import { TestTubeDiagonalIcon } from 'lucide-react'
 import type { Payment } from '@/app/payment/payments-columns'
 import type { DataTableActions } from '@/components/commons/data-table/data-table-types'
-import { generateTablePDF, type PDFColumn } from '@/lib/pdf-utils'
+import { type PDFColumn, generateTablePDF } from '@/lib/pdf-utils'
+import { Button } from '@/components/ui/button'
+import { TestTubeDiagonalIcon } from 'lucide-react'
 
 export const paymentsActions: DataTableActions<Payment> = {
   onExport: (rows, format) => {

@@ -12,7 +12,7 @@ interface PageHeaderProps {
   }
 }
 
-export default function PageHeader ({ title, description, actions  }: PageHeaderProps) {
+export function PageHeader ({ title, description, actions  }: PageHeaderProps) {
   return (
     <div className='flex justify-between items-end mb-4'>
       <div className='space-y-1'>

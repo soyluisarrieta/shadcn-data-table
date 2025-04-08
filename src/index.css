@@ -119,4 +119,8 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  .container-wrapper {
+    @apply max-w-[1400px] w-full mx-auto border-x border-dashed;
+  }
 }

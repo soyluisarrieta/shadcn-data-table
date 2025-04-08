@@ -1,6 +1,13 @@
-import { CustomColumnDef } from '@/components/commons/data-table/data-table-types'
+import type { CustomColumnDef } from '@/components/commons/data-table/data-table-types'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { MoreHorizontalIcon } from 'lucide-react'
 
 export type Payment = {
