@@ -4,6 +4,26 @@
   "type": "registry:block",
   "title": "Data table",
   "description": "Data Table with sorting, filtering, pagination, and responsive design.",
+  "registryDependencies": [
+    "accordion",
+    "badge",
+    "button",
+    "checkbox",
+    "command",
+    "dropdown-menu",
+    "input",
+    "label",
+    "popover",
+    "calendar",
+    "scroll-area",
+    "select",
+    "separator",
+    "switch",
+    "table",
+    "tooltip",
+    "toggle-group",
+    "toggle"
+  ],
   "files": [
     {
       "path": "src/components/data-table/data-table.tsx",
