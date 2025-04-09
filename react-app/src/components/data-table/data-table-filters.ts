@@ -32,13 +32,13 @@ const globalFilterFn = <TData>({
   const searchValueLower = filterValue.searchValue.toLowerCase()
 
   if (filterValue.searchBy === 'all') {
-    return row.getAllCells().some((cell: any) => {
+    return row.getAllCells().some((cell) => {
       const cellValue = cell.getValue()
       return String(cellValue).toLowerCase().includes(searchValueLower)
     })
   }
 
-  const cell = row.getAllCells().find((cell: any) => cell.column.id === filterValue.searchBy)
+  const cell = row.getAllCells().find((cell) => cell.column.id === filterValue.searchBy)
   if (!cell) return true
   return String(cell.getValue()).toLowerCase().includes(searchValueLower)
 }
