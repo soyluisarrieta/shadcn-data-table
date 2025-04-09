@@ -4,12 +4,18 @@
   "type": "registry:block",
   "title": "Data table",
   "description": "Data Table with sorting, filtering, pagination, and responsive design.",
+  "dependencies": [
+    "@tanstack/react-table",
+    "date-fns",
+    "lucide-react"
+  ],
   "registryDependencies": [
     "accordion",
     "badge",
     "button",
     "checkbox",
     "command",
+    "dialog",
     "dropdown-menu",
     "input",
     "label",

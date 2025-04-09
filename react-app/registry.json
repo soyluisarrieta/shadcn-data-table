@@ -15,6 +15,7 @@
         "button",
         "checkbox",
         "command",
+        "dialog",
         "dropdown-menu",
         "input",
         "label",
@@ -28,6 +29,11 @@
         "tooltip",
         "toggle-group",
         "toggle"
+      ],
+      "dependencies": [
+        "@tanstack/react-table",
+        "date-fns",
+        "lucide-react"
       ],
       "files": [
         {
