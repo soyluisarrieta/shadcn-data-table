@@ -1,0 +1,54 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "homepage": "https://github.com/soyluisarrieta/shadcn-data-table",
+  "name": "shadcn-data-table",
+  "author": "@soyluisarrieta",
+  "items": [
+    {
+      "name": "data-table",
+      "type": "registry:block",
+      "title": "Data table",
+      "description": "Data Table with sorting, filtering, pagination, and responsive design.",
+      "files": [
+        {
+          "path": "src/components/commons/data-table/data-table.tsx",
+          "type": "registry:block"
+        },
+        {
+          "path": "src/components/commons/data-table/data-table-types.ts",
+          "type": "registry:file",
+          "target": "components/commons/data-table/data-table-types.ts"
+        },
+        {
+          "path": "src/components/commons/data-table/data-table-toolbar.tsx",
+          "type": "registry:block"
+        },
+        {
+          "path": "src/components/commons/data-table/data-table-selection-actions.tsx",
+          "type": "registry:block"
+        },
+        {
+          "path": "src/components/commons/data-table/data-table-footer.tsx",
+          "type": "registry:block"
+        },
+        {
+          "path": "src/components/commons/data-table/data-table-filters.ts",
+          "type": "registry:file",
+          "target": "components/commons/data-table/data-table-filters.ts"
+        },
+        {
+          "path": "src/components/commons/data-table/data-table-column-selection.tsx",
+          "type": "registry:block"
+        },
+        {
+          "path": "src/components/commons/data-table/data-table-column-header.tsx",
+          "type": "registry:block"
+        },
+        {
+          "path": "src/components/commons/date-picker.tsx",
+          "type": "registry:block"
+        }
+      ]
+    }
+  ]
+}
