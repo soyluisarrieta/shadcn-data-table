@@ -3,12 +3,16 @@ import { Switch } from '@/components/ui/switch'
 import { MoonIcon, SunIcon } from 'lucide-react'
 
 export function ToggleTheme () {
-  const [darkTheme, setDarkTheme] = React.useState(true)
+  const [darkTheme, setDarkTheme] = React.useState(() => {
+    const savedTheme = window.localStorage.getItem('theme')
+    return savedTheme ? savedTheme === 'dark' : true
+  })
 
   React.useEffect(() => {
     document.documentElement.classList.toggle('dark', darkTheme)
     document.documentElement.style.colorScheme = darkTheme ? 'dark' : 'light'
     document.documentElement.setAttribute('data-theme', darkTheme ? 'dark' : 'light')
+    window.localStorage.setItem('theme', darkTheme ? 'dark' : 'light')
   }, [darkTheme])
 
   return (
