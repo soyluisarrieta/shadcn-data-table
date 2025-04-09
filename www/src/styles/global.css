@@ -121,8 +121,10 @@ html[data-theme='dark'],
     @apply bg-background text-foreground;
   }
 
-  .container-wrapper {
-    @apply w-full mx-auto border-x border-dashed;
-    max-width: 1536px;
+  @media (min-width: 1536px) {
+    .container-wrapper {
+      @apply w-full mx-auto border-x border-dashed;
+      max-width: 1536px;
+    }
   }
 }
