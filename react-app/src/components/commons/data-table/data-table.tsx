@@ -210,7 +210,8 @@ function DataTableRow <TData> ({
           const column = cell.column.columnDef as CustomColumnDef<TData>
           const columnStyle: React.CSSProperties = {
             width: widthExists ? (column.width === 'auto' ? 0 : column.width) : '100%',
-            minWidth: minWidthExists ? column.minWidth : undefined
+            minWidth: minWidthExists ? column.minWidth : undefined,
+            textAlign: column.align
           }
           return (
             <TableCell

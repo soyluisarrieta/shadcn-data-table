@@ -45,6 +45,7 @@ export const paymentsColumns: CustomColumnDef<Payment>[] = [
   {
     accessorKey: 'amount',
     label: 'Amount',
+    align: 'right',
     header: () => <div className="text-right">Amount</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue('amount'))
@@ -54,7 +55,7 @@ export const paymentsColumns: CustomColumnDef<Payment>[] = [
         minimumFractionDigits: 0
       }).format(amount)
 
-      return <div className="text-right font-medium">{formatted}</div>
+      return <div className="font-medium">{formatted}</div>
     }
   },
   {

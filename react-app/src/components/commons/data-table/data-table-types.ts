@@ -6,6 +6,7 @@ type OnClickActionBase<TData, TReturn = void> = (rows: TData[], cleanRowSelectio
 export type CustomColumnDefProps<TData> = {
   accessorKey?: keyof TData;
   width?: string | number;
+  align?: 'left' | 'right' | 'center';
   minWidth?: string | number;
   label?: string;
 }

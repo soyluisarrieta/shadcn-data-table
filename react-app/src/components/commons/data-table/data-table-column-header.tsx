@@ -1,4 +1,4 @@
-import type { FilterableColumn } from '@/components/commons/data-table/data-table-types'
+import type { FilterableColumn, CustomColumnDef } from '@/components/commons/data-table/data-table-types'
 import { type Header, flexRender } from '@tanstack/react-table'
 import {
   ArrowDown,
@@ -42,6 +42,7 @@ export function DataTableColumnHeader<TData> ({
   const isSingleSelection = filterableColumn?.type === FilterType.SingleSelection
 
   const column = header.column
+  const columnDef = column.columnDef as CustomColumnDef<TData>
   const canSort = column.getCanSort()
   const canHide = column.getCanHide()
 
@@ -58,7 +59,10 @@ export function DataTableColumnHeader<TData> ({
   const isFilteredColumn = column.getIsSorted() || selectedValues.size
 
   return (
-    <div className={cn('flex items-center space-x-2', className)}>
+    <div
+      className={cn('flex items-center space-x-2', className)}
+      style={{ justifyContent: columnDef.align }}
+    >
       <DropdownMenu>
         <Button
           variant={isFilteredColumn ? 'secondary' : 'ghost'}
