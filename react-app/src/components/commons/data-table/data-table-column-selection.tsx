@@ -7,7 +7,7 @@ export function DataTableColumnSelection<TData> (): CustomColumnDef<TData> {
     id: 'select',
     header: ({ table }: { table: Table<TData> }) => (
       <Checkbox
-        className='mr-2'
+        className='ml-3 mr-2'
         checked={
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && 'indeterminate')

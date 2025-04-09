@@ -63,7 +63,7 @@ export function DataTableColumnHeader<TData> ({
         <Button
           variant={isFilteredColumn ? 'secondary' : 'ghost'}
           size="sm"
-          className={cn('-ml-3 h-8 data-[state=open]:bg-accent text-xs', isFilteredColumn && 'font-bold')}
+          className={cn('h-8 data-[state=open]:bg-accent text-xs', isFilteredColumn && 'font-bold')}
           asChild
         >
           <DropdownMenuTrigger>
