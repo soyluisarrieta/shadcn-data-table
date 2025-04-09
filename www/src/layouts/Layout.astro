@@ -1,15 +1,43 @@
 ---
 import "@/styles/global.css";
+import { META_TAGS } from '@/constants';
+
+const { 
+  TITLE,
+  DESCRIPTION,
+  DOMAIN,
+  IMAGE,
+  URL,
+  GITHUB
+} = META_TAGS;
 ---
 
 <!doctype html>
 <html lang="en" class="dark" data-theme="dark" style="color-scheme: dark;">
 	<head>
+    <!-- Primary Meta Tags -->
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
+		<title>{TITLE}</title>
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Shadcn Data Table | @soyluisarrieta</title>
+    <meta name="description" content={DESCRIPTION.LG}>
+
+    <!-- Facebook Meta Tags -->
+    <meta property="og:title" content={TITLE}>
+    <meta property="og:description" content={DESCRIPTION.MD}>
+    <meta property="og:url" content={URL}>
+    <meta property="og:image" content={IMAGE}>
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content={TITLE}>
+    <meta name="twitter:description" content={DESCRIPTION.MD}>
+    <meta name="twitter:image" content={IMAGE}>
+    <meta name="twitter:site" content={GITHUB.USERNAME}>
+    <meta name="twitter:creator" content={GITHUB.USERNAME}>
+    <meta property="twitter:domain" content={DOMAIN}>
+    <meta property="twitter:url" content={URL}>
 	</head>
 	<body>
 		<slot />
