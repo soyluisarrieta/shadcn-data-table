@@ -1,4 +1,4 @@
-import type { CustomColumnDef } from '@/components/commons/data-table/data-table-types'
+import type { CustomColumnDef } from '@/components/data-table/data-table-types'
 import {
   DropdownMenu,
   DropdownMenuContent,

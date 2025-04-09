@@ -1,4 +1,4 @@
-import type { FilterableColumn } from '@/components/commons/data-table/data-table-types'
+import type { FilterableColumn } from '@/components/data-table/data-table-types'
 import { type Header, flexRender } from '@tanstack/react-table'
 import {
   ArrowDown,
@@ -29,7 +29,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
-import { FilterType } from '@/components/commons/data-table/data-table-filters'
+import { FilterType } from '@/components/data-table/data-table-filters'
 
 export function DataTableColumnHeader<TData> ({
   header,

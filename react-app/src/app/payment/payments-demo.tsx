@@ -1,10 +1,10 @@
 import React from 'react'
 import { type Payment, paymentsColumns } from '@/app/payment/payments-columns'
-import { DataTable } from '@/components/commons/data-table/data-table'
+import { DataTable } from '@/components/data-table/data-table'
 import { PAYMENT_MOCK } from '@/app/payment/payments-mock'
 import { filterableColumns } from '@/app/payment/payments-filters'
 import { paymentsActions } from '@/app/payment/payments-actions'
-import { PageHeader } from '@/components/commons/page-header'
+import { PageHeader } from '@/components/page-header'
 
 export default function DemoPayments () {
   const [payments, setPayments] = React.useState<Payment[]>([])

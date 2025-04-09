@@ -1,4 +1,4 @@
-import { type FilterType } from '@/components/commons/data-table/data-table-filters'
+import { type FilterType } from '@/components/data-table/data-table-filters'
 import { type ColumnDef } from '@tanstack/react-table'
 
 type OnClickActionBase<TData, TReturn = void> = (rows: TData[], cleanRowSelection: () => void) => TReturn

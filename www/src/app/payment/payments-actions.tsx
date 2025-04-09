@@ -1,5 +1,5 @@
 import type { Payment } from '@/app/payment/payments-columns'
-import type { DataTableActions } from '@/components/commons/data-table/data-table-types'
+import type { DataTableActions } from '@/components/data-table/data-table-types'
 import { type PDFColumn, generateTablePDF } from '@/lib/pdf-utils'
 import { Button } from '@/components/ui/button'
 import { TestTubeDiagonalIcon } from 'lucide-react'

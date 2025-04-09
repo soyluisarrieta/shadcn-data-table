@@ -1,5 +1,5 @@
 import DemoPayments from '@/app/payment/payments-demo'
-import { ToggleTheme } from '@/components/commons/toggle-theme'
+import { ToggleTheme } from '@/components/toggle-theme'
 import { ExternalLinkIcon } from 'lucide-react'
 
 export default function App () {
