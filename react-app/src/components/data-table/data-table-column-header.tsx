@@ -1,11 +1,11 @@
 import type { FilterableColumn, CustomColumnDef } from '@/components/data-table/data-table-types'
 import { type Header, flexRender } from '@tanstack/react-table'
 import {
-  ArrowDown,
-  ArrowUp,
+  ArrowDownIcon,
+  ArrowUpIcon,
   CheckIcon,
   ChevronDownIcon,
-  ChevronsUpDown,
+  ChevronsUpDownIcon,
   EyeOff,
   RotateCcwIcon
 } from 'lucide-react'
@@ -79,17 +79,17 @@ export function DataTableColumnHeader<TData> ({
                 header.getContext()
               )}
             {column.getIsSorted() === 'desc' ? (
-              <ArrowDown />
+              <ArrowDownIcon className='size-3 mt-px' />
             ) : column.getIsSorted() === 'asc' ? (
-              <ArrowUp />
+              <ArrowUpIcon className='size-3 mt-px' />
             ) : (
-              canSort ? <ChevronsUpDown /> : (
+              canSort ? <ChevronsUpDownIcon className='size-3 mt-px' /> : (
                 selectedValues.size
                   ? (
                     <Badge className='size-4 rounded-full p-0 flex justify-center items-center text-[10px] text-center'>
                       {selectedValues.size > 9 ? '+9' : selectedValues.size}
                     </Badge>)
-                  : <ChevronDownIcon />
+                  : <ChevronDownIcon className='size-3 mt-px' />
               )
             )}
           </DropdownMenuTrigger>
@@ -172,11 +172,11 @@ export function DataTableColumnHeader<TData> ({
           {canSort && (
             <>
               <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
-                <ArrowUp className="h-3.5 w-3.5 text-muted-foreground/70" />
+                <ArrowUpIcon className="h-3.5 w-3.5 text-muted-foreground/70" />
                 {TC.FILTERS.SORT_ASCENDING}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
-                <ArrowDown className="h-3.5 w-3.5 text-muted-foreground/70" />
+                <ArrowDownIcon className="h-3.5 w-3.5 text-muted-foreground/70" />
                 {TC.FILTERS.SORT_DESCENDING}
               </DropdownMenuItem>
               {column.getIsSorted() && (
