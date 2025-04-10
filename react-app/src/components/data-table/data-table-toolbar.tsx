@@ -1,6 +1,7 @@
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger
@@ -15,11 +16,11 @@ import { Select,
   SelectValue
 } from '@/components/ui/select'
 import type { CustomColumnDef, ExportFormat } from '@/components/data-table/data-table-types'
-import { type Column, type Table } from '@tanstack/react-table'
+import type { Column, Table } from '@tanstack/react-table'
 import { type DateValue, DatePicker } from '@/components/ui/date-picker'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { CheckIcon, CopyIcon, DownloadIcon, Settings2Icon, XCircleIcon } from 'lucide-react'
+import { CheckIcon, CopyIcon, DownloadIcon, RotateCwIcon, Settings2Icon, XCircleIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -99,8 +100,9 @@ function DataTableSearchInput ({
 function DataTableDropdownView<TData> ({
   table
 }: {
-  table: Table<TData>
+  table: Table<TData>,
 }) {
+
   return (
     <DropdownMenu>
       <Button
@@ -123,9 +125,9 @@ function DataTableDropdownView<TData> ({
             return (
               <div
                 key={column.id}
-                className={cn('flex justify-between items-center capitalize p-2 text-sm', !column.getIsVisible() && 'opa')}
+                className='flex justify-between items-center capitalize p-2 text-sm'
               >
-                <span>{column.id}</span>
+                <span className={!column.getIsVisible() ? 'opacity-50' : ''}>{column.id}</span>
                 <Switch
                   className='ml-auto scale-90'
                   disabled={!column.getCanHide()}
@@ -135,6 +137,19 @@ function DataTableDropdownView<TData> ({
               </div>
             )
           })}
+        {Object.entries(table.getState().columnVisibility).some(([key, value]) => {
+          const initialValue = table.initialState.columnVisibility?.[key] ?? true
+          return value !== initialValue
+        }) && (
+          <>
+            <DropdownMenuSeparator />
+            <Button className='w-full' size='sm' variant='secondary' asChild>
+              <DropdownMenuItem onClick={() => table.resetColumnVisibility()}>
+                <RotateCwIcon /> Reset
+              </DropdownMenuItem>
+            </Button>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   )
@@ -190,7 +205,6 @@ function DataTableRightToolbar<TData> ({
     })
   }, [dateFilter, table])
 
-  // Obtener las filas filtradas o todas las filas existentes
   const getRows = () => filteredOnly
     ? table.getFilteredRowModel().flatRows.map(row => row.original)
     : table.getCoreRowModel().flatRows.map(row => row.original)
