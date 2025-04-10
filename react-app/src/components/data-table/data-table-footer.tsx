@@ -29,6 +29,8 @@ export default function DataTableFooter<TData> ({
     table.getFilteredRowModel().rows.length
   )
 
+  if (table.getFilteredRowModel().rows.length < 10) return null
+
   return (
     <div className='flex items-center justify-between border-t p-2'>
       <div className="hidden lg:inline-block flex-1 text-sm text-muted-foreground">
