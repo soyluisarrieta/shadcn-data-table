@@ -23,7 +23,7 @@ export function DataTableSelectionActions<TData> ({ table, selectedRows, actions
       <div className='h-fit py-1.5 px-2.5 text-sm border rounded-md bg-popover mx-auto -scale-100 flex items-center shadow-lg'>
         <div className='flex items-center gap-2 pr-3 whitespace-nowrap'>
           <Checkbox className='pointer-events-none' checked />
-          <span className='font-semibold'>
+          <span className='text-muted-foreground'>
             {selectedRows === 1
               ? TC.SELECTION.ITEMS_SELECTED.replace('{count}', selectedRows.toString())
               : TC.SELECTION.ITEMS_SELECTED_PLURAL.replace('{count}', selectedRows.toString())
@@ -104,7 +104,7 @@ export function DataTableColumnSelection<TData> (): CustomColumnDef<TData> {
           aria-label={TC.FILTERS.SELECT_ALL}
         />
         {table.getIsSomePageRowsSelected() &&
-          <MinusIcon className='absolute size-3 text-foreground' />
+          <MinusIcon className='absolute size-3 text-foreground pointer-events-none' />
         }
       </div>
     ),
