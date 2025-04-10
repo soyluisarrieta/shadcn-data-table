@@ -48,7 +48,7 @@ Esto instalará el componente de tabla de datos y todas sus dependencias en tu p
 - [x] Header fijo al hacer scroll
 - [x] Esqueleto de carga de datos
 - [x] Pestañas para diferentes tablas
-- [ ] Soporte para múltiples idiomas
+- [x] Textos centralizados en constantes
 - [ ] Guardar y restaurar filtros en LocalStorage
 - [ ] Cálculos básicos por columnas
 - [ ] Integración con gráficos

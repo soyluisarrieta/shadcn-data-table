@@ -48,7 +48,7 @@ This will install the data table component and all its dependencies to your proj
 - [x] Fixed header on scroll
 - [x] Data loading skeleton
 - [x] Tabs for different tables
-- [ ] Support for multiple languages
+- [x] Texts centralized in constants
 - [ ] Save and restore filters in LocalStorage
 - [ ] Basic calculations by columns
 - [ ] Integration with charts
