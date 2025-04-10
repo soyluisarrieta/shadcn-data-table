@@ -28,6 +28,7 @@ import DataTableSelectionActions from '@/components/data-table/data-table-select
 import { FILTERS } from '@/components/data-table/data-table-filters'
 import type { CustomColumnDef, CustomColumnDefProps, DataTableActions, FilterableColumn } from '@/components/data-table/data-table-types'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 
 export function DataTable<TData, TValue> ({
   columns,
@@ -118,38 +119,43 @@ export function DataTable<TData, TValue> ({
       </DataTableToolbar>
 
       <div className="rounded-md border relative [&>div]:overflow-clip [&>div]:rounded-t-md">
-        <Table className={!widthExists ? 'w-auto' : 'w-full'}>
-          <DataTableHeader
-            table={table}
-            widthExists={widthExists}
-            minWidthExists={minWidthExists}
-            filterableColumns={filterableColumns}
-          />
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              <DataTableRow
-                table={table}
-                widthExists={widthExists}
-                minWidthExists={minWidthExists}
-                isLoading={isLoading}
-              />
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length + 1} className="h-24 text-center">
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+        <ScrollArea type='always'>
+          <Table className={!widthExists ? 'w-auto' : 'w-full'}>
+            <DataTableHeader
+              table={table}
+              widthExists={widthExists}
+              minWidthExists={minWidthExists}
+              filterableColumns={filterableColumns}
+            />
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                <DataTableRow
+                  table={table}
+                  widthExists={widthExists}
+                  minWidthExists={minWidthExists}
+                  isLoading={isLoading}
+                />
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length + 1} className="h-24 text-center">
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
 
-        <DataTableSelectionActions
-          table={table}
-          selectedRows={selectedRows}
-          actions={actions}
-        />
+          <ScrollBar orientation="horizontal" />
+
+          <DataTableSelectionActions
+            table={table}
+            selectedRows={selectedRows}
+            actions={actions}
+          />
+        </ScrollArea>
 
         <DataTableFooter table={table} />
+
       </div>
     </>
   )
