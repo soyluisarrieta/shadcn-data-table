@@ -2,21 +2,24 @@ import type { CustomColumnDef } from '@/components/data-table/data-table-types'
 import type { Row, Table } from '@tanstack/react-table'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DATA_TABLE_TEXT_CONTENT as TC } from '@/components/data-table/data-table-text-content'
+import { MinusIcon } from 'lucide-react'
 
 export function DataTableColumnSelection<TData> (): CustomColumnDef<TData> {
   return {
     id: 'select',
     width: 'auto',
     header: ({ table }: { table: Table<TData> }) => (
-      <Checkbox
-        className='ml-3 mr-2'
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
+      <div className='relative flex justify-center items-center pl-3 pr-2'>
+        <Checkbox
+          className='relative'
+          checked={table.getIsAllPageRowsSelected()}
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label={TC.FILTERS.SELECT_ALL}
+        />
+        {table.getIsSomePageRowsSelected() &&
+          <MinusIcon className='absolute size-3 text-foreground' />
         }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label={TC.FILTERS.SELECT_ALL}
-      />
+      </div>
     ),
     cell: ({ row }: { row: Row<TData> }) => (
       <Checkbox
