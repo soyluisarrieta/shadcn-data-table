@@ -1,6 +1,5 @@
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -111,10 +110,10 @@ function DataTableDropdownView<TData> ({
       >
         <DropdownMenuTrigger>
           <Settings2Icon />
-          View
+          Columns
         </DropdownMenuTrigger>
       </Button>
-      <DropdownMenuContent align="end" className="w-[150px]">
+      <DropdownMenuContent align="end" className="min-w-44">
         <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
@@ -122,15 +121,18 @@ function DataTableDropdownView<TData> ({
           .filter((column) => column.id !== 'select' && column.id !== 'actions')
           .map((column) => {
             return (
-              <DropdownMenuCheckboxItem
+              <div
                 key={column.id}
-                className={cn('capitalize', !column.getIsVisible() && 'line-through')}
-                disabled={!column.getCanHide()}
-                checked={column.getIsVisible()}
-                onCheckedChange={(value: boolean) => column.toggleVisibility(!!value)}
+                className={cn('flex justify-between items-center capitalize p-2 text-sm', !column.getIsVisible() && 'opa')}
               >
-                {column.id}
-              </DropdownMenuCheckboxItem>
+                <span>{column.id}</span>
+                <Switch
+                  className='ml-auto scale-90'
+                  disabled={!column.getCanHide()}
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value: boolean) => column.toggleVisibility(!!value)}
+                />
+              </div>
             )
           })}
       </DropdownMenuContent>
