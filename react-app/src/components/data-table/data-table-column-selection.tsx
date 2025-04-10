@@ -1,6 +1,7 @@
 import type { CustomColumnDef } from '@/components/data-table/data-table-types'
 import type { Row, Table } from '@tanstack/react-table'
 import { Checkbox } from '@/components/ui/checkbox'
+import { DATA_TABLE_TEXT_CONTENT as TC } from '@/components/data-table/data-table-text-content'
 
 export function DataTableColumnSelection<TData> (): CustomColumnDef<TData> {
   return {
@@ -14,7 +15,7 @@ export function DataTableColumnSelection<TData> (): CustomColumnDef<TData> {
           (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
+        aria-label={TC.FILTERS.SELECT_ALL}
       />
     ),
     cell: ({ row }: { row: Row<TData> }) => (
@@ -22,7 +23,7 @@ export function DataTableColumnSelection<TData> (): CustomColumnDef<TData> {
         className='mr-2'
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
+        aria-label={TC.FILTERS.SELECT_ALL}
       />
     ),
     enableSorting: false,

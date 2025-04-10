@@ -28,6 +28,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
 import { FILTERS, FilterType } from '@/components/data-table/data-table-filters'
+import { DATA_TABLE_TEXT_CONTENT as TC } from '@/components/data-table/data-table-text-content'
 
 function DataTableSelectSearch<TData> ({
   columns,
@@ -41,13 +42,13 @@ function DataTableSelectSearch<TData> ({
   return (
     <Select value={value} onValueChange={onValueChange}>
       <SelectTrigger className="w-[120px] rounded-r-none border-r-0 bg-muted/50 text-muted-foreground">
-        <SelectValue placeholder="Global" />
+        <SelectValue placeholder={TC.SEARCH.GLOBAL_SEARCH} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>Search by</SelectLabel>
+          <SelectLabel>{TC.SEARCH.SEARCH_BY_LABEL}</SelectLabel>
           <SelectSeparator />
-          <SelectItem value="all">Global</SelectItem>
+          <SelectItem value="all">{TC.SEARCH.GLOBAL_SEARCH}</SelectItem>
           {columns.map((column) => {
             if (!column.getCanFilter()) { return null }
             const col = column.columnDef as CustomColumnDef<TData>
@@ -79,7 +80,7 @@ function DataTableSearchInput ({
     <div className="relative flex-1 w-full lg:max-w-72">
       <Input
         className="w-full pr-9 rounded-l-none"
-        placeholder="Search..."
+        placeholder={TC.SEARCH.PLACEHOLDER}
         value={value}
         onChange={(e) => onValueChange(e.target.value)}
       />
@@ -112,11 +113,11 @@ function DataTableDropdownView<TData> ({
       >
         <DropdownMenuTrigger>
           <Settings2Icon />
-          Columns
+          {TC.COLUMNS.BUTTON_LABEL}
         </DropdownMenuTrigger>
       </Button>
       <DropdownMenuContent align="end" className="min-w-44">
-        <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+        <DropdownMenuLabel>{TC.COLUMNS.DROPDOWN_LABEL}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()
@@ -145,7 +146,7 @@ function DataTableDropdownView<TData> ({
             <DropdownMenuSeparator />
             <Button className='w-full' size='sm' variant='secondary' asChild>
               <DropdownMenuItem onClick={() => table.resetColumnVisibility()}>
-                <RotateCwIcon /> Reset
+                <RotateCwIcon /> {TC.COLUMNS.RESET_BUTTON}
               </DropdownMenuItem>
             </Button>
           </>
@@ -240,7 +241,7 @@ function DataTableRightToolbar<TData> ({
             </Button>
             <PopoverContent className='w-auto p-0' align='end'>
               <div className="space-y-3">
-                <h4 className="font-medium leading-none px-4 mt-4">Formats</h4>
+                <h4 className="font-medium leading-none px-4 mt-4">{TC.EXPORT.FORMAT_LABEL}</h4>
                 <ToggleGroup
                   className='px-3 [&_button]:px-4'
                   value={selectedFormat}
@@ -248,15 +249,15 @@ function DataTableRightToolbar<TData> ({
                   onValueChange={(format: ExportFormat) => setSelectedFormat(format)}
                   variant='outline'
                 >
-                  <ToggleGroupItem value="pdf">PDF</ToggleGroupItem>
-                  <ToggleGroupItem value="csv">CSV</ToggleGroupItem>
-                  <ToggleGroupItem value="xlsx">EXCEL</ToggleGroupItem>
-                  <ToggleGroupItem value="json">JSON</ToggleGroupItem>
+                  <ToggleGroupItem value="pdf">{TC.EXPORT.PDF_LABEL}</ToggleGroupItem>
+                  <ToggleGroupItem value="csv">{TC.EXPORT.CSV_LABEL}</ToggleGroupItem>
+                  <ToggleGroupItem value="xlsx">{TC.EXPORT.EXCEL_LABEL}</ToggleGroupItem>
+                  <ToggleGroupItem value="json">{TC.EXPORT.JSON_LABEL}</ToggleGroupItem>
                 </ToggleGroup>
 
                 <div className='flex justify-between items-center gap-2 px-4 text-sm text-mute'>
                   <span>
-                    Filtered only
+                    {TC.EXPORT.FILTERED_ONLY_LABEL}
                     <span className='text-xs text-muted-foreground ml-2'>({getRows().length} rows)</span>
                   </span>
                   <Switch
@@ -276,8 +277,8 @@ function DataTableRightToolbar<TData> ({
                       onClick={handleCopy}
                     >
                       {hasCopied
-                        ? (<><CheckIcon />Copied!</>)
-                        : (<><CopyIcon />Copy JSON</>)
+                        ? (<><CheckIcon />{TC.EXPORT.COPIED_MESSAGE}</>)
+                        : (<><CopyIcon />{TC.EXPORT.COPY_JSON_BUTTON}</>)
                       }
                     </Button>
                   )}
@@ -288,7 +289,7 @@ function DataTableRightToolbar<TData> ({
                       setOpenExportPopover(false)
                     }}
                   >
-                    {selectedFormat === 'pdf' ? 'Abrir' : 'Download'}
+                    {TC.EXPORT.EXPORT_BUTTON}
                   </Button>
                 </div>
               </div>

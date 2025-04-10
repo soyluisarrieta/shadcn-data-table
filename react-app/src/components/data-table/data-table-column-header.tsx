@@ -9,6 +9,7 @@ import {
   EyeOff,
   RotateCcwIcon
 } from 'lucide-react'
+import { DATA_TABLE_TEXT_CONTENT as TC } from '@/components/data-table/data-table-text-content'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -97,9 +98,9 @@ export function DataTableColumnHeader<TData> ({
           {filterableColumn && filterableColumn?.options && (
             <>
               <Command>
-                {filterableColumn.options.length > 7 && <CommandInput placeholder='Search' />}
+                {filterableColumn.options.length > 7 && <CommandInput placeholder={TC.FILTERS.FILTER_PLACEHOLDER} />}
                 <CommandList className="max-h-full">
-                  <CommandEmpty className='text-muted-foreground text-sm p-4'>No results found.</CommandEmpty>
+                  <CommandEmpty className='text-muted-foreground text-sm p-4'>{TC.FILTERS.FILTER_EMPTY}</CommandEmpty>
                   <ScrollArea className='flex max-h-52 flex-col overflow-y-auto'>
                     <CommandGroup>
                       {filterableColumn.options.map((option) => {
@@ -158,7 +159,7 @@ export function DataTableColumnHeader<TData> ({
                           onSelect={() => column?.setFilterValue(undefined)}
                           className="justify-center text-center cursor-pointer"
                         >
-                          Clear filter
+                          {TC.FILTERS.CLEAR_FILTER}
                         </CommandItem>
                       </CommandGroup>
                     </>
@@ -172,18 +173,18 @@ export function DataTableColumnHeader<TData> ({
             <>
               <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
                 <ArrowUp className="h-3.5 w-3.5 text-muted-foreground/70" />
-                Asc
+                {TC.FILTERS.SORT_ASCENDING}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
                 <ArrowDown className="h-3.5 w-3.5 text-muted-foreground/70" />
-                Desc
+                {TC.FILTERS.SORT_DESCENDING}
               </DropdownMenuItem>
               {column.getIsSorted() && (
                 <>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => column.clearSorting()}>
                     <RotateCcwIcon className="h-3.5 w-3.5 text-muted-foreground/70" />
-                    Reset
+                    {TC.COLUMNS.RESET_BUTTON}
                   </DropdownMenuItem>
                 </>
               )}
@@ -193,7 +194,7 @@ export function DataTableColumnHeader<TData> ({
           {canHide && (
             <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
               <EyeOff className="h-3.5 w-3.5 text-muted-foreground/70" />
-              Hide
+              {TC.FILTERS.HIDE_COLUMN}
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>

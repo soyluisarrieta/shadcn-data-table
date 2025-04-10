@@ -57,14 +57,14 @@ export function DataTable<TData, TValue> ({
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   const [activeTab, setActiveTab] = React.useState<string>(tabsConfig?.defaultTab || tabsConfig?.tabs?.[0]?.value || 'all')
-  
+
   React.useEffect(() => {
     if (tabsConfig) {
-      const activeTabConfig = tabsConfig.tabs.find(tab => tab.value === activeTab);
+      const activeTabConfig = tabsConfig.tabs.find(tab => tab.value === activeTab)
       if (activeTabConfig?.columnVisibility) {
-        setColumnVisibility(activeTabConfig.columnVisibility);
+        setColumnVisibility(activeTabConfig.columnVisibility)
       } else {
-        setColumnVisibility({});
+        setColumnVisibility({})
       }
     }
   }, [activeTab, tabsConfig])
@@ -97,13 +97,13 @@ export function DataTable<TData, TValue> ({
   }, [extendedColumn, disableRowSelection])
 
   const filteredData = React.useMemo(() => {
-    if (!tabsConfig || !data) return data;
-    
-    const activeTabConfig = tabsConfig.tabs.find(tab => tab.value === activeTab);
-    if (!activeTabConfig || !activeTabConfig.filter) return data;
-    
-    return data.filter(activeTabConfig.filter);
-  }, [data, tabsConfig, activeTab]);
+    if (!tabsConfig || !data) return data
+
+    const activeTabConfig = tabsConfig.tabs.find(tab => tab.value === activeTab)
+    if (!activeTabConfig || !activeTabConfig.filter) return data
+
+    return data.filter(activeTabConfig.filter)
+  }, [data, tabsConfig, activeTab])
 
   const table = useReactTable({
     data: filteredData ?? mock ?? [],
@@ -143,8 +143,8 @@ export function DataTable<TData, TValue> ({
       </DataTableToolbar>
 
       {tabsConfig && (
-        <Tabs 
-          defaultValue={tabsConfig.defaultTab || tabsConfig.tabs[0].value} 
+        <Tabs
+          defaultValue={tabsConfig.defaultTab || tabsConfig.tabs[0].value}
           className={tabsConfig.className}
           value={activeTab}
           onValueChange={setActiveTab}

@@ -5,6 +5,7 @@ import {
   ChevronsLeftIcon,
   ChevronsRightIcon
 } from 'lucide-react'
+import { DATA_TABLE_TEXT_CONTENT as TC } from '@/components/data-table/data-table-text-content'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -31,11 +32,14 @@ export default function DataTableFooter<TData> ({
   return (
     <div className='flex items-center justify-between border-t p-2'>
       <div className="hidden lg:inline-block flex-1 text-sm text-muted-foreground">
-        Showing {startRowNumber}-{endRowNumber} of {table.getFilteredRowModel().rows.length} rows
+        {TC.PAGINATION.SHOWING_ROWS
+          .replace('{start}', startRowNumber.toString())
+          .replace('{end}', endRowNumber.toString())
+          .replace('{total}', table.getFilteredRowModel().rows.length.toString())}
       </div>
       <div className="flex flex-1 lg:flex-none justify-between items-center space-x-4">
         <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium text-muted-foreground">Rows per page:</p>
+          <p className="text-sm font-medium text-muted-foreground">{TC.PAGINATION.ROWS_PER_PAGE}</p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => table.setPageSize(Number(value))}
@@ -59,7 +63,7 @@ export default function DataTableFooter<TData> ({
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">Go to first page</span>
+            <span className="sr-only">{TC.PAGINATION.GO_TO_FIRST_PAGE}</span>
             <ChevronsLeftIcon />
           </Button>
           <Button
@@ -68,11 +72,13 @@ export default function DataTableFooter<TData> ({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">Go to previous page</span>
+            <span className="sr-only">{TC.PAGINATION.GO_TO_PREVIOUS_PAGE}</span>
             <ChevronLeftIcon />
           </Button>
           <div className="flex px-2 items-center justify-center text-sm font-medium text-muted-foreground">
-            Page {String(table.getState().pagination.pageIndex + 1).padStart(2, '0')} of {String(table.getPageCount()).padStart(2, '0')}
+            {TC.PAGINATION.PAGE_X_OF_Y
+              .replace('{current}', String(table.getState().pagination.pageIndex + 1).padStart(2, '0'))
+              .replace('{total}', String(table.getPageCount()).padStart(2, '0'))}
           </div>
           <Button
             variant="outline"
@@ -80,7 +86,7 @@ export default function DataTableFooter<TData> ({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">Go to next page</span>
+            <span className="sr-only">{TC.PAGINATION.GO_TO_NEXT_PAGE}</span>
             <ChevronRightIcon />
           </Button>
           <Button
@@ -89,7 +95,7 @@ export default function DataTableFooter<TData> ({
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">Got to last page</span>
+            <span className="sr-only">{TC.PAGINATION.GO_TO_LAST_PAGE}</span>
             <ChevronsRightIcon />
           </Button>
         </div>

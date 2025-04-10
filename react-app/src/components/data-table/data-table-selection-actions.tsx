@@ -4,6 +4,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { type Table } from '@tanstack/react-table'
 import { TrashIcon, XIcon } from 'lucide-react'
 import { Fragment } from 'react/jsx-runtime'
+import { DATA_TABLE_TEXT_CONTENT as TC } from '@/components/data-table/data-table-text-content'
 
 interface DataTableActionsProps<TData> {
   table: Table<TData>;
@@ -20,7 +21,12 @@ export default function DataTableSelectionActions<TData> ({ table, selectedRows,
       <div className='h-fit py-1.5 px-2.5 text-sm border rounded-md bg-popover mx-auto -scale-100 flex items-center shadow-lg'>
         <div className='flex items-center gap-2 pr-3 whitespace-nowrap'>
           <Checkbox className='pointer-events-none' checked />
-          <span className='font-semibold'>{selectedRows} item{selectedRows > 1 && 's'}</span>
+          <span className='font-semibold'>
+            {selectedRows === 1
+              ? TC.SELECTION.ITEMS_SELECTED.replace('{count}', selectedRows.toString())
+              : TC.SELECTION.ITEMS_SELECTED_PLURAL.replace('{count}', selectedRows.toString())
+            }
+          </span>
         </div>
         <div className='w-px h-6 mx-2 bg-border' />
         {customActions?.map((action, i) => {
@@ -62,7 +68,7 @@ export default function DataTableSelectionActions<TData> ({ table, selectedRows,
                 )}
               >
                 <TrashIcon />
-                <span className='font-semibold'>Remove all</span>
+                <span className='font-semibold'>{TC.SELECTION.REMOVE_ALL_BUTTON}</span>
               </Button>
             </div>
             <div className='w-px h-6 mx-2 bg-border' />
@@ -75,7 +81,7 @@ export default function DataTableSelectionActions<TData> ({ table, selectedRows,
             size='sm'
             onClick={() => table.resetRowSelection()}
           >
-            <XIcon /> Cancel
+            <XIcon /> {TC.SELECTION.CANCEL_BUTTON}
           </Button>
         </div>
       </div>
