@@ -33,6 +33,9 @@ const globalFilterFn = <TData>({
 
   if (filterValue.searchBy === 'all') {
     return row.getAllCells().some((cell) => {
+      if (cell.column.columnDef.filterFn === FILTERS[FilterType.DatePicker]) {
+        return false
+      }
       const cellValue = cell.getValue()
       return String(cellValue).toLowerCase().includes(searchValueLower)
     })

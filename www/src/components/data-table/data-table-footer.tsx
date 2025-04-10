@@ -72,7 +72,7 @@ export default function DataTableFooter<TData> ({
             <ChevronLeftIcon />
           </Button>
           <div className="flex px-2 items-center justify-center text-sm font-medium text-muted-foreground">
-            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+            Page {String(table.getState().pagination.pageIndex + 1).padStart(2, '0')} of {String(table.getPageCount()).padStart(2, '0')}
           </div>
           <Button
             variant="outline"

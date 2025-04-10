@@ -8,14 +8,17 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
-import { MoreHorizontalIcon } from 'lucide-react'
+import { MoreHorizontalIcon, TrendingDownIcon, TrendingUpIcon } from 'lucide-react'
 
 export type Payment = {
-  id: string
-  amount: number
-  status: 'pending' | 'processing' | 'success' | 'failed'
-  email: string
-  date: string
+  id: string;
+  amount: number;
+  status: 'pending' | 'processing' | 'success' | 'failed';
+  email: string;
+  date: string;
+  category: 'Groceries' | 'Utilities' | 'Entertainment' | 'Travel';
+  type: 'Income' | 'Expense';
+  notes?: string;
 }
 
 export const paymentsColumns: CustomColumnDef<Payment>[] = [
@@ -26,25 +29,43 @@ export const paymentsColumns: CustomColumnDef<Payment>[] = [
   },
   {
     accessorKey: 'email',
-    width: '100%',
-    minWidth: 300,
     enableHiding: false,
     header: 'Email'
   },
   {
-    accessorKey: 'date',
-    width: 'auto',
-    enableHiding: false,
-    header: 'Fecha',
+    accessorKey: 'notes',
+    header: 'Notes',
+    width: '100%',
+    minWidth: 300
+  },
+  {
+    accessorKey: 'category',
+    header: 'Category',
     cell: ({ row }) => {
-      const date = new Date(row.getValue('date'))
-      date.setMinutes(date.getMinutes() + date.getTimezoneOffset())
-      return <div>{date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+      const category: string = row.getValue('category')
+      return <div className='outline outline-primary/20 text-xs rounded-full px-3 py-1'>
+        {category}
+      </div>
+    }
+  },
+  {
+    accessorKey: 'type',
+    header: 'Type',
+    cell: ({ row }) => {
+      const type: string = row.getValue('type')
+      return <div className='flex items-center gap-2'>
+        {type === 'Income'
+          ? <TrendingUpIcon className="h-4 w-4 text-green-500 dark:text-green-400/80" />
+          : <TrendingDownIcon className="h-4 w-4 text-red-500 dark:text-red-400/80" />
+        }
+        {type}
+      </div>
     }
   },
   {
     accessorKey: 'amount',
     label: 'Amount',
+    align: 'right',
     header: () => <div className="text-right">Amount</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue('amount'))
@@ -54,7 +75,23 @@ export const paymentsColumns: CustomColumnDef<Payment>[] = [
         minimumFractionDigits: 0
       }).format(amount)
 
-      return <div className="text-right font-medium">{formatted}</div>
+      const type = row.getValue('type')
+      const color = type === 'Income'
+        ? 'text-green-500 dark:text-green-400/80'
+        : 'text-red-500 dark:text-red-400/80'
+      return <div className={color}>{formatted}</div>
+    }
+  },
+  {
+    accessorKey: 'date',
+    width: 'auto',
+    minWidth: 110,
+    enableHiding: false,
+    header: 'Date',
+    cell: ({ row }) => {
+      const date = new Date(row.getValue('date'))
+      date.setMinutes(date.getMinutes() + date.getTimezoneOffset())
+      return <div>{date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
     }
   },
   {
