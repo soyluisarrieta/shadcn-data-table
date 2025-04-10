@@ -1,7 +1,7 @@
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger
@@ -16,11 +16,11 @@ import { Select,
   SelectValue
 } from '@/components/ui/select'
 import type { CustomColumnDef, ExportFormat } from '@/components/data-table/data-table-types'
-import { type Column, type Table } from '@tanstack/react-table'
+import type { Column, Table } from '@tanstack/react-table'
 import { type DateValue, DatePicker } from '@/components/ui/date-picker'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { CheckIcon, CopyIcon, DownloadIcon, Settings2Icon, XCircleIcon } from 'lucide-react'
+import { CheckIcon, CopyIcon, DownloadIcon, RotateCwIcon, Settings2Icon, XCircleIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -100,8 +100,9 @@ function DataTableSearchInput ({
 function DataTableDropdownView<TData> ({
   table
 }: {
-  table: Table<TData>
+  table: Table<TData>,
 }) {
+
   return (
     <DropdownMenu>
       <Button
@@ -111,10 +112,10 @@ function DataTableDropdownView<TData> ({
       >
         <DropdownMenuTrigger>
           <Settings2Icon />
-          View
+          Columns
         </DropdownMenuTrigger>
       </Button>
-      <DropdownMenuContent align="end" className="w-[150px]">
+      <DropdownMenuContent align="end" className="min-w-44">
         <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
@@ -122,17 +123,33 @@ function DataTableDropdownView<TData> ({
           .filter((column) => column.id !== 'select' && column.id !== 'actions')
           .map((column) => {
             return (
-              <DropdownMenuCheckboxItem
+              <div
                 key={column.id}
-                className={cn('capitalize', !column.getIsVisible() && 'line-through')}
-                disabled={!column.getCanHide()}
-                checked={column.getIsVisible()}
-                onCheckedChange={(value: boolean) => column.toggleVisibility(!!value)}
+                className='flex justify-between items-center capitalize p-2 text-sm'
               >
-                {column.id}
-              </DropdownMenuCheckboxItem>
+                <span className={!column.getIsVisible() ? 'opacity-50' : ''}>{column.id}</span>
+                <Switch
+                  className='ml-auto scale-90'
+                  disabled={!column.getCanHide()}
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value: boolean) => column.toggleVisibility(!!value)}
+                />
+              </div>
             )
           })}
+        {Object.entries(table.getState().columnVisibility).some(([key, value]) => {
+          const initialValue = table.initialState.columnVisibility?.[key] ?? true
+          return value !== initialValue
+        }) && (
+          <>
+            <DropdownMenuSeparator />
+            <Button className='w-full' size='sm' variant='secondary' asChild>
+              <DropdownMenuItem onClick={() => table.resetColumnVisibility()}>
+                <RotateCwIcon /> Reset
+              </DropdownMenuItem>
+            </Button>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   )
@@ -188,7 +205,6 @@ function DataTableRightToolbar<TData> ({
     })
   }, [dateFilter, table])
 
-  // Obtener las filas filtradas o todas las filas existentes
   const getRows = () => filteredOnly
     ? table.getFilteredRowModel().flatRows.map(row => row.original)
     : table.getCoreRowModel().flatRows.map(row => row.original)

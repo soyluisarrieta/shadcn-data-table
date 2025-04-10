@@ -86,7 +86,6 @@ export const paymentsColumns: CustomColumnDef<Payment>[] = [
     accessorKey: 'date',
     width: 'auto',
     minWidth: 110,
-    enableHiding: false,
     header: 'Date',
     cell: ({ row }) => {
       const date = new Date(row.getValue('date'))

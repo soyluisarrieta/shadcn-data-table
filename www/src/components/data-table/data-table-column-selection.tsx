@@ -5,6 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 export function DataTableColumnSelection<TData> (): CustomColumnDef<TData> {
   return {
     id: 'select',
+    width: 'auto',
     header: ({ table }: { table: Table<TData> }) => (
       <Checkbox
         className='ml-3 mr-2'

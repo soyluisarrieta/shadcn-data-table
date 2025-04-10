@@ -16,9 +16,9 @@ export default function DataTableSelectionActions<TData> ({ table, selectedRows,
   const { onRemoveRows, customActions } = actions
 
   return (
-    <div className='h-0 row-selection-actions flex sticky bottom-1 -translate-y-2 z-10 -scale-100'>
+    <div className='h-0 row-selection-actions flex fixed lg:sticky left-1/2 lg:left-auto -translate-x-1/2 lg:translate-x-0 bottom-1 -translate-y-2 z-10 -scale-100'>
       <div className='h-fit py-1.5 px-2.5 text-sm border rounded-md bg-popover mx-auto -scale-100 flex items-center shadow-lg'>
-        <div className='flex items-center gap-2 pr-3'>
+        <div className='flex items-center gap-2 pr-3 whitespace-nowrap'>
           <Checkbox className='pointer-events-none' checked />
           <span className='font-semibold'>{selectedRows} item{selectedRows > 1 && 's'}</span>
         </div>

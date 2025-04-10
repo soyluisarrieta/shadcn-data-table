@@ -11,6 +11,13 @@ export type CustomColumnDefProps<TData> = {
   label?: string;
 }
 
+export type DataTableTab<TData> = {
+  value: string;
+  label: string;
+  columnVisibility?: Record<string, boolean>;
+  filter?: (data: TData) => boolean;
+}
+
 export type FilterableOption = {
   label: string;
   value: string;
@@ -39,6 +46,12 @@ export interface DataTableActions<TData> {
   customActions?: Array<SelectionActionProps<TData> | { component: OnClickActionBase<TData, React.JSX.Element> }>
   disableExport?: boolean
   disableCopy?: boolean
+}
+
+export interface DataTableTabsConfig<TData> {
+  tabs: DataTableTab<TData>[];
+  defaultTab?: string;
+  className?: string;
 }
 
 export type CustomColumnDef<TData> = ColumnDef<TData> & CustomColumnDefProps<TData>
