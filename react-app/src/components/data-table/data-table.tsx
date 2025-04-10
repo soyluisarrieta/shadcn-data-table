@@ -173,7 +173,7 @@ function DataTableHeader<TData> ({
           {headerGroup.headers.map((header) => {
             const column = header.column.columnDef as CustomColumnDef<TData>
             const columnStyle: React.CSSProperties = {
-              width: widthExists ? (column.width === 'auto' ? 0 : column.width) : '100%',
+              width: widthExists ? (column.width === 'auto' ? '0%' : column.width) : '100%',
               minWidth: minWidthExists ? column.minWidth : undefined
             }
             const filterableColumn = filterableColumns?.find((field) => field.columnKey === header.column.id)
