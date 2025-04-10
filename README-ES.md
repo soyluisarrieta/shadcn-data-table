@@ -46,7 +46,7 @@ Esto instalará el componente de tabla de datos y todas sus dependencias en tu p
 - [x] Exportar registros a diferentes formatos
 - [x] Resaltar filas seleccionadas
 - [x] Header fijo al hacer scroll
-- [ ] Esqueleto de carga de datos
+- [x] Esqueleto de carga de datos
 - [ ] Pestañas para diferentes tablas
 - [ ] Soporte para múltiples idiomas
 - [ ] Guardar y restaurar filtros en LocalStorage
