@@ -24,6 +24,7 @@
         "scroll-area",
         "select",
         "separator",
+        "skeleton",
         "switch",
         "table",
         "tooltip",
