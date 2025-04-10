@@ -13,6 +13,24 @@
 
 # Shadcn Data Table
 
+## Instalación
+
+Para añadir este componente de tabla de datos a tu proyecto, ejecuta el siguiente comando:
+
+```bash
+# Usando `pnpm`:
+pnpm dlx shadcn@latest add https://datatable-soyluisarrieta.vercel.app/r/data-table.json
+```
+
+```bash
+# O usando `npx`:
+npx shadcn@latest add https://datatable-soyluisarrieta.vercel.app/r/data-table.json
+```
+
+Esto instalará el componente de tabla de datos y todas sus dependencias en tu proyecto.
+
+## Características
+
 **LISTA DE TAREA:**
 
 - [x] Paginación con navegación

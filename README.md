@@ -13,6 +13,24 @@
 
 # Shadcn Data Table
 
+## Installation
+
+To add this data table component to your project, run the following command:
+
+```bash
+# using `pnpm`:
+pnpm dlx shadcn@latest add https://datatable-soyluisarrieta.vercel.app/r/data-table.json
+```
+
+```bash
+# or using `npx`:
+npx shadcn@latest add https://datatable-soyluisarrieta.vercel.app/r/data-table.json
+```
+
+This will install the data table component and all its dependencies to your project.
+
+## Features
+
 **TASK LIST:**
 
 - [x] Pagination with button navigation
