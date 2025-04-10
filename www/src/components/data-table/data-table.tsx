@@ -172,7 +172,11 @@ function DataTableHeader <TData> ({
             }
             const filterableColumn = filterableColumns?.find((field) => field.columnKey === header.column.id)
             return (
-              <TableHead key={header.id} style={columnStyle}>
+              <TableHead
+                key={header.id}
+                className='px-0'
+                style={columnStyle}
+              >
                 <DataTableColumnHeader
                   className='mr-1'
                   header={header}
@@ -206,10 +210,15 @@ function DataTableRow <TData> ({
           const column = cell.column.columnDef as CustomColumnDef<TData>
           const columnStyle: React.CSSProperties = {
             width: widthExists ? (column.width === 'auto' ? 0 : column.width) : '100%',
-            minWidth: minWidthExists ? column.minWidth : undefined
+            minWidth: minWidthExists ? column.minWidth : undefined,
+            textAlign: column.align
           }
           return (
-            <TableCell key={cell.id} style={columnStyle}>
+            <TableCell
+              key={cell.id}
+              className='px-3'
+              style={columnStyle}
+            >
               {flexRender(cell.column.columnDef.cell, cell.getContext())}
             </TableCell>
           )
