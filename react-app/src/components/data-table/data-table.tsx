@@ -26,9 +26,10 @@ import { DataTableColumnHeader } from '@/components/data-table/data-table-column
 import { DataTableColumnSelection } from '@/components/data-table/data-table-column-selection'
 import DataTableSelectionActions from '@/components/data-table/data-table-selection-actions'
 import { FILTERS } from '@/components/data-table/data-table-filters'
-import type { CustomColumnDef, CustomColumnDefProps, DataTableActions, FilterableColumn } from '@/components/data-table/data-table-types'
+import type { CustomColumnDef, CustomColumnDefProps, DataTableActions, DataTableTabsConfig, FilterableColumn } from '@/components/data-table/data-table-types'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export function DataTable<TData, TValue> ({
   columns,
@@ -38,7 +39,8 @@ export function DataTable<TData, TValue> ({
   actions = {},
   filterableColumns,
   disableCopyJSON = false,
-  isLoading = false
+  isLoading = false,
+  tabs: tabsConfig
 }: {
   columns: Array<ColumnDef<TData, TValue> & CustomColumnDefProps<TData>>;
   data: TData[] | undefined;
@@ -48,11 +50,13 @@ export function DataTable<TData, TValue> ({
   filterableColumns?: Array<FilterableColumn<TData>>;
   disableCopyJSON?: boolean;
   isLoading?: boolean;
+  tabs?: DataTableTabsConfig<TData>;
 }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const [activeTab, setActiveTab] = React.useState<string>(tabsConfig?.defaultTab || tabsConfig?.tabs?.[0]?.value || 'all')
 
   const extendedColumn = React.useMemo(() => {
     return columns.map(column => {
@@ -81,8 +85,17 @@ export function DataTable<TData, TValue> ({
     return extendedColumn
   }, [extendedColumn, disableRowSelection])
 
+  const filteredData = React.useMemo(() => {
+    if (!tabsConfig || !data) return data;
+    
+    const activeTabConfig = tabsConfig.tabs.find(tab => tab.value === activeTab);
+    if (!activeTabConfig || !activeTabConfig.filter) return data;
+    
+    return data.filter(activeTabConfig.filter);
+  }, [data, tabsConfig, activeTab]);
+
   const table = useReactTable({
-    data: data ?? mock ?? [],
+    data: filteredData ?? mock ?? [],
     columns: memorizedColumns,
     globalFilterFn: FILTERS.globalSearch,
     defaultColumn: { filterFn: FILTERS.partialMatch },
@@ -117,6 +130,21 @@ export function DataTable<TData, TValue> ({
           disableCopyJSON={disableCopyJSON}
         />
       </DataTableToolbar>
+
+      {tabsConfig && (
+        <Tabs 
+          defaultValue={tabsConfig.defaultTab || tabsConfig.tabs[0].value} 
+          className={tabsConfig.className}
+          value={activeTab}
+          onValueChange={setActiveTab}
+        >
+          <TabsList className='w-full pb-0 rounded-none bg-transparent justify-start [&>button]:grow-0 [&>button]:border-0 [&>button]:rounded-none [&>button]:dark:data-[state=active]:bg-transparent [&>button]:dark:data-[state=active]:border-b-2 [&>button]:dark:data-[state=active]:border-foreground'>
+            {tabsConfig.tabs.map((tab) => (
+              <TabsTrigger key={tab.value} value={tab.value}>{tab.label}</TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      )}
 
       <div className="rounded-md border relative [&>div]:overflow-clip [&>div]:rounded-t-md">
         <ScrollArea type='always'>

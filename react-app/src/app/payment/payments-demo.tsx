@@ -35,6 +35,7 @@ export default function DemoPayments () {
           }
         }}
       />
+      
       <DataTable
         columns={paymentsColumns}
         data={payments}
@@ -42,6 +43,23 @@ export default function DemoPayments () {
         actions={paymentsActions}
         mock={SIMULATED_MOCK}
         isLoading={!payments}
+        tabs={{
+          defaultTab: 'all',
+          className: '',
+          tabs: [
+            { value: 'all', label: 'All' },
+            { 
+              value: 'income', 
+              label: 'Income',
+              filter: (payment: Payment) => payment.type === 'Income'
+            },
+            { 
+              value: 'expense', 
+              label: 'Expense',
+              filter: (payment: Payment) => payment.type === 'Expense'
+            }
+          ]
+        }}
       />
     </div>
   )
