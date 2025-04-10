@@ -27,6 +27,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
+import { FILTERS, FilterType } from '@/components/data-table/data-table-filters'
 
 function DataTableSelectSearch<TData> ({
   columns,
@@ -50,6 +51,7 @@ function DataTableSelectSearch<TData> ({
           {columns.map((column) => {
             if (!column.getCanFilter()) { return null }
             const col = column.columnDef as CustomColumnDef<TData>
+            if (col.filterFn === FILTERS[FilterType.DatePicker]) { return null }
             const label = (col?.label) ?? col.header
             if (!label || typeof label !== 'string') {
               throw new Error(`The \`${column.id}\` column header is not a string. Add the \`label\` property if the \`header\` value does not contain a string.`)
