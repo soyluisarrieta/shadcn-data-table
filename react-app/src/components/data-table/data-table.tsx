@@ -27,21 +27,26 @@ import { DataTableColumnSelection } from '@/components/data-table/data-table-col
 import DataTableSelectionActions from '@/components/data-table/data-table-selection-actions'
 import { FILTERS } from '@/components/data-table/data-table-filters'
 import type { CustomColumnDef, CustomColumnDefProps, DataTableActions, FilterableColumn } from '@/components/data-table/data-table-types'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export function DataTable<TData, TValue> ({
   columns,
   data,
+  mock,
   disableRowSelection = false,
   actions = {},
   filterableColumns,
-  disableCopyJSON = false
+  disableCopyJSON = false,
+  isLoading = false
 }: {
   columns: Array<ColumnDef<TData, TValue> & CustomColumnDefProps<TData>>;
-  data: TData[];
+  data: TData[] | undefined;
+  mock?: TData[];
   disableRowSelection?: boolean;
   actions?: DataTableActions<TData>;
   filterableColumns?: Array<FilterableColumn<TData>>;
   disableCopyJSON?: boolean;
+  isLoading?: boolean;
 }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -76,7 +81,7 @@ export function DataTable<TData, TValue> ({
   }, [extendedColumn, disableRowSelection])
 
   const table = useReactTable({
-    data,
+    data: data ?? mock ?? [],
     columns: memorizedColumns,
     globalFilterFn: FILTERS.globalSearch,
     defaultColumn: { filterFn: FILTERS.partialMatch },
@@ -126,6 +131,7 @@ export function DataTable<TData, TValue> ({
                 table={table}
                 widthExists={widthExists}
                 minWidthExists={minWidthExists}
+                isLoading={isLoading}
               />
             ) : (
               <TableRow>
@@ -149,7 +155,7 @@ export function DataTable<TData, TValue> ({
   )
 }
 
-function DataTableHeader <TData> ({
+function DataTableHeader<TData> ({
   table,
   widthExists,
   minWidthExists,
@@ -191,35 +197,43 @@ function DataTableHeader <TData> ({
   )
 }
 
-function DataTableRow <TData> ({
+function DataTableRow<TData> ({
   table,
   widthExists,
-  minWidthExists
+  minWidthExists,
+  isLoading
 }: {
   table: TableType<TData>;
   widthExists: boolean;
   minWidthExists: boolean;
+  isLoading: boolean;
 }) {
+  const totalColumns = table.getAllColumns().length
   return (
     table.getRowModel().rows.map((row) => (
       <TableRow
         key={row.id}
         data-state={row.getIsSelected() && 'selected'}
       >
-        {row.getVisibleCells().map((cell) => {
+        {row.getVisibleCells().map((cell, i) => {
           const column = cell.column.columnDef as CustomColumnDef<TData>
           const columnStyle: React.CSSProperties = {
             width: widthExists ? (column.width === 'auto' ? 0 : column.width) : '100%',
             minWidth: minWidthExists ? column.minWidth : undefined,
             textAlign: column.align
           }
+          const content = flexRender(cell.column.columnDef.cell, cell.getContext())
           return (
             <TableCell
               key={cell.id}
               className='px-3'
               style={columnStyle}
             >
-              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              {isLoading && i !== 0 && i !== totalColumns - 1 ? (
+                <Skeleton className="w-fit h-3 align-middle my-2.5 rounded-xl inline-flex">
+                  <span className='h-0 opacity-0 pointer-events-none select-none'>{content}</span>
+                </Skeleton>
+              ) : content}
             </TableCell>
           )
         })}
