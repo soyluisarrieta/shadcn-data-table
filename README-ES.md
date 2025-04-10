@@ -45,7 +45,7 @@ Esto instalará el componente de tabla de datos y todas sus dependencias en tu p
 - [x] Mostrar u ocultar columnas
 - [x] Exportar registros a diferentes formatos
 - [x] Resaltar filas seleccionadas
-- [ ] Header fijo al hacer scroll
+- [x] Header fijo al hacer scroll
 - [ ] Esqueleto de carga de datos
 - [ ] Pestañas para diferentes tablas
 - [ ] Soporte para múltiples idiomas

@@ -112,7 +112,7 @@ export function DataTable<TData, TValue> ({
         />
       </DataTableToolbar>
 
-      <div className="rounded-md border relative">
+      <div className="rounded-md border relative [&>div]:overflow-clip [&>div]:rounded-t-md">
         <Table className={!widthExists ? 'w-auto' : 'w-full'}>
           <DataTableHeader
             table={table}
@@ -161,7 +161,7 @@ function DataTableHeader <TData> ({
   filterableColumns?: Array<FilterableColumn<TData>>;
 }) {
   return (
-    <TableHeader>
+    <TableHeader className='bg-background/30 backdrop-blur-lg border-0 [&_tr]:border-0 outline outline-border sticky top-0 z-10'>
       {table.getHeaderGroups().map((headerGroup) => (
         <TableRow key={headerGroup.id}>
           {headerGroup.headers.map((header) => {
