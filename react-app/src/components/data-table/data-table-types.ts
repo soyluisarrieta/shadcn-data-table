@@ -14,6 +14,7 @@ export type CustomColumnDefProps<TData> = {
 export type DataTableTab<TData> = {
   value: string;
   label: string;
+  columnVisibility?: Record<string, boolean>;
   filter?: (data: TData) => boolean;
 }
 

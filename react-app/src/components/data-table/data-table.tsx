@@ -57,6 +57,17 @@ export function DataTable<TData, TValue> ({
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   const [activeTab, setActiveTab] = React.useState<string>(tabsConfig?.defaultTab || tabsConfig?.tabs?.[0]?.value || 'all')
+  
+  React.useEffect(() => {
+    if (tabsConfig) {
+      const activeTabConfig = tabsConfig.tabs.find(tab => tab.value === activeTab);
+      if (activeTabConfig?.columnVisibility) {
+        setColumnVisibility(activeTabConfig.columnVisibility);
+      } else {
+        setColumnVisibility({});
+      }
+    }
+  }, [activeTab, tabsConfig])
 
   const extendedColumn = React.useMemo(() => {
     return columns.map(column => {
@@ -138,7 +149,7 @@ export function DataTable<TData, TValue> ({
           value={activeTab}
           onValueChange={setActiveTab}
         >
-          <TabsList className='w-full pb-0 rounded-none bg-transparent justify-start [&>button]:grow-0 [&>button]:border-0 [&>button]:rounded-none [&>button]:dark:data-[state=active]:bg-transparent [&>button]:dark:data-[state=active]:border-b-2 [&>button]:dark:data-[state=active]:border-foreground'>
+          <TabsList className='w-full pb-0 rounded-none bg-transparent justify-start [&>button]:grow-0 [&>button]:px-3 [&>button]:border-0 [&>button]:rounded-none [&>button]:dark:data-[state=active]:bg-transparent [&>button]:dark:data-[state=active]:border-b-2 [&>button]:dark:data-[state=active]:border-primary [&>button]:dark:data-[state=active]:text-primary [&>button]:hover:text-primary/90'>
             {tabsConfig.tabs.map((tab) => (
               <TabsTrigger key={tab.value} value={tab.value}>{tab.label}</TabsTrigger>
             ))}

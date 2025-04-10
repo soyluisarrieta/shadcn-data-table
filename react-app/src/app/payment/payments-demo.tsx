@@ -49,14 +49,26 @@ export default function DemoPayments () {
           tabs: [
             { value: 'all', label: 'All' },
             { 
+              value: 'recent', 
+              label: 'Recent',
+              columnVisibility: { category: false },
+              // Simulated recent payments in April
+              filter: (payment: Payment) => {
+                const date = new Date(payment.date)
+                return date.getMonth() === 3
+              }
+            },
+            { 
               value: 'income', 
               label: 'Income',
-              filter: (payment: Payment) => payment.type === 'Income'
+              columnVisibility: { type: false },
+              filter: (payment: Payment) => payment.type === 'Income',
             },
             { 
               value: 'expense', 
               label: 'Expense',
-              filter: (payment: Payment) => payment.type === 'Expense'
+              columnVisibility: { status: false,  type: false },
+              filter: (payment: Payment) => payment.type === 'Expense',
             }
           ]
         }}
