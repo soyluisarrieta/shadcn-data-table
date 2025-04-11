@@ -17,11 +17,11 @@ import { Select,
   SelectValue
 } from '@/components/ui/select'
 import type { CustomColumnDef, ExportFormat, FilterableColumn } from '@/components/data-table/data-table-types'
-import { flexRender, type Column, type Table } from '@tanstack/react-table'
+import { flexRender, Header, type Column, type Table } from '@tanstack/react-table'
 import { type DateValue, DatePicker } from '@/components/ui/date-picker'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { CheckIcon, CopyIcon, DownloadIcon, ListFilterIcon, RotateCwIcon, SettingsIcon, XCircleIcon } from 'lucide-react'
+import { CheckIcon, CopyIcon, DownloadIcon, ListFilterIcon, RotateCwIcon, SettingsIcon, XCircleIcon, TrashIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -30,6 +30,17 @@ import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
 import { FILTERS, FilterType } from '@/components/data-table/data-table-filters'
 import { DATA_TABLE_TEXT_CONTENT as TC } from '@/components/data-table/data-table-text-content'
+import { Badge } from '@/components/ui/badge'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator
+} from '@/components/ui/command'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 function DataTableSelectSearch<TData> ({
   columns,
@@ -156,6 +167,110 @@ function DataTableDropdownView<TData> ({
   )
 }
 
+function DataTableColumnFilter<TData> ({
+  header,
+  filter,
+  isOpen,
+  onOpenChange
+}: {
+  header: Header<TData, unknown>;
+  filter?: FilterableColumn<TData>;
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}) {
+  if (!filter) return null
+
+  const { column } = header
+  const unknownValue = column?.getFilterValue()
+  const selectedValues = new Set(Array.isArray(unknownValue) ? unknownValue : [])
+
+  const isSingleSelection = filter.type === FilterType.SingleSelection
+
+  return (
+    <DropdownMenu open={isOpen} onOpenChange={onOpenChange}>
+      <Button variant='outline' size='sm' asChild>
+        <DropdownMenuTrigger>
+          {filter.label}
+          <Badge className='size-4 rounded-full p-0 flex justify-center items-center text-[10px] m-0 text-center'>
+            {selectedValues.size || 0}
+          </Badge>
+        </DropdownMenuTrigger>
+      </Button>
+      <DropdownMenuContent className='max-w-44'>
+        <DropdownMenuGroup>
+          <Command className='p-0'>
+            {filter.options && filter.options.length > 7 && (
+              <CommandInput placeholder='Search' />
+            )}
+            <CommandList className="max-h-full p-1">
+              <CommandEmpty className='text-muted-foreground text-sm p-4'>{TC.FILTERS.FILTER_EMPTY}</CommandEmpty>
+              <ScrollArea className='flex max-h-52 flex-col overflow-y-auto'>
+                <CommandGroup>
+                  {filter.options && filter.options.map((option) => {
+                    const isSelected = selectedValues.has(option.value)
+                    return (
+                      <CommandItem
+                        key={option.value}
+                        className='cursor-pointer'
+                        onSelect={() => {
+                          if (isSingleSelection) {
+                            selectedValues.clear()
+                            selectedValues.add(option.value)
+                          } else {
+                            if (isSelected) {
+                              selectedValues.delete(option.value)
+                            } else {
+                              selectedValues.add(option.value)
+                            }
+                          }
+                          const filterValues = Array.from(selectedValues)
+                          column?.setFilterValue(filterValues)
+                        }}
+                      >
+                        <div
+                          className={cn(
+                            'flex size-4 items-center justify-center rounded-sm border border-primary cursor-pointer',
+                            isSingleSelection && 'rounded-full outline outline-offset-1',
+                            isSelected
+                              ? 'bg-primary text-primary-foreground'
+                              : 'opacity-50 [&_svg]:invisible'
+                          )}
+                        >
+                          <CheckIcon className="size-4" />
+                        </div>
+                        {option.icon && (
+                          <option.icon className="size-4 text-muted-foreground" />
+                        )}
+                        <span>{option.label}</span>
+                        {option.count && (
+                          <span className="ml-auto flex size-4 items-center justify-center font-mono text-xs">
+                            {option.count}
+                          </span>
+                        )}
+                      </CommandItem>
+                    )
+                  })}
+                </CommandGroup>
+              </ScrollArea>
+
+              <CommandSeparator className='mb-2' />
+              <Button
+                className='w-full font-normal'
+                variant="ghost"
+                size='sm'
+                onClick={() => column.setFilterValue(undefined)}
+              >
+                <TrashIcon className='text-muted-foreground' />
+                Delete filter
+              </Button>
+            </CommandList>
+          </Command>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
 function DataTableLeftToolbar<TData> ({
   table,
   filterableColumns
@@ -165,17 +280,33 @@ function DataTableLeftToolbar<TData> ({
 }) {
   const [searchBy, setSearchBy] = useState('all')
   const [searchValue, setSearchValue] = useState('')
+  const [openFilterMenu, setOpenFilterMenu] = useState(false)
+  const [openFilterDropdown, setOpenFilterDropdown] = useState<string | null>(null)
 
   useEffect(() => {
     table.setGlobalFilter({ searchBy, searchValue })
   }, [searchBy, searchValue, table])
 
-  const headers = table
+  const getFilterableColumns = (columnId: string) => {
+    const col = filterableColumns?.find(({ columnKey }) => columnKey === columnId)
+    if (!col || col.type === FilterType.DatePicker) return undefined
+    return col
+  }
+
+  const filterableHeaders = table
     .getFlatHeaders()
-    .filter(({ id }) => (
-      filterableColumns?.find(({ columnKey, type }) =>
-        columnKey === id && type !== FilterType.DatePicker
-      )))
+    .filter(({ id }) => getFilterableColumns(id))
+
+  const activeFilterHeaders = table
+    .getFlatHeaders()
+    .filter(({ column }) => column.getFilterValue() !== undefined)
+    .map((header) => ({ ...header, filter: getFilterableColumns(header.id) }))
+  console.log(activeFilterHeaders)
+
+  const openFilterById = (columnId: string) => {
+    setOpenFilterMenu(false)
+    setOpenFilterDropdown(columnId)
+  }
 
   return (
     <div className='flex-1 flex gap-2'>
@@ -191,8 +322,25 @@ function DataTableLeftToolbar<TData> ({
         />
       </div>
       <div className='rounded-lg flex items-center gap-1 px-0.5'>
-        <DropdownMenu>
-          <Button variant='ghost' asChild>
+
+        {activeFilterHeaders.map(header => (
+          <DataTableColumnFilter
+            key={header.id}
+            header={header}
+            filter={header?.filter}
+            isOpen={openFilterDropdown === header.id}
+            onOpenChange={(open) => {
+              if (open) {
+                setOpenFilterDropdown(header.id)
+              } else if (openFilterDropdown === header.id) {
+                setOpenFilterDropdown(null)
+              }
+            }}
+          />
+        ))}
+
+        <DropdownMenu open={openFilterMenu} onOpenChange={setOpenFilterMenu}>
+          <Button variant='ghost' size='sm' asChild>
             <DropdownMenuTrigger className='border border-dashed'>
               <ListFilterIcon />
               Add filter
@@ -204,21 +352,39 @@ function DataTableLeftToolbar<TData> ({
                 Select column
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {headers.map(columnHeader => {
-                const columnName = flexRender(
-                  columnHeader.column.columnDef.header,
-                  columnHeader.getContext()
-                )
+              {filterableHeaders.map(header => {
+                const { column } = header
                 return (
                   <Button
-                    key={columnHeader.id}
+                    key={header.id}
                     className={'w-full flex justify-between items-center capitalize p-2 text-sm'}
                     variant='ghost'
+                    onClick={() => {
+                      column.setFilterValue([])
+                      openFilterById(header.id)
+                    }}
                   >
-                    {columnName}
+                    {flexRender(column.columnDef.header, header.getContext())}
                   </Button>
                 )
               })}
+              {table.getState().columnFilters.length > 0 && (
+                <>
+                  <DropdownMenuSeparator />
+                  <Button
+                    className="w-full font-normal"
+                    variant="ghost"
+                    size='sm'
+                    onClick={() => table.resetColumnFilters()}
+                    asChild
+                  >
+                    <DropdownMenuItem>
+                      <RotateCwIcon />
+                      Clear filters
+                    </DropdownMenuItem>
+                  </Button>
+                </>
+              )}
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
