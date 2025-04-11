@@ -20,7 +20,7 @@ import type { Column, Table } from '@tanstack/react-table'
 import { type DateValue, DatePicker } from '@/components/ui/date-picker'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { CheckIcon, CopyIcon, DownloadIcon, RotateCwIcon, Settings2Icon, XCircleIcon } from 'lucide-react'
+import { CheckIcon, CopyIcon, DownloadIcon, RotateCwIcon, SettingsIcon, XCircleIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -112,8 +112,7 @@ function DataTableDropdownView<TData> ({
         asChild
       >
         <DropdownMenuTrigger>
-          <Settings2Icon />
-          {TC.COLUMNS.BUTTON_LABEL}
+          <SettingsIcon />
         </DropdownMenuTrigger>
       </Button>
       <DropdownMenuContent align="end" className="min-w-44">

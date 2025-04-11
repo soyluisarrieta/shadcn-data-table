@@ -8,7 +8,6 @@ export const DATA_TABLE_TEXT_CONTENT = {
 
   // Toolbar - Columns
   COLUMNS: {
-    BUTTON_LABEL: 'Columns',
     DROPDOWN_LABEL: 'Toggle columns',
     RESET_BUTTON: 'Reset'
   },
