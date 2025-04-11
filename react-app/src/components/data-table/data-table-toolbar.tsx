@@ -1,6 +1,7 @@
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -15,12 +16,12 @@ import { Select,
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import type { CustomColumnDef, ExportFormat } from '@/components/data-table/data-table-types'
-import type { Column, Table } from '@tanstack/react-table'
+import type { CustomColumnDef, ExportFormat, FilterableColumn } from '@/components/data-table/data-table-types'
+import { flexRender, type Column, type Table } from '@tanstack/react-table'
 import { type DateValue, DatePicker } from '@/components/ui/date-picker'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { CheckIcon, CopyIcon, DownloadIcon, RotateCwIcon, SettingsIcon, XCircleIcon } from 'lucide-react'
+import { CheckIcon, CopyIcon, DownloadIcon, ListFilterIcon, RotateCwIcon, SettingsIcon, XCircleIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -155,7 +156,13 @@ function DataTableDropdownView<TData> ({
   )
 }
 
-function DataTableLeftToolbar<TData> ({ table }: { table: Table<TData> }) {
+function DataTableLeftToolbar<TData> ({
+  table,
+  filterableColumns
+}: {
+  table: Table<TData>;
+  filterableColumns?: FilterableColumn<TData>[];
+}) {
   const [searchBy, setSearchBy] = useState('all')
   const [searchValue, setSearchValue] = useState('')
 
@@ -163,8 +170,15 @@ function DataTableLeftToolbar<TData> ({ table }: { table: Table<TData> }) {
     table.setGlobalFilter({ searchBy, searchValue })
   }, [searchBy, searchValue, table])
 
+  const headers = table
+    .getFlatHeaders()
+    .filter(({ id }) => (
+      filterableColumns?.find(({ columnKey, type }) =>
+        columnKey === id && type !== FilterType.DatePicker
+      )))
+
   return (
-    <div className='flex-1'>
+    <div className='flex-1 flex gap-2'>
       <div className='flex'>
         <DataTableSelectSearch
           columns={table.getAllLeafColumns()}
@@ -175,6 +189,39 @@ function DataTableLeftToolbar<TData> ({ table }: { table: Table<TData> }) {
           value={searchValue}
           onValueChange={setSearchValue}
         />
+      </div>
+      <div className='rounded-lg flex items-center gap-1 px-0.5'>
+        <DropdownMenu>
+          <Button variant='ghost' asChild>
+            <DropdownMenuTrigger className='border border-dashed'>
+              <ListFilterIcon />
+              Add filter
+            </DropdownMenuTrigger>
+          </Button>
+          <DropdownMenuContent>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className='text-xs text-muted-foreground font-normal'>
+                Select column
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {headers.map(columnHeader => {
+                const columnName = flexRender(
+                  columnHeader.column.columnDef.header,
+                  columnHeader.getContext()
+                )
+                return (
+                  <Button
+                    key={columnHeader.id}
+                    className={'w-full flex justify-between items-center capitalize p-2 text-sm'}
+                    variant='ghost'
+                  >
+                    {columnName}
+                  </Button>
+                )
+              })}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   )

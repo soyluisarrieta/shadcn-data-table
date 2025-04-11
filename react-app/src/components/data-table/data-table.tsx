@@ -133,7 +133,10 @@ export function DataTable<TData, TValue> ({
   return (
     <>
       <DataTableToolbar>
-        <DataTableLeftToolbar table={table} />
+        <DataTableLeftToolbar
+          table={table}
+          filterableColumns={filterableColumns}
+        />
         <DataTableRightToolbar
           table={table}
           onExport={actions?.onExport}
