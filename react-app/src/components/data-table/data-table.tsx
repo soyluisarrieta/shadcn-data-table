@@ -166,7 +166,6 @@ export function DataTable<TData, TValue> ({
               table={table}
               widthExists={widthExists}
               minWidthExists={minWidthExists}
-              filterableColumns={filterableColumns}
             />
             <TableBody>
               {table.getRowModel().rows?.length ? (
@@ -205,13 +204,11 @@ export function DataTable<TData, TValue> ({
 function DataTableHeader<TData> ({
   table,
   widthExists,
-  minWidthExists,
-  filterableColumns
+  minWidthExists
 }: {
   table: TableType<TData>;
   widthExists: boolean;
   minWidthExists: boolean;
-  filterableColumns?: Array<FilterableColumn<TData>>;
 }) {
   return (
     <TableHeader className='bg-background/30 backdrop-blur-lg border-0 [&_tr]:border-0 outline outline-border sticky top-0 z-10'>
@@ -223,7 +220,6 @@ function DataTableHeader<TData> ({
               width: widthExists ? (column.width === 'auto' ? '0%' : column.width) : '100%',
               minWidth: minWidthExists ? column.minWidth : undefined
             }
-            const filterableColumn = filterableColumns?.find((field) => field.columnKey === header.column.id)
             return (
               <TableHead
                 key={header.id}
@@ -233,7 +229,6 @@ function DataTableHeader<TData> ({
                 <DataTableColumnHeader
                   className='mr-1'
                   header={header}
-                  filterableColumn={filterableColumn}
                 />
               </TableHead>
             )

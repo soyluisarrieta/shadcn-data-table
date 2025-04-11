@@ -48,8 +48,8 @@ export const DATA_TABLE_TEXT_CONTENT = {
 
   // Filter columns
   FILTERS: {
-    SORT_ASCENDING: 'Sort ascending',
-    SORT_DESCENDING: 'Sort descending',
+    SORT_ASC: 'Sort asc',
+    SORT_DESC: 'Sort desc',
     HIDE_COLUMN: 'Hide column',
     FILTER_EMPTY: 'No options found',
     FILTER_PLACEHOLDER: 'Filter...',
