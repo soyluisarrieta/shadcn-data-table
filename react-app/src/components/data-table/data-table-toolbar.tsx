@@ -295,7 +295,8 @@ function DataTableLeftToolbar<TData> ({
 
   const filterableHeaders = table
     .getFlatHeaders()
-    .filter(({ id }) => getFilterableColumns(id))
+    .map((header) => ({ ...header, filter: getFilterableColumns(header.id) }))
+    .filter(({ filter }) => filter)
 
   const activeFilterHeaders = table
     .getFlatHeaders()
@@ -353,7 +354,8 @@ function DataTableLeftToolbar<TData> ({
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               {filterableHeaders.map(header => {
-                const { column } = header
+                const { column, filter } = header
+                if (!filter) return null
                 return (
                   <Button
                     key={header.id}
@@ -364,7 +366,7 @@ function DataTableLeftToolbar<TData> ({
                       openFilterById(header.id)
                     }}
                   >
-                    {flexRender(column.columnDef.header, header.getContext())}
+                    {filter.label}
                   </Button>
                 )
               })}
