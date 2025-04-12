@@ -14,13 +14,13 @@ export interface FilterParams<TData, TValue> {
 
 export type FilterFunction<TData, TValue> = (params: FilterParams<TData, TValue>) => boolean;
 
-const createFilter = <TData, TValue>(filterFn: FilterFunction<TData, TValue>) => {
+const createFilter = <TData, TValue>(filter: FilterFunction<TData, TValue>) => {
   return (row: Row<TData>, columnId: string, filterValue: TValue) => {
-    return filterFn({ row, columnId, filterValue })
+    return filter({ row, columnId, filterValue })
   }
 }
 
-const globalFilterFn = <TData>({
+const globalFilter = <TData>({
   row,
   filterValue
 }: FilterParams<TData, {
@@ -46,7 +46,7 @@ const globalFilterFn = <TData>({
   return String(cell.getValue()).toLowerCase().includes(searchValueLower)
 }
 
-const partialMatchFilterFn = <TData>({
+const partialMatchFilter = <TData>({
   row,
   columnId,
   filterValue
@@ -55,7 +55,7 @@ const partialMatchFilterFn = <TData>({
   return String(rowValue).toLowerCase().includes(String(filterValue).toLowerCase())
 }
 
-const selectionFilterFn = <TData>({
+const selectionFilter = <TData>({
   row,
   columnId,
   filterValue
@@ -65,7 +65,7 @@ const selectionFilterFn = <TData>({
 }
 
 const formatDate = (date: Date) => date.toISOString().split('T')[0]
-const datePickerFilterFn = <TData>({
+const datePickerFilter = <TData>({
   row,
   columnId,
   filterValue
@@ -92,9 +92,9 @@ const datePickerFilterFn = <TData>({
 }
 
 export const FILTERS = {
-  partialMatch: createFilter(partialMatchFilterFn),
-  globalSearch: createFilter(globalFilterFn),
-  [FilterType.MultiSelection]: createFilter(selectionFilterFn),
-  [FilterType.SingleSelection]: createFilter(selectionFilterFn),
-  [FilterType.DatePicker]: createFilter(datePickerFilterFn)
+  partialMatch: createFilter(partialMatchFilter),
+  globalSearch: createFilter(globalFilter),
+  [FilterType.MultiSelection]: createFilter(selectionFilter),
+  [FilterType.SingleSelection]: createFilter(selectionFilter),
+  [FilterType.DatePicker]: createFilter(datePickerFilter)
 }
