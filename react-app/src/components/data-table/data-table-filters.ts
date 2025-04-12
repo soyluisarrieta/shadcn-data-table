@@ -1,12 +1,7 @@
-import type { FilterFunction, FilterParams } from '@/components/data-table/data-table-types'
+import type { FilterParams } from '@/components/data-table/data-table-types'
+import { createFilter } from '@/components/data-table/data-table-utils'
 import { FilterType } from '@/components/data-table/filters'
-import type { Row } from '@tanstack/react-table'
-
-const createFilter = <TData, TValue>(filter: FilterFunction<TData, TValue>) => {
-  return (row: Row<TData>, columnId: string, filterValue: TValue) => {
-    return filter({ row, columnId, filterValue })
-  }
-}
+import { format } from 'date-fns'
 
 const globalFilter = <TData>({
   row,
@@ -52,7 +47,6 @@ const selectionFilter = <TData>({
   return filterValue.includes(row.getValue(columnId))
 }
 
-const formatDate = (date: Date) => date.toISOString().split('T')[0]
 const datePickerFilter = <TData>({
   row,
   columnId,
@@ -61,19 +55,20 @@ const datePickerFilter = <TData>({
   from: Date;
   to: Date;
 }>) => {
-  const rawValue = row.getValue(columnId)
+  const rawValue: Date = row.getValue(columnId)
   if (!rawValue) return false
 
-  const dateStr = typeof rawValue === 'string' ? rawValue : formatDate(rawValue as Date)
+  const dateFormat = (date: Date) => format(date, 'yyyy-MM-dd')
+  const dateStr = typeof rawValue === 'string' ? rawValue : dateFormat(rawValue)
 
   if (filterValue instanceof Date) {
-    return dateStr === formatDate(filterValue)
+    return dateStr === dateFormat(filterValue)
   }
 
   const { from: fromDate, to: toDate } = filterValue
 
-  if (dateStr === formatDate(fromDate)) return true
-  if (dateStr === formatDate(toDate)) return true
+  if (dateStr === dateFormat(fromDate)) return true
+  if (dateStr === dateFormat(toDate)) return true
 
   const cellDate = new Date(dateStr)
   return cellDate >= fromDate && cellDate <= toDate
