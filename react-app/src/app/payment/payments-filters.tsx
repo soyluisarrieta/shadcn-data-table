@@ -1,6 +1,5 @@
 import type { Payment } from '@/app/payment/payments-columns'
 import type { FilterableColumn } from '@/components/data-table/data-table-types'
-import { FilterType } from '@/components/data-table/data-table-filters'
 import { CheckCircle2Icon, CircleXIcon, ClockFadingIcon, TimerIcon } from 'lucide-react'
 
 export const filterableColumns: FilterableColumn<Payment>[]  = [
@@ -18,7 +17,7 @@ export const filterableColumns: FilterableColumn<Payment>[]  = [
   {
     columnKey: 'email',
     label: 'Email',
-    type: FilterType.MultiSelection,
+    type: 'multiple-selection',
     options: [
       { label: 'user 17', value: 'user17@example.com' },
       { label: 'user 18', value: 'user18@example.com' },

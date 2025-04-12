@@ -1,18 +1,6 @@
+import type { FilterFunction, FilterParams } from '@/components/data-table/data-table-types'
+import { FilterType } from '@/components/data-table/filters'
 import type { Row } from '@tanstack/react-table'
-
-export enum FilterType {
-  MultiSelection = 'multiple-selection',
-  SingleSelection = 'single-selection',
-  DatePicker = 'date',
-}
-
-export interface FilterParams<TData, TValue> {
-  row: Row<TData>;
-  columnId: string;
-  filterValue: TValue;
-}
-
-export type FilterFunction<TData, TValue> = (params: FilterParams<TData, TValue>) => boolean;
 
 const createFilter = <TData, TValue>(filter: FilterFunction<TData, TValue>) => {
   return (row: Row<TData>, columnId: string, filterValue: TValue) => {

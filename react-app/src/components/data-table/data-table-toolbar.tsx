@@ -16,21 +16,16 @@ import { Select,
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import type { CustomColumnDef, ExportFormat, FilterableColumn } from '@/components/data-table/data-table-types'
-import { flexRender, Header, type Column, type Table } from '@tanstack/react-table'
-import { type DateValue, DatePicker } from '@/components/ui/date-picker'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { CheckIcon, CopyIcon, DownloadIcon, ListFilterIcon, RotateCwIcon, SettingsIcon, XCircleIcon, TrashIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { cn } from '@/lib/utils'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { Separator } from '@/components/ui/separator'
-import { Switch } from '@/components/ui/switch'
-import { FILTERS, FilterType } from '@/components/data-table/data-table-filters'
-import { DATA_TABLE_TEXT_CONTENT as TC } from '@/components/data-table/data-table-text-content'
-import { Badge } from '@/components/ui/badge'
+import {
+  CheckIcon,
+  CopyIcon,
+  DownloadIcon,
+  ListFilterIcon,
+  RotateCwIcon,
+  SettingsIcon,
+  XCircleIcon,
+  TrashIcon
+} from 'lucide-react'
 import {
   Command,
   CommandEmpty,
@@ -40,7 +35,22 @@ import {
   CommandList,
   CommandSeparator
 } from '@/components/ui/command'
+import type { CustomColumnDef, ExportFormat, FilterableColumn } from '@/components/data-table/data-table-types'
+import { Header, type Column, type Table } from '@tanstack/react-table'
+import { type DateValue, DatePicker } from '@/components/ui/date-picker'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { useEffect, useState } from 'react'
+import { cn } from '@/lib/utils'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { Separator } from '@/components/ui/separator'
+import { Switch } from '@/components/ui/switch'
+import { FILTERS } from '@/components/data-table/data-table-filters'
+import { DATA_TABLE_TEXT_CONTENT as TC } from '@/components/data-table/data-table-text-content'
+import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { FilterType } from '@/components/data-table/filters'
 
 function DataTableSelectSearch<TData> ({
   columns,

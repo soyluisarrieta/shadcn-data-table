@@ -1,5 +1,5 @@
-import { type FilterType } from '@/components/data-table/data-table-filters'
-import { type ColumnDef } from '@tanstack/react-table'
+import type { FilterType } from '@/components/data-table/filters'
+import type { Row, ColumnDef } from '@tanstack/react-table'
 
 type OnClickActionBase<TData, TReturn = void> = (rows: TData[], cleanRowSelection: () => void) => TReturn
 
@@ -55,3 +55,11 @@ export interface DataTableTabsConfig<TData> {
 }
 
 export type CustomColumnDef<TData> = ColumnDef<TData> & CustomColumnDefProps<TData>
+
+export interface FilterParams<TData, TValue> {
+  row: Row<TData>;
+  columnId: string;
+  filterValue: TValue;
+}
+
+export type FilterFunction<TData, TValue> = (params: FilterParams<TData, TValue>) => boolean;
