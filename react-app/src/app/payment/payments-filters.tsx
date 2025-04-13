@@ -6,7 +6,7 @@ export const filterableColumns: FilterableColumn<Payment>[]  = [
   {
     columnKey: 'status',
     label: 'Status',
-    type: 'single-selection',
+    type: 'SINGLE_SELECTION',
     options: [
       { label: 'pending', value: 'pending', icon: ClockFadingIcon  },
       { label: 'processing', value: 'processing', icon: TimerIcon },
@@ -17,7 +17,7 @@ export const filterableColumns: FilterableColumn<Payment>[]  = [
   {
     columnKey: 'email',
     label: 'Email',
-    type: 'multiple-selection',
+    type: 'MULTI_SELECTION',
     options: [
       { label: 'user 17', value: 'user17@example.com' },
       { label: 'user 18', value: 'user18@example.com' },
@@ -35,6 +35,6 @@ export const filterableColumns: FilterableColumn<Payment>[]  = [
   {
     columnKey: 'date',
     label: 'Date',
-    type: 'date'
+    type: 'DATE_PICKER'
   }
 ]

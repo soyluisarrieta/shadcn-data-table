@@ -46,11 +46,11 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
-import { FILTERS } from '@/components/data-table/data-table-filters'
 import { DATA_TABLE_TEXT_CONTENT as TC } from '@/components/data-table/data-table-text-content'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { FilterType } from '@/components/data-table/filters'
+import { FILTERS } from '@/components/data-table/filters'
+import { getFilterFn } from '@/components/data-table/data-table-utils'
 
 function DataTableSelectSearch<TData> ({
   columns,
@@ -74,7 +74,7 @@ function DataTableSelectSearch<TData> ({
           {columns.map((column) => {
             if (!column.getCanFilter()) { return null }
             const col = column.columnDef as CustomColumnDef<TData>
-            if (col.filterFn === FILTERS[FilterType.DatePicker]) { return null }
+            if (col.filterFn === getFilterFn(FILTERS.DATE_PICKER)) { return null }
             const label = (col?.label) ?? col.header
             if (!label || typeof label !== 'string') {
               throw new Error(`The \`${column.id}\` column header is not a string. Add the \`label\` property if the \`header\` value does not contain a string.`)
@@ -194,7 +194,7 @@ function DataTableColumnFilter<TData> ({
   const unknownValue = column?.getFilterValue()
   const selectedValues = new Set(Array.isArray(unknownValue) ? unknownValue : [])
 
-  const isSingleSelection = filter.type === FilterType.SingleSelection
+  const isSingleSelection = filter.type === FILTERS.SINGLE_SELECTION
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={onOpenChange}>
@@ -299,7 +299,7 @@ function DataTableLeftToolbar<TData> ({
 
   const getFilterableColumns = (columnId: string) => {
     const col = filterableColumns?.find(({ columnKey }) => columnKey === columnId)
-    if (!col || col.type === FilterType.DatePicker) return undefined
+    if (!col || col.type === FILTERS.DATE_PICKER) return undefined
     return col
   }
 
@@ -312,7 +312,6 @@ function DataTableLeftToolbar<TData> ({
     .getFlatHeaders()
     .filter(({ column }) => column.getFilterValue() !== undefined)
     .map((header) => ({ ...header, filter: getFilterableColumns(header.id) }))
-  console.log(activeFilterHeaders)
 
   const openFilterById = (columnId: string) => {
     setOpenFilterMenu(false)
@@ -333,7 +332,6 @@ function DataTableLeftToolbar<TData> ({
         />
       </div>
       <div className='rounded-lg flex items-center gap-1 px-0.5'>
-
         {activeFilterHeaders.map(header => (
           <DataTableColumnFilter
             key={header.id}

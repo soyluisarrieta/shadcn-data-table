@@ -1,4 +1,4 @@
-import type { FilterType } from '@/components/data-table/filters'
+import { FILTER_FUNCTIONS } from '@/components/data-table/filters'
 import type { Row, ColumnDef } from '@tanstack/react-table'
 
 type OnClickActionBase<TData, TReturn = void> = (rows: TData[], cleanRowSelection: () => void) => TReturn
@@ -25,10 +25,12 @@ export type FilterableOption = {
   count?: number;
 }
 
+export type FilterKeys = keyof typeof FILTER_FUNCTIONS;
+
 export interface FilterableColumn<TData> {
   columnKey: keyof TData;
   label?: string;
-  type: `${FilterType}`;
+  type: `${FilterKeys}`;
   options?: FilterableOption[]
 }
 
@@ -61,5 +63,3 @@ export interface FilterParams<TData, TValue> {
   columnId: string;
   filterValue: TValue;
 }
-
-export type FilterFunction<TData, TValue> = (params: FilterParams<TData, TValue>) => boolean;

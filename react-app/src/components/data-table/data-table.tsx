@@ -24,11 +24,12 @@ import { DataTableLeftToolbar, DataTableRightToolbar, DataTableToolbar } from '@
 import DataTableFooter from '@/components/data-table/data-table-footer'
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { DataTableColumnSelection, DataTableSelectionActions } from '@/components/data-table/data-table-column-selection'
-import { FILTERS } from '@/components/data-table/data-table-filters'
 import type { CustomColumnDef, CustomColumnDefProps, DataTableActions, DataTableTabsConfig, FilterableColumn } from '@/components/data-table/data-table-types'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { getFilterFn } from '@/components/data-table/data-table-utils'
+import { FILTERS } from '@/components/data-table/filters'
 
 export function DataTable<TData, TValue> ({
   columns,
@@ -72,9 +73,9 @@ export function DataTable<TData, TValue> ({
     return columns.map(column => {
       const filter = filterableColumns?.find((field) => field.columnKey === column.accessorKey)
       if (filter) {
-        column.filterFn = FILTERS[filter.type]
+        column.filterFn = getFilterFn(filter.type)
       } else if (!column.filterFn) {
-        column.filterFn = FILTERS.partialMatch
+        column.filterFn = getFilterFn(FILTERS.PARTIAL_MATCH)
       }
       const accessorFn = (originalRow: TData) =>
         originalRow[column.accessorKey as keyof TData]?.toString()
@@ -107,8 +108,8 @@ export function DataTable<TData, TValue> ({
   const table = useReactTable({
     data: filteredData ?? mock ?? [],
     columns: memorizedColumns,
-    globalFilterFn: FILTERS.globalSearch,
-    defaultColumn: { filterFn: FILTERS.partialMatch },
+    defaultColumn: { filterFn: getFilterFn(FILTERS.PARTIAL_MATCH) },
+    globalFilterFn: getFilterFn(FILTERS.GLOBAL_SEARCH),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
