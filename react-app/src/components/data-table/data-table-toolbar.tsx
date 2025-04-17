@@ -50,7 +50,7 @@ import { DATA_TABLE_TEXT_CONTENT as TC } from '@/components/data-table/data-tabl
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { FILTERS } from '@/components/data-table/filters'
-import { getFilterFn } from '@/components/data-table/data-table-utils'
+import { createFilterFn, getFilterFn } from '@/components/data-table/data-table-utils'
 
 function DataTableSelectSearch<TData> ({
   columns,
@@ -305,13 +305,25 @@ function DataTableLeftToolbar<TData> ({
 
   const filterableHeaders = table
     .getFlatHeaders()
-    .map((header) => ({ ...header, filter: getFilterableColumns(header.id) }))
+    .map((header) => {
+      const filter = getFilterableColumns(header.id)
+      if (filter && filter.filterFn && header.column) {
+        header.column.columnDef.filterFn = createFilterFn(filter.filterFn)
+      }
+      return { ...header, filter }
+    })
     .filter(({ filter }) => filter)
 
   const activeFilterHeaders = table
     .getFlatHeaders()
     .filter(({ column }) => column.getFilterValue() !== undefined)
-    .map((header) => ({ ...header, filter: getFilterableColumns(header.id) }))
+    .map((header) => {
+      const filter = getFilterableColumns(header.id)
+      if (filter && filter.filterFn && header.column) {
+        header.column.columnDef.filterFn = createFilterFn(filter.filterFn)
+      }
+      return { ...header, filter }
+    })
 
   const openFilterById = (columnId: string) => {
     setOpenFilterMenu(false)

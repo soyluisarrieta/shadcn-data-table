@@ -3,6 +3,16 @@ import type { FilterParams } from '@/components/data-table/data-table-types'
 import { FILTER_FUNCTIONS } from '@/components/data-table/filters'
 
 /**
+ * Utility type for filter functions that take named parameters
+ */
+type FilterFunction<TData, TValue> = (params: FilterParams<TData, TValue>) => boolean;
+
+export const createFilterFn = <TData, TValue>(filterFn: FilterFunction<TData, TValue>) => {
+  return (row: Row<TData>, columnId: string, filterValue: TValue) => (
+    filterFn({ row, columnId, filterValue })
+  )}
+
+/**
  * Retrieves a filter function based on the provided filter type
  * @template TData - The type of data in the table row
  * @template T - The specific filter type extending FilterType
@@ -12,12 +22,9 @@ import { FILTER_FUNCTIONS } from '@/components/data-table/filters'
  */
 type FilterType = keyof typeof FILTER_FUNCTIONS
 type FilterValue<T extends FilterType> = Parameters<typeof FILTER_FUNCTIONS[T]>[0]['filterValue']
-type FilterFunction<TData, TValue> = (params: FilterParams<TData, TValue>) => boolean;
 
-export const getFilterFn = <TData,T extends FilterType> (type: T) => {
+export const getFilterFn = <TData, T extends FilterType>(type: T) => {
   const fn = FILTER_FUNCTIONS[type] as FilterFunction<TData, FilterValue<T>>
   if (!fn) throw new Error(`Filter type \`${type}\` not found`)
-  return (row: Row<TData>, columnId: string, filterValue: FilterValue<T>) => (
-    fn({ row, columnId, filterValue })
-  )
+  return createFilterFn(fn)
 }

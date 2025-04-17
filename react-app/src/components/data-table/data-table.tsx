@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {
-  type ColumnDef,
   type Table as TableType,
   type VisibilityState,
   type ColumnFiltersState,
@@ -24,14 +23,14 @@ import { DataTableLeftToolbar, DataTableRightToolbar, DataTableToolbar } from '@
 import DataTableFooter from '@/components/data-table/data-table-footer'
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { DataTableColumnSelection, DataTableSelectionActions } from '@/components/data-table/data-table-column-selection'
-import type { CustomColumnDef, CustomColumnDefProps, DataTableActions, DataTableTabsConfig, FilterableColumn } from '@/components/data-table/data-table-types'
+import type { CustomColumnDef, DataTableActions, DataTableTabsConfig, FilterableColumn } from '@/components/data-table/data-table-types'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getFilterFn } from '@/components/data-table/data-table-utils'
 import { FILTERS } from '@/components/data-table/filters'
 
-export function DataTable<TData, TValue> ({
+export function DataTable<TData> ({
   columns,
   data,
   mock,
@@ -42,7 +41,7 @@ export function DataTable<TData, TValue> ({
   isLoading = false,
   tabs: tabsConfig
 }: {
-  columns: Array<ColumnDef<TData, TValue> & CustomColumnDefProps<TData>>;
+  columns: CustomColumnDef<TData>[];
   data: TData[] | undefined;
   mock?: TData[];
   disableRowSelection?: boolean;
