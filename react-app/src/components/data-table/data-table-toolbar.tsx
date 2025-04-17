@@ -40,7 +40,7 @@ import { Header, type Column, type Table } from '@tanstack/react-table'
 import { type DateValue, DatePicker } from '@/components/ui/date-picker'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
@@ -297,22 +297,24 @@ function DataTableLeftToolbar<TData> ({
     table.setGlobalFilter({ searchBy, searchValue })
   }, [searchBy, searchValue, table])
 
-  const getFilterableColumns = (columnId: string) => {
+  const getFilterableColumns = useCallback((columnId: string) => {
     const col = filterableColumns?.find(({ columnKey }) => columnKey === columnId)
     if (!col || col.type === FILTERS.DATE_PICKER) return undefined
     return col
-  }
+  }, [filterableColumns])
 
-  const filterableHeaders = table
-    .getFlatHeaders()
-    .map((header) => {
-      const filter = getFilterableColumns(header.id)
-      if (filter && filter.filterFn && header.column) {
-        header.column.columnDef.filterFn = createFilterFn(filter.filterFn)
-      }
-      return { ...header, filter }
-    })
-    .filter(({ filter }) => filter)
+  const filterableHeaders = useMemo(() => {
+    return table
+      .getFlatHeaders()
+      .map((header) => {
+        const filter = getFilterableColumns(header.id)
+        if (filter && filter.filterFn && header.column) {
+          header.column.columnDef.filterFn = createFilterFn(filter.filterFn)
+        }
+        return { ...header, filter }
+      })
+      .filter(({ filter }) => filter)
+  }, [table, getFilterableColumns])
 
   const activeFilterHeaders = table
     .getFlatHeaders()
@@ -325,16 +327,28 @@ function DataTableLeftToolbar<TData> ({
       return { ...header, filter }
     })
 
-  const openFilterById = (columnId: string) => {
+  const openFilterById = useCallback((columnId: string) => {
     setOpenFilterMenu(false)
     setOpenFilterDropdown(columnId)
-  }
+  }, [])
+
+  const handleFilterChange = useCallback((open: boolean, headerId: string) => {
+    if (open) {
+      setOpenFilterDropdown(headerId)
+    } else if (openFilterDropdown === headerId) {
+      setOpenFilterDropdown(null)
+    }
+  }, [openFilterDropdown])
+
+  const leafColumns = useMemo(() => table.getAllLeafColumns(), [table])
+
+  const handleResetFilters = useCallback(() => table.resetColumnFilters(), [table])
 
   return (
     <div className='flex-1 flex gap-2'>
       <div className='flex'>
         <DataTableSelectSearch
-          columns={table.getAllLeafColumns()}
+          columns={leafColumns}
           value={searchBy}
           onValueChange={setSearchBy}
         />
@@ -350,13 +364,7 @@ function DataTableLeftToolbar<TData> ({
             header={header}
             filter={header?.filter}
             isOpen={openFilterDropdown === header.id}
-            onOpenChange={(open) => {
-              if (open) {
-                setOpenFilterDropdown(header.id)
-              } else if (openFilterDropdown === header.id) {
-                setOpenFilterDropdown(null)
-              }
-            }}
+            onOpenChange={(open) => handleFilterChange(open, header.id)}
           />
         ))}
 
@@ -397,7 +405,7 @@ function DataTableLeftToolbar<TData> ({
                     className="w-full font-normal"
                     variant="ghost"
                     size='sm'
-                    onClick={() => table.resetColumnFilters()}
+                    onClick={handleResetFilters}
                     asChild
                   >
                     <DropdownMenuItem>
