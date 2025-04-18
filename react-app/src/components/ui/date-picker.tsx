@@ -77,6 +77,8 @@ type DatePickerBase = {
   placeholder?: string
   onModeChange?: (mode: `${Modes}`) => void,
   align?: 'start' | 'center' | 'end';
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 function DatePickerTrigger ({
@@ -433,7 +435,9 @@ export function DatePicker ({
   placeholder,
   mode = 'duo',
   onModeChange,
-  align = 'end'
+  align = 'end',
+  open,
+  onOpenChange
 }: DatePickerBase & (
   DatePickerSingle | DatePickerRange | DatePickerDuo
 )) {
@@ -563,7 +567,7 @@ export function DatePicker ({
   }
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
+    <Popover open={open ?? isOpen} onOpenChange={onOpenChange ?? setIsOpen}>
       <DatePickerTrigger
         className={className}
         placeholder={placeholder}
