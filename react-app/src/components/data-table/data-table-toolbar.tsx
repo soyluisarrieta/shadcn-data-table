@@ -41,7 +41,7 @@ import type {
   FilterColumn,
   FilterColumnExtended as FilterColumnExt
 } from '@/components/data-table/data-table-types'
-import { Header, type Column, type Table } from '@tanstack/react-table'
+import { type Column, type Table } from '@tanstack/react-table'
 import { type DateValue, DatePicker } from '@/components/ui/date-picker'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -54,7 +54,7 @@ import { Switch } from '@/components/ui/switch'
 import { DATA_TABLE_TEXT_CONTENT as TC } from '@/components/data-table/data-table-text-content'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { FILTERS } from '@/components/data-table/filters'
+import { FILTER_FUNCTIONS, FILTERS } from '@/components/data-table/filters'
 import { createFilterFn, getFilterFn } from '@/components/data-table/data-table-utils'
 
 function DataTableSelectSearch<TData> ({
@@ -195,8 +195,20 @@ function DataTableColumnFilter<TData> ({
 }) {
   if (!filter) return null
 
-  const unknownValue = column?.getFilterValue()
-  const selectedValues = new Set(Array.isArray(unknownValue) ? unknownValue : [])
+  const filterValue = column.getFilterValue()
+  const selectedValues = new Set(Array.isArray(filterValue) ? filterValue : [])
+
+  if (filter.type === FILTERS.DATE_PICKER) {
+    column.columnDef.filterFn = createFilterFn(FILTER_FUNCTIONS.DATE_PICKER)
+    return (
+      <DatePicker
+        value={filterValue ?? undefined}
+        onValueChange={ column.setFilterValue }
+        onReset={() => column.setFilterValue(undefined)}
+        placeholder={filter.label}
+      />
+    )
+  }
 
   const isSingleSelection = filter.type === FILTERS.SINGLE_SELECTION
 
@@ -238,7 +250,7 @@ function DataTableColumnFilter<TData> ({
                             }
                           }
                           const filterValues = Array.from(selectedValues)
-                          column?.setFilterValue(filterValues)
+                          column.setFilterValue(filterValues)
                         }}
                       >
                         <div
@@ -307,18 +319,6 @@ function DataTableLeftToolbar<TData> ({
     if (!col || col.type === FILTERS.DATE_PICKER) return undefined
     return col
   }, [columnFilters])
-
-  const activeFilterHeaders = table
-    .getLeafHeaders()
-    .filter(({ column }) => column.getFilterValue() !== undefined)
-    .map((header) => {
-
-      const filter = getColumnFilters(header.id)
-      if (filter && filter.filterFn && header.column) {
-        header.column.columnDef.filterFn = createFilterFn(filter.filterFn)
-      }
-      return { ...header, filter }
-    })
 
   const handleFilterChange = useCallback((
     open: boolean,
