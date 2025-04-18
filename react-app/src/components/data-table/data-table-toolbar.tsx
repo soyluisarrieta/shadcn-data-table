@@ -202,6 +202,8 @@ function DataTableColumnFilter<TData> ({
     column.columnDef.filterFn = createFilterFn(FILTER_FUNCTIONS.DATE_PICKER)
     return (
       <DatePicker
+        open={isOpen}
+        onOpenChange={onOpenChange}
         value={filterValue ?? undefined}
         onValueChange={ column.setFilterValue }
         onReset={() => column.setFilterValue(undefined)}
@@ -314,17 +316,6 @@ function DataTableLeftToolbar<TData> ({
     table.setGlobalFilter({ searchBy, searchValue })
   }, [searchBy, searchValue, table])
 
-  const handleFilterChange = useCallback((
-    open: boolean,
-    filterId: FilterColumnExt<TData>['id']
-  ) => {
-    if (open) {
-      setOpenFilterDropdown(filterId)
-    } else if (openFilterDropdown === filterId) {
-      setOpenFilterDropdown(null)
-    }
-  }, [openFilterDropdown])
-
   const leafColumns = useMemo(() => table.getAllLeafColumns(), [table])
 
   const handleResetFilters = useCallback(() => table.resetColumnFilters(), [table])
@@ -353,7 +344,13 @@ function DataTableLeftToolbar<TData> ({
               filter={filter}
               isOpen={openFilterDropdown === filter.id}
               onOpenChange={(open) => {
-                handleFilterChange(open, filter.id)
+                if (open) {
+                  setOpenFilterDropdown(filter.id)
+                } else if (openFilterDropdown === filter.id) {
+                  if (filter.type !== FILTERS.DATE_PICKER) {
+                    setOpenFilterDropdown(null)
+                  }
+                }
               }}
             />
           )}
