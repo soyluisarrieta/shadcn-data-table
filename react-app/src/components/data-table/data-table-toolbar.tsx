@@ -42,7 +42,7 @@ import type {
   FilterColumnExtended as FilterColumnExt
 } from '@/components/data-table/data-table-types'
 import { type Column, type Table } from '@tanstack/react-table'
-import { DatePicker } from '@/components/ui/date-picker'
+import { DatePicker } from '@/components/data-table/data-table-date-picker'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useEffect, useMemo, useState } from 'react'
