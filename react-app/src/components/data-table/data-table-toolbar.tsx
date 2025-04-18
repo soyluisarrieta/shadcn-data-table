@@ -303,19 +303,6 @@ function DataTableLeftToolbar<TData> ({
     return col
   }, [filterableColumns])
 
-  const filterableHeaders = useMemo(() => {
-    return table
-      .getFlatHeaders()
-      .map((header) => {
-        const filter = getFilterableColumns(header.id)
-        if (filter && filter.filterFn && header.column) {
-          header.column.columnDef.filterFn = createFilterFn(filter.filterFn)
-        }
-        return { ...header, filter }
-      })
-      .filter(({ filter }) => filter)
-  }, [table, getFilterableColumns])
-
   const activeFilterHeaders = table
     .getFlatHeaders()
     .filter(({ column }) => column.getFilterValue() !== undefined)
@@ -381,17 +368,17 @@ function DataTableLeftToolbar<TData> ({
                 Select column
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {filterableHeaders.map(header => {
-                const { column, filter } = header
-                if (!filter) return null
+              {filterableColumns?.map(filter => {
+                const column = table.getColumn(filter.columnKey as string)
+                if (!column) return null
                 return (
                   <Button
-                    key={header.id}
+                    key={column.id + filter.label}
                     className={'w-full flex justify-between items-center capitalize p-2 text-sm'}
                     variant='ghost'
                     onClick={() => {
                       column.setFilterValue([])
-                      openFilterById(header.id)
+                      openFilterById(column.id)
                     }}
                   >
                     {filter.label}
