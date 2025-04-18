@@ -1,5 +1,5 @@
 import type { Row } from '@tanstack/react-table'
-import type { FilterParams } from '@/components/data-table/data-table-types'
+import type { FilterColumn, FilterColumnExtended, FilterParams } from '@/components/data-table/data-table-types'
 import { FILTER_FUNCTIONS } from '@/components/data-table/filters'
 
 /**
@@ -27,4 +27,12 @@ export const getFilterFn = <TData, T extends FilterType>(type: T) => {
   const fn = FILTER_FUNCTIONS[type] as FilterFunction<TData, FilterValue<T>>
   if (!fn) throw new Error(`Filter type \`${type}\` not found`)
   return createFilterFn(fn)
+}
+
+/**
+ * Defines the structure and configuration for custom table column filters
+ * @template TData - The type representing the data structure for each table row
+ */
+export const defineFilters = <TData>(filters: FilterColumn<TData>[]): FilterColumnExtended<TData>[] => {
+  return filters.map((filter, i) => ({ ...filter, id: i.toString() }))
 }
