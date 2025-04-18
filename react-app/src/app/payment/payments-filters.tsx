@@ -1,8 +1,8 @@
 import type { Payment } from '@/app/payment/payments-columns'
-import type { FilterableColumn } from '@/components/data-table/data-table-types'
+import { defineFilters } from '@/components/data-table/data-table-utils'
 import { CheckCircle2Icon, CircleXIcon, ClockFadingIcon, TimerIcon } from 'lucide-react'
 
-export const filterableColumns: FilterableColumn<Payment>[]  = [
+export const filterableColumns = defineFilters<Payment>([
   {
     columnKey: 'status',
     label: 'Status',
@@ -60,7 +60,8 @@ export const filterableColumns: FilterableColumn<Payment>[]  = [
 
       return true
     }
-  }, {
+  },
+  {
     columnKey: 'date',
     label: 'Time period',
     type: 'SINGLE_SELECTION',
@@ -101,4 +102,4 @@ export const filterableColumns: FilterableColumn<Payment>[]  = [
     label: 'Date',
     type: 'DATE_PICKER'
   }
-]
+])

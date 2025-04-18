@@ -33,12 +33,16 @@ export type FilterableOption = {
 
 export type FilterKeys = keyof typeof FILTER_FUNCTIONS;
 
-export interface FilterableColumn<TData> {
-  columnKey: keyof TData;
+export interface FilterColumn<TData> {
+  columnKey: Extract<keyof TData, string>;
   label: string;
   type: `${FilterKeys}`;
   options?: FilterableOption[]
   filterFn?: (params: FilterParams<TData, string[] | number[] | null>) => boolean;
+}
+
+export interface FilterColumnExtended<TData> extends FilterColumn<TData> {
+  readonly id: string
 }
 
 export type SelectionActionProps<TData> = {

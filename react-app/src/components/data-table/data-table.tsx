@@ -23,7 +23,12 @@ import { DataTableLeftToolbar, DataTableRightToolbar, DataTableToolbar } from '@
 import DataTableFooter from '@/components/data-table/data-table-footer'
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { DataTableColumnSelection, DataTableSelectionActions } from '@/components/data-table/data-table-column-selection'
-import type { CustomColumnDef, DataTableActions, DataTableTabsConfig, FilterableColumn } from '@/components/data-table/data-table-types'
+import type {
+  CustomColumnDef,
+  DataTableActions,
+  DataTableTabsConfig,
+  FilterColumnExtended as FilterColumnExt
+} from '@/components/data-table/data-table-types'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -46,7 +51,7 @@ export function DataTable<TData> ({
   mock?: TData[];
   disableRowSelection?: boolean;
   actions?: DataTableActions<TData>;
-  filterableColumns?: Array<FilterableColumn<TData>>;
+  filterableColumns?: FilterColumnExt<TData>[];
   disableCopyJSON?: boolean;
   isLoading?: boolean;
   tabs?: DataTableTabsConfig<TData>;
@@ -135,7 +140,7 @@ export function DataTable<TData> ({
       <DataTableToolbar>
         <DataTableLeftToolbar
           table={table}
-          filterableColumns={filterableColumns}
+          columnFilters={filterableColumns}
         />
         <DataTableRightToolbar
           table={table}

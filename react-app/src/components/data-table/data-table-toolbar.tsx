@@ -35,7 +35,12 @@ import {
   CommandList,
   CommandSeparator
 } from '@/components/ui/command'
-import type { CustomColumnDef, ExportFormat, FilterableColumn } from '@/components/data-table/data-table-types'
+import type {
+  CustomColumnDef,
+  ExportFormat,
+  FilterColumn,
+  FilterColumnExtended as FilterColumnExt
+} from '@/components/data-table/data-table-types'
 import { Header, type Column, type Table } from '@tanstack/react-table'
 import { type DateValue, DatePicker } from '@/components/ui/date-picker'
 import { Button } from '@/components/ui/button'
@@ -178,19 +183,18 @@ function DataTableDropdownView<TData> ({
 }
 
 function DataTableColumnFilter<TData> ({
-  header,
+  column,
   filter,
   isOpen,
   onOpenChange
 }: {
-  header: Header<TData, unknown>;
-  filter?: FilterableColumn<TData>;
+  column: Column<TData>
+  filter: FilterColumn<TData> & { id: string };
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
 }) {
   if (!filter) return null
 
-  const { column } = header
   const unknownValue = column?.getFilterValue()
   const selectedValues = new Set(Array.isArray(unknownValue) ? unknownValue : [])
 
@@ -283,46 +287,46 @@ function DataTableColumnFilter<TData> ({
 
 function DataTableLeftToolbar<TData> ({
   table,
-  filterableColumns
+  columnFilters
 }: {
   table: Table<TData>;
-  filterableColumns?: FilterableColumn<TData>[];
+  columnFilters?: FilterColumnExt<TData>[];
 }) {
   const [searchBy, setSearchBy] = useState('all')
   const [searchValue, setSearchValue] = useState('')
   const [openFilterMenu, setOpenFilterMenu] = useState(false)
-  const [openFilterDropdown, setOpenFilterDropdown] = useState<string | null>(null)
+  const [openFilterDropdown, setOpenFilterDropdown] = useState<FilterColumnExt<TData>['id'] | null>(null)
+  const [activeFilters, setActiveFilters] = useState<FilterColumnExt<TData>[]>([])
 
   useEffect(() => {
     table.setGlobalFilter({ searchBy, searchValue })
   }, [searchBy, searchValue, table])
 
-  const getFilterableColumns = useCallback((columnId: string) => {
-    const col = filterableColumns?.find(({ columnKey }) => columnKey === columnId)
+  const getColumnFilters = useCallback((columnId: string) => {
+    const col = columnFilters?.find(({ columnKey }) => columnKey === columnId)
     if (!col || col.type === FILTERS.DATE_PICKER) return undefined
     return col
-  }, [filterableColumns])
+  }, [columnFilters])
 
   const activeFilterHeaders = table
-    .getFlatHeaders()
+    .getLeafHeaders()
     .filter(({ column }) => column.getFilterValue() !== undefined)
     .map((header) => {
-      const filter = getFilterableColumns(header.id)
+
+      const filter = getColumnFilters(header.id)
       if (filter && filter.filterFn && header.column) {
         header.column.columnDef.filterFn = createFilterFn(filter.filterFn)
       }
       return { ...header, filter }
     })
 
-  const openFilterById = useCallback((columnId: string) => {
-    setOpenFilterMenu(false)
-    setOpenFilterDropdown(columnId)
-  }, [])
-
-  const handleFilterChange = useCallback((open: boolean, headerId: string) => {
+  const handleFilterChange = useCallback((
+    open: boolean,
+    filterId: FilterColumnExt<TData>['id']
+  ) => {
     if (open) {
-      setOpenFilterDropdown(headerId)
-    } else if (openFilterDropdown === headerId) {
+      setOpenFilterDropdown(filterId)
+    } else if (openFilterDropdown === filterId) {
       setOpenFilterDropdown(null)
     }
   }, [openFilterDropdown])
@@ -345,15 +349,21 @@ function DataTableLeftToolbar<TData> ({
         />
       </div>
       <div className='rounded-lg flex items-center gap-1 px-0.5'>
-        {activeFilterHeaders.map(header => (
-          <DataTableColumnFilter
-            key={header.id}
-            header={header}
-            filter={header?.filter}
-            isOpen={openFilterDropdown === header.id}
-            onOpenChange={(open) => handleFilterChange(open, header.id)}
-          />
-        ))}
+        {activeFilters.map(filter => {
+          const column = table.getColumn(filter.columnKey)
+          if (!column) return null
+          return (
+            <DataTableColumnFilter
+              key={filter.id}
+              column={column}
+              filter={filter}
+              isOpen={openFilterDropdown === filter.id}
+              onOpenChange={(open) => {
+                handleFilterChange(open, filter.id)
+              }}
+            />
+          )}
+        )}
 
         <DropdownMenu open={openFilterMenu} onOpenChange={setOpenFilterMenu}>
           <Button variant='ghost' size='sm' asChild>
@@ -368,17 +378,18 @@ function DataTableLeftToolbar<TData> ({
                 Select column
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {filterableColumns?.map(filter => {
-                const column = table.getColumn(filter.columnKey as string)
+              {columnFilters?.map(filter => {
+                const column = table.getColumn(filter.columnKey)
                 if (!column) return null
                 return (
                   <Button
-                    key={column.id + filter.label}
-                    className={'w-full flex justify-between items-center capitalize p-2 text-sm'}
+                    key={filter.id}
+                    className='w-full flex justify-between items-center capitalize p-2 text-sm'
                     variant='ghost'
                     onClick={() => {
-                      column.setFilterValue([])
-                      openFilterById(column.id)
+                      setActiveFilters([...activeFilters, filter])
+                      setOpenFilterMenu(false)
+                      setOpenFilterDropdown(filter.id)
                     }}
                   >
                     {filter.label}
