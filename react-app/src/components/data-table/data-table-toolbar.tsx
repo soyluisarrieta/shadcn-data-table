@@ -42,7 +42,7 @@ import type {
   FilterColumnExtended as FilterColumnExt
 } from '@/components/data-table/data-table-types'
 import { type Column, type Table } from '@tanstack/react-table'
-import { type DateValue, DatePicker } from '@/components/ui/date-picker'
+import { DatePicker } from '@/components/ui/date-picker'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -314,12 +314,6 @@ function DataTableLeftToolbar<TData> ({
     table.setGlobalFilter({ searchBy, searchValue })
   }, [searchBy, searchValue, table])
 
-  const getColumnFilters = useCallback((columnId: string) => {
-    const col = columnFilters?.find(({ columnKey }) => columnKey === columnId)
-    if (!col || col.type === FILTERS.DATE_PICKER) return undefined
-    return col
-  }, [columnFilters])
-
   const handleFilterChange = useCallback((
     open: boolean,
     filterId: FilterColumnExt<TData>['id']
@@ -430,21 +424,10 @@ function DataTableRightToolbar<TData> ({
   onExport?: (data: TData[], format: ExportFormat) => void
   disableCopyJSON?: boolean
 }) {
-  const [dateFilter, setDateFilter] = useState<DateValue>()
   const [openExportPopover, setOpenExportPopover] = useState(false)
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat>('pdf')
   const [filteredOnly, setFilteredOnly] = useState(true)
   const [hasCopied, setHasCopied] = useState(false)
-
-  useEffect(() => {
-    table.setColumnFilters(oldFilters => {
-      const otherFilters = oldFilters.filter(filter => filter.id !== 'date')
-      if (dateFilter) {
-        return [...otherFilters, { id: 'date', value: dateFilter }]
-      }
-      return otherFilters
-    })
-  }, [dateFilter, table])
 
   const getRows = () => filteredOnly
     ? table.getFilteredRowModel().flatRows.map(row => row.original)
@@ -461,11 +444,6 @@ function DataTableRightToolbar<TData> ({
 
   return (
     <div className='hidden lg:flex gap-1'>
-      <DatePicker
-        value={dateFilter}
-        onValueChange={setDateFilter}
-        onReset={() => { setDateFilter(undefined) }}
-      />
       <DataTableDropdownView table={table} />
       {onExport && (
         <div className='flex items-center'>
