@@ -45,7 +45,7 @@ import { type Column, type Table } from '@tanstack/react-table'
 import { DatePicker } from '@/components/ui/date-picker'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
@@ -309,7 +309,7 @@ function DataTableLeftToolbar<TData> ({
   const [searchBy, setSearchBy] = useState('all')
   const [searchValue, setSearchValue] = useState('')
   const [openFilterMenu, setOpenFilterMenu] = useState(false)
-  const [openFilterDropdown, setOpenFilterDropdown] = useState<FilterColumnExt<TData>['id'] | null>(null)
+  const [openFilterDropdown, setOpenFilterDropdown] = useState<FilterColumnExt<TData>['id']>()
   const [activeFilters, setActiveFilters] = useState<FilterColumnExt<TData>[]>([])
 
   useEffect(() => {
@@ -318,7 +318,16 @@ function DataTableLeftToolbar<TData> ({
 
   const leafColumns = useMemo(() => table.getAllLeafColumns(), [table])
 
-  const handleResetFilters = useCallback(() => table.resetColumnFilters(), [table])
+  const handleFilterChange = (
+    filterId: FilterColumnExt<TData>['id'],
+    open: boolean
+  ) => {
+    if (open) {
+      setOpenFilterDropdown(filterId)
+    } else if (openFilterDropdown === filterId) {
+      setOpenFilterDropdown(undefined)
+    }
+  }
 
   return (
     <div className='flex-1 flex gap-2'>
@@ -344,13 +353,7 @@ function DataTableLeftToolbar<TData> ({
               filter={filter}
               isOpen={openFilterDropdown === filter.id}
               onOpenChange={(open) => {
-                if (open) {
-                  setOpenFilterDropdown(filter.id)
-                } else if (openFilterDropdown === filter.id) {
-                  if (filter.type !== FILTERS.DATE_PICKER) {
-                    setOpenFilterDropdown(null)
-                  }
-                }
+                handleFilterChange(filter.id, open)
               }}
             />
           )}
@@ -380,7 +383,7 @@ function DataTableLeftToolbar<TData> ({
                     onClick={() => {
                       setActiveFilters([...activeFilters, filter])
                       setOpenFilterMenu(false)
-                      setOpenFilterDropdown(filter.id)
+                      handleFilterChange(filter.id, true)
                     }}
                   >
                     {filter.label}
@@ -394,7 +397,7 @@ function DataTableLeftToolbar<TData> ({
                     className="w-full font-normal"
                     variant="ghost"
                     size='sm'
-                    onClick={handleResetFilters}
+                    onClick={() => table.resetColumnFilters()}
                     asChild
                   >
                     <DropdownMenuItem>

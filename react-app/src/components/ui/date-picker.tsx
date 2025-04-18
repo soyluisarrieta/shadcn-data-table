@@ -19,10 +19,10 @@ import {
 
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
 const DAY_NAMES = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 const MONTHS = [
@@ -120,10 +120,10 @@ function DatePickerTrigger ({
       )}
       asChild
     >
-      <PopoverTrigger>
+      <DropdownMenuTrigger>
         <span className="flex-1">{formatDisplayText()}</span>
         <CalendarIcon className="ml-2 h-4 w-4 text-muted-foreground" />
-      </PopoverTrigger>
+      </DropdownMenuTrigger>
     </Button>
   )
 }
@@ -466,7 +466,7 @@ export function DatePicker ({
   React.useEffect(() => {
     let timeoutId: NodeJS.Timeout | null = null
 
-    if (!isOpen && view !== 'days') {
+    if (!(open ?? isOpen) && view !== 'days') {
       timeoutId = setTimeout(() => {
         setView('days')
       }, 200)
@@ -477,7 +477,7 @@ export function DatePicker ({
         clearTimeout(timeoutId)
       }
     }
-  }, [isOpen, view])
+  }, [isOpen, open, view])
 
   // Handle date selection
   const handleSelect = (day: Date) => {
@@ -567,7 +567,7 @@ export function DatePicker ({
   }
 
   return (
-    <Popover open={open ?? isOpen} onOpenChange={onOpenChange ?? setIsOpen}>
+    <DropdownMenu open={open} onOpenChange={onOpenChange}>
       <DatePickerTrigger
         className={className}
         placeholder={placeholder}
@@ -576,7 +576,7 @@ export function DatePicker ({
         rangeEnd={rangeEnd}
         isRangeMode={isRangeMode}
       />
-      <PopoverContent className="w-auto p-0" align={align}>
+      <DropdownMenuContent className='w-auto p-0' align={align}>
         <div className="p-3">
           <DatePickerHeader
             currentMonth={currentMonth as Date}
@@ -623,7 +623,7 @@ export function DatePicker ({
             </div>
           )}
         </div>
-      </PopoverContent>
-    </Popover>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
