@@ -1,8 +1,8 @@
 import { FilterKeys } from '@/components/data-table/data-table-types'
-import { datePickerFilter } from '@/components/data-table/filters/date-picker-filter'
-import { globalSearchFilter } from '@/components/data-table/filters/global-search-filter'
-import { partialMatchFilter } from '@/components/data-table/filters/partial-match-filter'
-import { selectionFilter } from '@/components/data-table/filters/selection-filter'
+import { datePickerFilter } from '@/components/data-table/filters/filter-date-picker'
+import { globalSearchFilter } from '@/components/data-table/filters/filter-global-search'
+import { partialMatchFilter } from '@/components/data-table/filters/filter-partial-match'
+import { selectionFilter } from '@/components/data-table/filters/filter-selection'
 
 // Filter raw functions
 export const FILTER_FUNCTIONS = {
