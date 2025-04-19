@@ -3,6 +3,8 @@ import type { Row, ColumnDef } from '@tanstack/react-table'
 
 type OnClickActionBase<TData, TReturn = void> = (rows: TData[], cleanRowSelection: () => void) => TReturn
 
+export type FilterFunction<TData,TValue = any> = (row: Row<TData>, columnId: string, filterValue: TValue) => boolean;
+
 export interface FilterParams<TData, TValue> {
   row: Row<TData>;
   columnId: string;

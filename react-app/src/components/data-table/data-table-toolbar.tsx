@@ -38,7 +38,6 @@ import {
 import type {
   CustomColumnDef,
   ExportFormat,
-  FilterColumn,
   FilterColumnExtended as FilterColumnExt
 } from '@/components/data-table/data-table-types'
 import { type Column, type Table } from '@tanstack/react-table'
@@ -54,8 +53,8 @@ import { Switch } from '@/components/ui/switch'
 import { DATA_TABLE_TEXT_CONTENT as TC } from '@/components/data-table/data-table-text-content'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { FILTER_FUNCTIONS, FILTERS } from '@/components/data-table/filters'
-import { createFilterFn, getFilterFn } from '@/components/data-table/data-table-utils'
+import { FILTERS } from '@/components/data-table/filters'
+import { getFilterFn } from '@/components/data-table/data-table-utils'
 
 function DataTableSelectSearch<TData> ({
   columns,
@@ -189,31 +188,44 @@ function DataTableColumnFilter<TData> ({
   onOpenChange
 }: {
   column: Column<TData>
-  filter: FilterColumn<TData> & { id: string };
+  filter: FilterColumnExt<TData>;
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
 }) {
   if (!filter) return null
 
-  const filterValue = column.getFilterValue()
+  const columnFilters = column.getFilterValue() as Record<FilterColumnExt<TData>['id'], any> || {}
+
+  const filterValue = columnFilters[filter.id]
   const selectedValues = new Set(Array.isArray(filterValue) ? filterValue : [])
 
+  const updateFilterValue = (value: any) => {
+    const newFilters = { ...columnFilters }
+
+    if (value === undefined || (Array.isArray(value) && value.length === 0)) {
+      delete newFilters[filter.id]
+    } else {
+      newFilters[filter.id] = value
+    }
+
+    const finalValue = Object.keys(newFilters).length > 0 ? newFilters : undefined
+    column.setFilterValue(finalValue)
+  }
+
   if (filter.type === FILTERS.DATE_PICKER) {
-    column.columnDef.filterFn = createFilterFn(FILTER_FUNCTIONS.DATE_PICKER)
     return (
       <DatePicker
         open={isOpen}
         onOpenChange={onOpenChange}
         value={filterValue ?? undefined}
-        onValueChange={ column.setFilterValue }
-        onReset={() => column.setFilterValue(undefined)}
+        onValueChange={updateFilterValue}
+        onReset={() => updateFilterValue(undefined)}
         placeholder={filter.label}
       />
     )
   }
 
   const isSingleSelection = filter.type === FILTERS.SINGLE_SELECTION
-
   return (
     <DropdownMenu open={isOpen} onOpenChange={onOpenChange}>
       <Button variant='outline' size='sm' asChild>
@@ -252,7 +264,7 @@ function DataTableColumnFilter<TData> ({
                             }
                           }
                           const filterValues = Array.from(selectedValues)
-                          column.setFilterValue(filterValues)
+                          updateFilterValue(filterValues.length > 0 ? filterValues : undefined)
                         }}
                       >
                         <div
@@ -286,7 +298,7 @@ function DataTableColumnFilter<TData> ({
                 className='w-full font-normal'
                 variant="ghost"
                 size='sm'
-                onClick={() => column.setFilterValue(undefined)}
+                onClick={() => updateFilterValue(undefined)}
               >
                 <TrashIcon className='text-muted-foreground' />
                 Delete filter

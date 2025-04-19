@@ -27,12 +27,13 @@ import type {
   CustomColumnDef,
   DataTableActions,
   DataTableTabsConfig,
-  FilterColumnExtended as FilterColumnExt
+  FilterColumnExtended as FilterColumnExt,
+  FilterFunction
 } from '@/components/data-table/data-table-types'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { getFilterFn } from '@/components/data-table/data-table-utils'
+import { createFilterFn, getFilterFn } from '@/components/data-table/data-table-utils'
 import { FILTERS } from '@/components/data-table/filters'
 
 export function DataTable<TData> ({
@@ -75,12 +76,23 @@ export function DataTable<TData> ({
 
   const extendedColumn = React.useMemo(() => {
     return columns.map(column => {
-      const filter = filterableColumns?.find((field) => field.columnKey === column.accessorKey)
-      if (filter) {
-        column.filterFn = getFilterFn(filter.type)
-      } else if (!column.filterFn) {
-        column.filterFn = getFilterFn(FILTERS.PARTIAL_MATCH)
+      column.filterFn = (row, columnId, filterValue) => {
+        if (!filterValue) return true
+
+        return Object
+          .entries(filterValue)
+          .every(([filterId, value]) => {
+            const filterConfig = filterableColumns?.find(f => f.id === filterId)
+            if (!filterConfig) return true
+
+            const filterFunction: FilterFunction<TData> = filterConfig.filterFn
+              ? createFilterFn(filterConfig.filterFn)
+              : getFilterFn(filterConfig.type)
+
+            return filterFunction(row, columnId, value)
+          })
       }
+
       const accessorFn = (originalRow: TData) =>
         originalRow[column.accessorKey as keyof TData]?.toString()
       return {
