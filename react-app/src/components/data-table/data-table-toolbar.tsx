@@ -328,7 +328,11 @@ function DataTableLeftToolbar<TData> ({
     table.setGlobalFilter({ searchBy, searchValue })
   }, [searchBy, searchValue, table])
 
-  const leafColumns = useMemo(() => table.getAllLeafColumns(), [table])
+  const leafColumns = useMemo(() => (
+    table
+      .getAllLeafColumns()
+      .filter(({ columnDef }) => (columnDef as CustomColumnDef<TData>)?.searchable)
+  ), [table])
 
   const handleFilterChange = (
     filterId: FilterColumnExt<TData>['id'],
