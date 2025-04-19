@@ -87,6 +87,7 @@ export const paymentsColumns: CustomColumnDef<Payment>[] = [
     width: 'auto',
     minWidth: 110,
     header: 'Date',
+    searchable: false,
     cell: ({ row }) => {
       const date = new Date(row.getValue('date'))
       date.setMinutes(date.getMinutes() + date.getTimezoneOffset())

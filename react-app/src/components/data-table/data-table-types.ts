@@ -17,6 +17,7 @@ export type CustomColumnDef<TData> = ColumnDef<TData> & {
   align?: 'left' | 'right' | 'center';
   minWidth?: string | number;
   label?: string;
+  searchable?: boolean;
 }
 
 export type DataTableTab<TData> = {

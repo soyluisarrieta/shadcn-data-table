@@ -1,4 +1,4 @@
-import type { FilterParams } from '@/components/data-table/data-table-types'
+import type { CustomColumnDef, FilterParams } from '@/components/data-table/data-table-types'
 
 type TParams<TData> = FilterParams<TData, {
   searchBy: string;
@@ -13,10 +13,11 @@ export const globalSearchFilter = <TData>({
 
   const searchValueLower = filterValue.searchValue.toLowerCase()
 
-  // 🚩 CONFIGURAR ALGUNA PROPIEDAD PARA IMPEDIR QUE SE HAGA BÚSQUEDA DE COLUMNAS ESPECIFICAS.
-
   if (filterValue.searchBy === 'all') {
     return row.getAllCells().some((cell) => {
+      const columnDef = cell.column.columnDef as CustomColumnDef<TData>
+      if (!columnDef?.searchable) return false
+
       const cellValue = cell.getValue()
       return String(cellValue).toLowerCase().includes(searchValueLower)
     })
