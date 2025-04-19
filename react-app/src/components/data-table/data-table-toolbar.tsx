@@ -397,7 +397,10 @@ function DataTableLeftToolbar<TData> ({
                     className='w-full flex justify-between items-center capitalize p-2 text-sm'
                     variant='ghost'
                     onClick={() => {
-                      setActiveFilters([...activeFilters, filter])
+                      const isFilterActive = activeFilters.some(activeFilter => activeFilter.id === filter.id)
+                      if (!isFilterActive) {
+                        setActiveFilters([...activeFilters, filter])
+                      }
                       setOpenFilterMenu(false)
                       handleFilterChange(filter.id, true)
                     }}
