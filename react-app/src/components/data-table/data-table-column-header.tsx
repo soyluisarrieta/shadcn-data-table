@@ -32,7 +32,7 @@ export function DataTableColumnHeader<TData> ({
 
   if (!canSort && !canHide) {
     return (
-      <div className={cn('flex items-center', className)}>
+      <div className={cn('flex items-center text-muted-foreground hover:text-secondary-foreground', className)}>
         {flexRender(header.column.columnDef.header, header.getContext())}
       </div>
     )
@@ -45,9 +45,9 @@ export function DataTableColumnHeader<TData> ({
     >
       <DropdownMenu>
         <Button
-          variant='ghost'
+          variant='link'
           size="sm"
-          className={cn('h-8 data-[state=open]:bg-accent text-xs', column.getIsSorted() && 'font-bold bg-muted/70')}
+          className={cn('h-8 hover:no-underline font-medium text-xs text-secondary-foreground/70 hover:text-secondary-foreground data-[state=open]:text-secondary-foreground focus-visible:text-secondary-foreground focus-visible:ring-0', column.getIsSorted() && 'font-bold bg-muted/70')}
           asChild
         >
           <DropdownMenuTrigger>

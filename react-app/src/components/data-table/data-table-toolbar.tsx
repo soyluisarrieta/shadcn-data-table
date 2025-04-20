@@ -473,7 +473,7 @@ function DataTableRightToolbar<TData> ({
               asChild
             >
               <PopoverTrigger>
-                <DownloadIcon className="text-muted-foreground" size={16} strokeWidth={2} />
+                <DownloadIcon size={16} strokeWidth={2} />
               </PopoverTrigger>
             </Button>
             <PopoverContent className='w-auto p-0' align='end'>

@@ -149,6 +149,21 @@ export function DataTable<TData> ({
 
   return (
     <>
+      {tabsConfig && (
+        <Tabs
+          defaultValue={tabsConfig.defaultTab || tabsConfig.tabs[0].value}
+          className={tabsConfig.className}
+          value={activeTab}
+          onValueChange={setActiveTab}
+        >
+          <TabsList className='w-full pb-0 rounded-none bg-transparent justify-start border-b [&>button]:grow-0 [&>button]:px-3 [&>button]:border-0 [&>button]:rounded-none [&>button]:dark:data-[state=active]:bg-transparent [&>button]:dark:data-[state=active]:border-b-2 [&>button]:dark:data-[state=active]:border-primary [&>button]:dark:data-[state=active]:text-primary [&>button]:hover:text-primary/90'>
+            {tabsConfig.tabs.map((tab) => (
+              <TabsTrigger key={tab.value} value={tab.value}>{tab.label}</TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      )}
+
       <DataTableToolbar>
         <DataTableLeftToolbar
           table={table}
@@ -161,22 +176,7 @@ export function DataTable<TData> ({
         />
       </DataTableToolbar>
 
-      {tabsConfig && (
-        <Tabs
-          defaultValue={tabsConfig.defaultTab || tabsConfig.tabs[0].value}
-          className={tabsConfig.className}
-          value={activeTab}
-          onValueChange={setActiveTab}
-        >
-          <TabsList className='w-full pb-0 rounded-none bg-transparent justify-start [&>button]:grow-0 [&>button]:px-3 [&>button]:border-0 [&>button]:rounded-none [&>button]:dark:data-[state=active]:bg-transparent [&>button]:dark:data-[state=active]:border-b-2 [&>button]:dark:data-[state=active]:border-primary [&>button]:dark:data-[state=active]:text-primary [&>button]:hover:text-primary/90'>
-            {tabsConfig.tabs.map((tab) => (
-              <TabsTrigger key={tab.value} value={tab.value}>{tab.label}</TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
-      )}
-
-      <div className="rounded-md border relative [&>div]:overflow-clip [&>div]:rounded-t-md">
+      <div className="rounded-md relative [&>div]:overflow-clip [&>div]:rounded-t-md">
         <ScrollArea type='always'>
           <Table className={!widthExists ? 'w-auto' : 'w-full'}>
             <DataTableHeader
@@ -228,9 +228,9 @@ function DataTableHeader<TData> ({
   minWidthExists: boolean;
 }) {
   return (
-    <TableHeader className='bg-background/30 backdrop-blur-lg border-0 [&_tr]:border-0 outline outline-border sticky top-0 z-10'>
+    <TableHeader className='bg-transparent backdrop-blur-lg border-0 outline-0 [&_tr]:border-0 sticky top-0 z-10'>
       {table.getHeaderGroups().map((headerGroup) => (
-        <TableRow key={headerGroup.id}>
+        <TableRow key={headerGroup.id} className='[&>th]:first:rounded-l-lg [&>th]:last:rounded-r-lg'>
           {headerGroup.headers.map((header) => {
             const column = header.column.columnDef as CustomColumnDef<TData>
             const columnStyle: React.CSSProperties = {
@@ -240,7 +240,7 @@ function DataTableHeader<TData> ({
             return (
               <TableHead
                 key={header.id}
-                className='px-0'
+                className='px-0 bg-border'
                 style={columnStyle}
               >
                 <DataTableColumnHeader
@@ -285,7 +285,7 @@ function DataTableRow<TData> ({
           return (
             <TableCell
               key={cell.id}
-              className='px-3'
+              className='p-3'
               style={columnStyle}
             >
               {isLoading && i !== 0 && i !== totalColumns - 1 ? (
