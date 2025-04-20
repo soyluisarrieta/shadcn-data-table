@@ -45,7 +45,6 @@ This will install the data table component and all its dependencies to your proj
 - [x] Show or hide columns
 - [x] Export records to different formats
 - [x] Highlight selected rows
-- [x] Fixed header on scroll
 - [x] Data loading skeleton
 - [x] Tabs for different tables
 - [x] Texts centralized in constants

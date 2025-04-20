@@ -176,7 +176,7 @@ export function DataTable<TData> ({
         />
       </DataTableToolbar>
 
-      <div className="rounded-md relative [&>div]:overflow-clip [&>div]:rounded-t-md">
+      <div className="relative">
         <ScrollArea type='always'>
           <Table className={!widthExists ? 'w-auto' : 'w-full'}>
             <DataTableHeader
@@ -228,7 +228,7 @@ function DataTableHeader<TData> ({
   minWidthExists: boolean;
 }) {
   return (
-    <TableHeader className='bg-transparent backdrop-blur-lg border-0 outline-0 [&_tr]:border-0 sticky top-0 z-10'>
+    <TableHeader className='border-0 outline-0 [&_tr]:border-0'>
       {table.getHeaderGroups().map((headerGroup) => (
         <TableRow key={headerGroup.id} className='[&>th]:first:rounded-l-lg [&>th]:last:rounded-r-lg'>
           {headerGroup.headers.map((header) => {
