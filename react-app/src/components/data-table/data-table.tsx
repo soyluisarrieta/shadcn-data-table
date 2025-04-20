@@ -240,13 +240,10 @@ function DataTableHeader<TData> ({
             return (
               <TableHead
                 key={header.id}
-                className='px-0 bg-border'
+                className='px-0 bg-muted hover:muted dark:bg-border'
                 style={columnStyle}
               >
-                <DataTableColumnHeader
-                  className='mr-1'
-                  header={header}
-                />
+                <DataTableColumnHeader header={header} />
               </TableHead>
             )
           })}
@@ -272,6 +269,7 @@ function DataTableRow<TData> ({
     table.getRowModel().rows.map((row) => (
       <TableRow
         key={row.id}
+        className='hover:bg-muted/20 data-[state=selected]:bg-muted/40 data-[state=selected]:hover:bg-muted/40'
         data-state={row.getIsSelected() && 'selected'}
       >
         {row.getVisibleCells().map((cell, i) => {

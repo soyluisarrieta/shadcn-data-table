@@ -19,8 +19,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
 export function DataTableColumnHeader<TData> ({
-  header,
-  className
+  header
 }: React.HTMLAttributes<HTMLDivElement> & {
   header:  Header<TData, unknown>
 }) {
@@ -32,7 +31,7 @@ export function DataTableColumnHeader<TData> ({
 
   if (!canSort && !canHide) {
     return (
-      <div className={cn('flex items-center text-muted-foreground hover:text-secondary-foreground', className)}>
+      <div className='flex items-center text-muted-foreground hover:text-secondary-foreground mr-1'>
         {flexRender(header.column.columnDef.header, header.getContext())}
       </div>
     )
@@ -40,14 +39,17 @@ export function DataTableColumnHeader<TData> ({
 
   return (
     <div
-      className={cn('flex items-center space-x-2', className)}
+      className='flex items-center space-x-2 mr-1'
       style={{ justifyContent: columnDef.align }}
     >
       <DropdownMenu>
         <Button
           variant='link'
           size="sm"
-          className={cn('h-8 hover:no-underline font-medium text-xs text-secondary-foreground/70 hover:text-secondary-foreground data-[state=open]:text-secondary-foreground focus-visible:text-secondary-foreground focus-visible:ring-0', column.getIsSorted() && 'font-bold bg-muted/70')}
+          className={cn(
+            'h-8 hover:no-underline font-medium text-xs text-secondary-foreground/70 hover:text-secondary-foreground data-[state=open]:text-secondary-foreground focus-visible:text-secondary-foreground focus-visible:ring-0',
+            column.getIsSorted() && 'font-bold bg-muted/70'
+          )}
           asChild
         >
           <DropdownMenuTrigger>
