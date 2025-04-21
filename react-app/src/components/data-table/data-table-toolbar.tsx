@@ -188,12 +188,14 @@ function DataTableColumnFilter<TData> ({
   column,
   filter,
   isOpen,
-  onOpenChange
+  onOpenChange,
+  onRemoveFilter
 }: {
   column: Column<TData>
   filter: FilterColumnExt<TData>;
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  onRemoveFilter?: (filterId: FilterColumnExt<TData>['id']) => void;
 }) {
   if (!filter) return null
 
@@ -242,9 +244,9 @@ function DataTableColumnFilter<TData> ({
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={onOpenChange}>
-      <div className='bg-accent/30 border rounded-lg flex items-center'>
+      <div className='bg-accent/30 border rounded-lg flex items-center h-8'>
         <Button
-          className='bg-accent flex items-center gap-1.5 pr-3'
+          className='bg-accent/90 dark:hover:bg-accent/70 flex items-center gap-1.5 pr-3'
           variant='ghost'
           size='sm'
           asChild
@@ -261,10 +263,7 @@ function DataTableColumnFilter<TData> ({
                     <span className='max-w-24 truncate'>{selectedOptionLabel}</span>
                   ) : (
                     <span>
-                      {selectedValues.size < 2
-                        ? selectedValues.size
-                        : '+9'
-                      }
+                      {selectedValues.size < 10 ? selectedValues.size : '+9'}
                     </span>
                   )}
                 </Badge>
@@ -279,6 +278,9 @@ function DataTableColumnFilter<TData> ({
           onClick={(e) => {
             e.stopPropagation()
             updateFilterValue(undefined)
+            if (onRemoveFilter) {
+              onRemoveFilter(filter.id)
+            }
           }}
         >
           <XIcon />
@@ -346,6 +348,7 @@ function DataTableColumnFilter<TData> ({
                   variant="ghost"
                   size='sm'
                   onClick={() => updateFilterValue(undefined)}
+                  disabled={selectedValues.size === 0}
                 >
                   <RotateCwIcon className='size-3.5 text-muted-foreground' />
                   Reset
@@ -355,7 +358,12 @@ function DataTableColumnFilter<TData> ({
                   className='grow font-normal flex items-center gap-1.5'
                   variant="ghost"
                   size='sm'
-                  onClick={() => updateFilterValue(undefined)}
+                  onClick={() => {
+                    updateFilterValue(undefined)
+                    if (onRemoveFilter) {
+                      onRemoveFilter(filter.id)
+                    }
+                  }}
                 >
                   <TrashIcon className='size-3.5 text-muted-foreground' />
                   Delete
@@ -404,7 +412,7 @@ function DataTableLeftToolbar<TData> ({
   }
 
   return (
-    <div className='flex-1 flex flex-col sm:flex-row gap-2'>
+    <div className='flex-1 flex flex-col lg:flex-row gap-2'>
       <div className='flex w-full sm:w-auto'>
         <DataTableSelectSearch
           columns={leafColumns}
@@ -429,20 +437,23 @@ function DataTableLeftToolbar<TData> ({
               onOpenChange={(open) => {
                 handleFilterChange(filter.id, open)
               }}
+              onRemoveFilter={(filterId) => {
+                const updatedFilters = activeFilters.filter(f => f.id !== filterId)
+                setActiveFilters(updatedFilters)
+              }}
             />
           )}
         )}
 
         <DropdownMenu open={openFilterMenu} onOpenChange={setOpenFilterMenu}>
           <Button
-            variant='outline'
-            size='sm'
+            className='whitespace-nowrap border border-dashed flex items-center gap-1.5 h-8 text-sm'
+            variant='ghost'
             asChild
-            className='whitespace-nowrap border-dashed flex items-center gap-1.5 h-8 text-xs sm:text-sm'
           >
             <DropdownMenuTrigger>
               <ListFilterIcon className='size-4' />
-              <span className='hidden sm:inline font-medium'>Add filter</span>
+              <span className='font-medium'>Add filter</span>
             </DropdownMenuTrigger>
           </Button>
           <DropdownMenuContent>
@@ -607,7 +618,7 @@ function DataTableToolbar ({
   children?: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center py-3 gap-2">
+    <div className="flex flex-col sm:flex-row items-start py-3 gap-2">
       {children}
     </div>
   )
