@@ -24,7 +24,8 @@ import {
   RotateCwIcon,
   SettingsIcon,
   XCircleIcon,
-  TrashIcon
+  TrashIcon,
+  XIcon
 } from 'lucide-react'
 import {
   Command,
@@ -142,7 +143,9 @@ function DataTableDropdownView<TData> ({
         </DropdownMenuTrigger>
       </Button>
       <DropdownMenuContent align="end" className="min-w-44">
-        <DropdownMenuLabel>{TC.COLUMNS.DROPDOWN_LABEL}</DropdownMenuLabel>
+        <DropdownMenuLabel className='text-muted-foreground font-normal text-xs'>
+          {TC.COLUMNS.DROPDOWN_LABEL}
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()
@@ -226,22 +229,65 @@ function DataTableColumnFilter<TData> ({
   }
 
   const isSingleSelection = filter.type === FILTERS.SINGLE_SELECTION
+
+  // Encontrar la etiqueta de la opción seleccionada para filtros con una sola selección
+  let selectedOptionLabel = ''
+  if (selectedValues.size === 1 && filter.options) {
+    const selectedValue = Array.from(selectedValues)[0]
+    const selectedOption = filter.options.find(option => option.value === selectedValue)
+    if (selectedOption) {
+      selectedOptionLabel = selectedOption.label
+    }
+  }
+
   return (
     <DropdownMenu open={isOpen} onOpenChange={onOpenChange}>
-      <Button variant='outline' size='sm' asChild>
-        <DropdownMenuTrigger>
-          {filter.label}
-          <Badge className='size-4 rounded-full p-0 flex justify-center items-center text-[10px] m-0 text-center'>
-            {selectedValues.size || 0}
-          </Badge>
-        </DropdownMenuTrigger>
-      </Button>
-      <DropdownMenuContent className='max-w-44'>
+      <div className='bg-accent/30 border rounded-lg flex items-center'>
+        <Button
+          className='bg-accent flex items-center gap-1.5 pr-3'
+          variant='ghost'
+          size='sm'
+          asChild
+        >
+          <DropdownMenuTrigger>
+            <div className='flex items-center gap-1.5'>
+              <span className='font-normal opacity-70'>{filter.label}:</span>
+              {selectedValues.size >= 0 && (
+                <Badge
+                  className={cn('flex items-center gap-1 px-2 py-0.5 h-5 text-xs', selectedValues.size > 1 && 'aspect-square')}
+                  variant='outline'
+                >
+                  {selectedValues.size === 1 && selectedOptionLabel ? (
+                    <span className='max-w-24 truncate'>{selectedOptionLabel}</span>
+                  ) : (
+                    <span>
+                      {selectedValues.size < 2
+                        ? selectedValues.size
+                        : '+9'
+                      }
+                    </span>
+                  )}
+                </Badge>
+              )}
+            </div>
+          </DropdownMenuTrigger>
+        </Button>
+        <Button
+          className='size-4 p-0 hover:dark:bg-transparent text-muted-foreground mx-1.5'
+          variant='ghost'
+          size='icon'
+          onClick={(e) => {
+            e.stopPropagation()
+            updateFilterValue(undefined)
+          }}
+        >
+          <XIcon />
+        </Button>
+      </div>
+      <DropdownMenuContent className='min-w-44 p-0'>
         <DropdownMenuGroup>
           <Command className='p-0'>
-            {filter.options && filter.options.length > 7 && (
-              <CommandInput placeholder='Search' />
-            )}
+            <CommandInput placeholder='Search option' />
             <CommandList className="max-h-full p-1">
               <CommandEmpty className='text-muted-foreground text-sm p-4'>{TC.FILTERS.FILTER_EMPTY}</CommandEmpty>
               <ScrollArea className='flex max-h-52 flex-col overflow-y-auto'>
@@ -269,21 +315,21 @@ function DataTableColumnFilter<TData> ({
                       >
                         <div
                           className={cn(
-                            'flex size-4 items-center justify-center rounded-sm border border-primary cursor-pointer',
+                            'flex size-4 items-center justify-center rounded-sm border border-primary cursor-pointer mr-2',
                             isSingleSelection && 'rounded-full outline outline-offset-1',
                             isSelected
                               ? 'bg-primary text-primary-foreground'
                               : 'opacity-50 [&_svg]:invisible'
                           )}
                         >
-                          <CheckIcon className="size-4" />
+                          <CheckIcon className="size-3.5" />
                         </div>
                         {option.icon && (
-                          <option.icon className="size-4 text-muted-foreground" />
+                          <option.icon className="size-4 text-muted-foreground mr-1.5" />
                         )}
-                        <span>{option.label}</span>
+                        <span className="text-sm">{option.label}</span>
                         {option.count && (
-                          <span className="ml-auto flex size-4 items-center justify-center font-mono text-xs">
+                          <span className="ml-auto flex size-5 items-center justify-center font-mono text-xs bg-muted rounded-full">
                             {option.count}
                           </span>
                         )}
@@ -294,15 +340,27 @@ function DataTableColumnFilter<TData> ({
               </ScrollArea>
 
               <CommandSeparator className='mb-2' />
-              <Button
-                className='w-full font-normal'
-                variant="ghost"
-                size='sm'
-                onClick={() => updateFilterValue(undefined)}
-              >
-                <TrashIcon className='text-muted-foreground' />
-                Delete filter
-              </Button>
+              <div className='flex justify-between items-center gap-x-2'>
+                <Button
+                  className='grow font-normal flex items-center gap-1.5'
+                  variant="ghost"
+                  size='sm'
+                  onClick={() => updateFilterValue(undefined)}
+                >
+                  <RotateCwIcon className='size-3.5 text-muted-foreground' />
+                  Reset
+                </Button>
+                <span className='h-4 border-r' />
+                <Button
+                  className='grow font-normal flex items-center gap-1.5'
+                  variant="ghost"
+                  size='sm'
+                  onClick={() => updateFilterValue(undefined)}
+                >
+                  <TrashIcon className='size-3.5 text-muted-foreground' />
+                  Delete
+                </Button>
+              </div>
             </CommandList>
           </Command>
         </DropdownMenuGroup>
@@ -346,8 +404,8 @@ function DataTableLeftToolbar<TData> ({
   }
 
   return (
-    <div className='flex-1 flex gap-2'>
-      <div className='flex'>
+    <div className='flex-1 flex flex-col sm:flex-row gap-2'>
+      <div className='flex w-full sm:w-auto'>
         <DataTableSelectSearch
           columns={leafColumns}
           value={searchBy}
@@ -358,7 +416,7 @@ function DataTableLeftToolbar<TData> ({
           onValueChange={setSearchValue}
         />
       </div>
-      <div className='rounded-lg flex items-center gap-1 px-0.5'>
+      <div className='rounded-lg flex flex-wrap items-center gap-1 px-0.5 mt-2 sm:mt-0'>
         {activeFilters.map(filter => {
           const column = table.getColumn(filter.columnKey)
           if (!column) return null
@@ -376,10 +434,15 @@ function DataTableLeftToolbar<TData> ({
         )}
 
         <DropdownMenu open={openFilterMenu} onOpenChange={setOpenFilterMenu}>
-          <Button variant='ghost' size='sm' asChild>
-            <DropdownMenuTrigger className='border border-dashed'>
-              <ListFilterIcon />
-              Add filter
+          <Button
+            variant='outline'
+            size='sm'
+            asChild
+            className='whitespace-nowrap border-dashed flex items-center gap-1.5 h-8 text-xs sm:text-sm'
+          >
+            <DropdownMenuTrigger>
+              <ListFilterIcon className='size-4' />
+              <span className='hidden sm:inline font-medium'>Add filter</span>
             </DropdownMenuTrigger>
           </Button>
           <DropdownMenuContent>
@@ -413,14 +476,14 @@ function DataTableLeftToolbar<TData> ({
                 <>
                   <DropdownMenuSeparator />
                   <Button
-                    className="w-full font-normal"
+                    className="w-full font-normal flex items-center gap-1.5"
                     variant="ghost"
                     size='sm'
                     onClick={() => table.resetColumnFilters()}
                     asChild
                   >
                     <DropdownMenuItem>
-                      <RotateCwIcon />
+                      <RotateCwIcon className="size-4" />
                       Clear filters
                     </DropdownMenuItem>
                   </Button>
@@ -462,7 +525,7 @@ function DataTableRightToolbar<TData> ({
   }
 
   return (
-    <div className='hidden lg:flex gap-1'>
+    <div className='flex gap-1 mt-2 sm:mt-0'>
       <DataTableDropdownView table={table} />
       {onExport && (
         <div className='flex items-center'>
@@ -544,7 +607,7 @@ function DataTableToolbar ({
   children?: React.ReactNode
 }) {
   return (
-    <div className="flex items-center py-3">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center py-3 gap-2">
       {children}
     </div>
   )
