@@ -22,8 +22,8 @@ import {
   DownloadIcon,
   ListFilterIcon,
   RotateCwIcon,
+  SearchIcon,
   SettingsIcon,
-  XCircleIcon,
   TrashIcon,
   XIcon
 } from 'lucide-react'
@@ -68,9 +68,6 @@ function DataTableSelectSearch<TData> ({
 }) {
   return (
     <Select value={value} onValueChange={onValueChange}>
-      <SelectTrigger className="w-[120px] rounded-r-none border-r-0 bg-muted/50 text-muted-foreground">
-        <SelectValue placeholder={TC.SEARCH.GLOBAL_SEARCH} />
-      </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           <SelectLabel>{TC.SEARCH.SEARCH_BY_LABEL}</SelectLabel>
@@ -96,31 +93,56 @@ function DataTableSelectSearch<TData> ({
   )
 }
 
-function DataTableSearchInput ({
+function DataTableSearchInput<TData> ({
   value,
-  onValueChange
+  onValueChange,
+  columns,
+  searchBy,
+  onSearchByChange
 }: {
   value: string
   onValueChange: (value: string) => void
+  columns: Column<TData>[]
+  searchBy: string
+  onSearchByChange: (column: string) => void
 }) {
   return (
-    <div className="relative flex-1 w-full lg:max-w-72">
-      <Input
-        className="w-full pr-9 rounded-l-none"
-        placeholder={TC.SEARCH.PLACEHOLDER}
-        value={value}
-        onChange={(e) => onValueChange(e.target.value)}
-      />
-      {value && (
-        <Button
-          className="h-8 px-2 lg:px-2 absolute right-0 top-1/2 -translate-y-1/2 text-foreground/50 hover:text-foreground"
-          variant="link"
-          size="icon"
-          onClick={() => onValueChange('')}
-        >
-          <XCircleIcon />
-        </Button>
-      )}
+    <div className='min-w-60'>
+      <div className="relative flex-1 flex items-center group">
+        <SearchIcon className='size-4 absolute left-2 text-muted-foreground' />
+        <Input
+          className="w-full md:max-w-52 border-r-0 rounded-r-none focus-visible:ring-0 group-focus-within:border-ring pl-8"
+          placeholder={TC.SEARCH.PLACEHOLDER}
+          value={value}
+          onChange={(e) => onValueChange(e.target.value)}
+        />
+        <Select value={searchBy} onValueChange={onSearchByChange}>
+          <SelectTrigger className="h-7 p-0 px-1 hover:dark:bg-input/30 focus-visible:ring-0 border border-l-0 rounded-l-none text-xs group-focus-within:border-ring text-primary/80 hover:text-primary">
+            <span  className="max-w-16 truncate"><SelectValue /></span>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>{TC.SEARCH.SEARCH_BY_LABEL}</SelectLabel>
+              <SelectSeparator />
+              <SelectItem value="all">{TC.SEARCH.GLOBAL_SEARCH}</SelectItem>
+              {columns.map((column) => {
+                if (!column.getCanFilter()) { return null }
+                const col = column.columnDef as CustomColumnDef<TData>
+                if (col.filterFn === getFilterFn(FILTERS.DATE_PICKER)) { return null }
+                const label = (col?.label) ?? col.header
+                if (!label || typeof label !== 'string') {
+                  return null
+                }
+                return (
+                  <SelectItem key={column.id} value={column.id}>
+                    {label}
+                  </SelectItem>
+                )}
+              )}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   )
 }
@@ -413,18 +435,14 @@ function DataTableLeftToolbar<TData> ({
 
   return (
     <div className='flex-1 flex flex-col lg:flex-row gap-2'>
-      <div className='flex w-full sm:w-auto'>
-        <DataTableSelectSearch
-          columns={leafColumns}
-          value={searchBy}
-          onValueChange={setSearchBy}
-        />
-        <DataTableSearchInput
-          value={searchValue}
-          onValueChange={setSearchValue}
-        />
-      </div>
-      <div className='rounded-lg flex flex-wrap items-center gap-1 px-0.5 mt-2 sm:mt-0'>
+      <DataTableSearchInput
+        columns={leafColumns}
+        value={searchValue}
+        onValueChange={setSearchValue}
+        searchBy={searchBy}
+        onSearchByChange={setSearchBy}
+      />
+      <div className='w-full rounded-lg flex flex-wrap items-center gap-1 px-0.5 py-2 lg:py-0'>
         {activeFilters.map(filter => {
           const column = table.getColumn(filter.columnKey)
           if (!column) return null
@@ -536,18 +554,18 @@ function DataTableRightToolbar<TData> ({
   }
 
   return (
-    <div className='flex gap-1 mt-2 sm:mt-0'>
+    <div className='flex gap-1'>
       <DataTableDropdownView table={table} />
       {onExport && (
         <div className='flex items-center'>
           <Popover open={openExportPopover} onOpenChange={setOpenExportPopover}>
             <Button
-              className="rounded-none first:rounded-s-lg last:rounded-e-lg"
               variant='outline'
               asChild
             >
               <PopoverTrigger>
                 <DownloadIcon size={16} strokeWidth={2} />
+                Export
               </PopoverTrigger>
             </Button>
             <PopoverContent className='w-auto p-0' align='end'>
@@ -618,7 +636,7 @@ function DataTableToolbar ({
   children?: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col sm:flex-row items-start py-3 gap-2">
+    <div className="flex flex-col sm:flex-row items-start justify-start py-3 gap-2">
       {children}
     </div>
   )
