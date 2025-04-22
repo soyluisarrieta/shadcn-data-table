@@ -158,10 +158,11 @@ function DataTableDropdownView<TData> ({
       <Button
         variant="outline"
         className="ml-auto flex"
+        size='icon'
         asChild
       >
         <DropdownMenuTrigger>
-          <SettingsIcon />
+          <SettingsIcon className='text-muted-foreground' />
         </DropdownMenuTrigger>
       </Button>
       <DropdownMenuContent align="end" className="min-w-44">
@@ -434,94 +435,100 @@ function DataTableLeftToolbar<TData> ({
   }
 
   return (
-    <div className='flex-1 flex flex-col lg:flex-row gap-2'>
-      <DataTableSearchInput
-        columns={leafColumns}
-        value={searchValue}
-        onValueChange={setSearchValue}
-        searchBy={searchBy}
-        onSearchByChange={setSearchBy}
-      />
-      <div className='w-full rounded-lg flex flex-wrap items-center gap-1 px-0.5 py-2 lg:py-0'>
-        {activeFilters.map(filter => {
-          const column = table.getColumn(filter.columnKey)
-          if (!column) return null
-          return (
-            <DataTableColumnFilter
-              key={filter.id}
-              column={column}
-              filter={filter}
-              isOpen={openFilterDropdown === filter.id}
-              onOpenChange={(open) => {
-                handleFilterChange(filter.id, open)
-              }}
-              onRemoveFilter={(filterId) => {
-                const updatedFilters = activeFilters.filter(f => f.id !== filterId)
-                setActiveFilters(updatedFilters)
-              }}
-            />
-          )}
-        )}
-
-        <DropdownMenu open={openFilterMenu} onOpenChange={setOpenFilterMenu}>
-          <Button
-            className='whitespace-nowrap border border-dashed flex items-center gap-1.5 h-8 text-sm'
-            variant='ghost'
-            asChild
-          >
-            <DropdownMenuTrigger>
-              <ListFilterIcon className='size-4' />
-              <span className='font-medium'>Add filter</span>
-            </DropdownMenuTrigger>
-          </Button>
-          <DropdownMenuContent>
-            <DropdownMenuGroup>
-              <DropdownMenuLabel className='text-xs text-muted-foreground font-normal'>
-                Select column
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {columnFilters?.map(filter => {
-                const column = table.getColumn(filter.columnKey)
-                if (!column) return null
-                return (
-                  <Button
-                    key={filter.id}
-                    className='w-full flex justify-between items-center capitalize p-2 text-sm'
-                    variant='ghost'
-                    onClick={() => {
-                      const isFilterActive = activeFilters.some(activeFilter => activeFilter.id === filter.id)
-                      if (!isFilterActive) {
-                        setActiveFilters([...activeFilters, filter])
-                      }
-                      setOpenFilterMenu(false)
-                      handleFilterChange(filter.id, true)
-                    }}
-                  >
-                    {filter.label}
-                  </Button>
-                )
-              })}
-              {table.getState().columnFilters.length > 0 && (
-                <>
-                  <DropdownMenuSeparator />
-                  <Button
-                    className="w-full font-normal flex items-center gap-1.5"
-                    variant="ghost"
-                    size='sm'
-                    onClick={() => table.resetColumnFilters()}
-                    asChild
-                  >
-                    <DropdownMenuItem>
-                      <RotateCwIcon className="size-4" />
-                      Clear filters
-                    </DropdownMenuItem>
-                  </Button>
-                </>
-              )}
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+    <div className='flex-1 flex flex-col gap-2 w-full'>
+      <div className='w-full flex flex-col sm:flex-row gap-2'>
+        <DataTableSearchInput
+          columns={leafColumns}
+          value={searchValue}
+          onValueChange={setSearchValue}
+          searchBy={searchBy}
+          onSearchByChange={setSearchBy}
+        />
+        <div className='flex-shrink-0 flex justify-start sm:justify-end'>
+          <DropdownMenu open={openFilterMenu} onOpenChange={setOpenFilterMenu}>
+            <Button
+              className='whitespace-nowrap border border-dashed flex items-center gap-1.5 h-8 text-sm w-full sm:w-auto'
+              variant='ghost'
+              asChild
+            >
+              <DropdownMenuTrigger>
+                <ListFilterIcon className='size-4' />
+                <span className='font-medium'>Add filter</span>
+              </DropdownMenuTrigger>
+            </Button>
+            <DropdownMenuContent>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className='text-xs text-muted-foreground font-normal'>
+                  Select column
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {columnFilters?.map(filter => {
+                  const column = table.getColumn(filter.columnKey)
+                  if (!column) return null
+                  return (
+                    <Button
+                      key={filter.id}
+                      className='w-full flex justify-between items-center capitalize p-2 text-sm'
+                      variant='ghost'
+                      onClick={() => {
+                        const isFilterActive = activeFilters.some(activeFilter => activeFilter.id === filter.id)
+                        if (!isFilterActive) {
+                          setActiveFilters([...activeFilters, filter])
+                        }
+                        setOpenFilterMenu(false)
+                        handleFilterChange(filter.id, true)
+                      }}
+                    >
+                      {filter.label}
+                    </Button>
+                  )
+                })}
+                {table.getState().columnFilters.length > 0 && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <Button
+                      className="w-full font-normal flex items-center gap-1.5"
+                      variant="ghost"
+                      size='sm'
+                      onClick={() => table.resetColumnFilters()}
+                      asChild
+                    >
+                      <DropdownMenuItem>
+                        <RotateCwIcon className="size-4" />
+                        Clear filters
+                      </DropdownMenuItem>
+                    </Button>
+                  </>
+                )}
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
+
+      {activeFilters.length > 0 && (
+        <div className='w-full pb-1 flex flex-wrap items-center gap-1 px-0.5'>
+          {activeFilters.map(filter => {
+            const column = table.getColumn(filter.columnKey)
+            if (!column) return null
+            return (
+              <DataTableColumnFilter
+                key={filter.id}
+                column={column}
+                filter={filter}
+                isOpen={openFilterDropdown === filter.id}
+                onOpenChange={(open) => {
+                  handleFilterChange(filter.id, open)
+                }}
+                onRemoveFilter={(filterId) => {
+                  const updatedFilters = activeFilters.filter(f => f.id !== filterId)
+                  setActiveFilters(updatedFilters)
+                }}
+              />
+            )}
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -564,7 +571,7 @@ function DataTableRightToolbar<TData> ({
               asChild
             >
               <PopoverTrigger>
-                <DownloadIcon size={16} strokeWidth={2} />
+                <DownloadIcon className='text-muted-foreground'  />
                 Export
               </PopoverTrigger>
             </Button>
@@ -636,7 +643,7 @@ function DataTableToolbar ({
   children?: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col sm:flex-row items-start justify-start py-3 gap-2">
+    <div className="flex flex-col sm:flex-row items-start justify-start py-3 gap-3">
       {children}
     </div>
   )
