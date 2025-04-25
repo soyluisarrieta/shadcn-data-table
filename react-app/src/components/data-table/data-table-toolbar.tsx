@@ -18,7 +18,6 @@ import { Select,
 } from '@/components/ui/select'
 import {
   CheckIcon,
-  Columns3Icon,
   CopyIcon,
   DownloadIcon,
   ListFilterIcon,
@@ -95,28 +94,33 @@ function DataTableSelectSearch<TData> ({
 }
 
 function DataTableSearchInput<TData> ({
-  value,
-  onValueChange,
-  columns,
-  searchBy,
-  onSearchByChange
+  table
 }: {
-  value: string
-  onValueChange: (value: string) => void
-  columns: Column<TData>[]
-  searchBy: string
-  onSearchByChange: (column: string) => void
+  table: Table<TData>;
 }) {
+  const [searchBy, setSearchBy] = useState('all')
+  const [searchValue, setSearchValue] = useState('')
+
+  useEffect(() => {
+    table.setGlobalFilter({ searchBy, searchValue })
+  }, [searchBy, searchValue, table])
+
+  const leafColumns = useMemo(() => (
+    table
+      .getAllLeafColumns()
+      .filter(({ columnDef }) => (columnDef as CustomColumnDef<TData>)?.searchable)
+  ), [table])
+
   return (
     <div className="sm:w-fit min-w-56 relative flex-1 flex items-center group">
       <SearchIcon className='size-4 absolute left-2 text-muted-foreground' />
       <Input
         className="border-r-0 rounded-r-none focus-visible:ring-0 group-focus-within:border-ring pl-8"
         placeholder={TC.SEARCH.PLACEHOLDER}
-        value={value}
-        onChange={(e) => onValueChange(e.target.value)}
+        value={searchValue}
+        onChange={(e) => setSearchValue(e.target.value)}
       />
-      <Select value={searchBy} onValueChange={onSearchByChange}>
+      <Select value={searchBy} onValueChange={setSearchBy}>
         <SelectTrigger className="h-7 p-0 px-1 hover:dark:bg-input/30 focus-visible:ring-0 border border-l-0 rounded-l-none text-xs group-focus-within:border-ring text-primary/80 hover:text-primary">
           <span className="max-w-16 truncate">
             <SelectValue />
@@ -127,7 +131,7 @@ function DataTableSearchInput<TData> ({
             <SelectLabel>{TC.SEARCH.SEARCH_BY_LABEL}</SelectLabel>
             <SelectSeparator />
             <SelectItem value="all">{TC.SEARCH.GLOBAL_SEARCH}</SelectItem>
-            {columns.map((column) => {
+            {leafColumns.map((column) => {
               if (!column.getCanFilter()) { return null }
               const col = column.columnDef as CustomColumnDef<TData>
               if (col.filterFn === getFilterFn(FILTERS.DATE_PICKER)) { return null }
@@ -363,21 +367,9 @@ function DataTableLeftToolbar<TData> ({
   table: Table<TData>;
   columnFilters?: FilterColumnExt<TData>[];
 }) {
-  const [searchBy, setSearchBy] = useState('all')
-  const [searchValue, setSearchValue] = useState('')
   const [openFilterMenu, setOpenFilterMenu] = useState(false)
   const [openFilterDropdown, setOpenFilterDropdown] = useState<FilterColumnExt<TData>['id']>()
   const [activeFilters, setActiveFilters] = useState<FilterColumnExt<TData>[]>([])
-
-  useEffect(() => {
-    table.setGlobalFilter({ searchBy, searchValue })
-  }, [searchBy, searchValue, table])
-
-  const leafColumns = useMemo(() => (
-    table
-      .getAllLeafColumns()
-      .filter(({ columnDef }) => (columnDef as CustomColumnDef<TData>)?.searchable)
-  ), [table])
 
   const handleFilterChange = (
     filterId: FilterColumnExt<TData>['id'],
@@ -392,13 +384,7 @@ function DataTableLeftToolbar<TData> ({
 
   return (
     <div className='w-full flex flex-col gap-2'>
-      <DataTableSearchInput
-        columns={leafColumns}
-        value={searchValue}
-        onValueChange={setSearchValue}
-        searchBy={searchBy}
-        onSearchByChange={setSearchBy}
-      />
+      <DataTableSearchInput table={table} />
       <div className='w-full flex items-center gap-2 flex-wrap'>
         {activeFilters.length > 0 && activeFilters.map(filter => {
           const column = table.getColumn(filter.columnKey)
