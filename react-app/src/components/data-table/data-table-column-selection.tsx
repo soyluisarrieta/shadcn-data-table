@@ -101,7 +101,7 @@ export function DataTableColumnSelection<TData> (): CustomColumnDef<TData> {
           className='relative'
           checked={table.getIsAllPageRowsSelected()}
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label={TC.FILTERS.SELECT_ALL}
+          aria-label={TC.ACCESSIBILITY.SELECT_ROW}
         />
         {table.getIsSomePageRowsSelected() &&
           <MinusIcon className='absolute size-3 text-foreground pointer-events-none' />
@@ -113,7 +113,7 @@ export function DataTableColumnSelection<TData> (): CustomColumnDef<TData> {
         className='mr-2'
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label={TC.FILTERS.SELECT_ALL}
+        aria-label={TC.ACCESSIBILITY.SELECT_ROW}
       />
     ),
     enableSorting: false,

@@ -24,22 +24,10 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
+import { DATA_TABLE_TEXT_CONTENT as TC } from '@/components/data-table/data-table-text-content'
 
-const DAY_NAMES = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
-const MONTHS = [
-  { name: 'Jan', full: 'January' },
-  { name: 'Feb', full: 'February' },
-  { name: 'Mar', full: 'March' },
-  { name: 'Apr', full: 'April' },
-  { name: 'May', full: 'May' },
-  { name: 'Jun', full: 'June' },
-  { name: 'Jul', full: 'July' },
-  { name: 'Aug', full: 'August' },
-  { name: 'Sep', full: 'September' },
-  { name: 'Oct', full: 'October' },
-  { name: 'Nov', full: 'November' },
-  { name: 'Dec', full: 'December' }
-]
+const DAY_NAMES = TC.DATE_PICKER.DAYS
+const MONTHS = TC.DATE_PICKER.MONTHS.map(month => ({ name: month.SHORT, full: month.FULL }))
 
 enum Modes {
   Duo = 'duo',
@@ -98,7 +86,7 @@ function DatePickerTrigger ({
   isRangeMode?: boolean
 }) {
   const formatDisplayText = () => {
-    const placeholderText = placeholder ? placeholder : `Pick a ${isRangeMode ? 'date range' : 'date'}`
+    const placeholderText = placeholder ? placeholder : (isRangeMode ? TC.DATE_PICKER.PICK_DATE_RANGE : TC.DATE_PICKER.PICK_DATE)
     if (!isRangeMode) {
       return selectedDate ? format(selectedDate ? selectedDate : new Date(), 'dd/MM/yy') : placeholderText
     } else if (isRangeMode) {
@@ -123,7 +111,7 @@ function DatePickerTrigger ({
     >
       <DropdownMenuTrigger>
         <div className='flex items-center gap-1.5'>
-          <span className='font-normal opacity-70'>{placeholder || 'Date'}:</span>
+          <span className='font-normal opacity-70'>{placeholder || TC.DATE_PICKER.DATE_LABEL}:</span>
           {hasValue && (
             <Badge
               className='flex items-center gap-1 px-2 py-0.5 h-5 text-xs'
@@ -165,11 +153,11 @@ function DatePickerHeader ({
       <div className="flex items-center">
         <Button variant="ghost" className="h-8 w-8 p-0" onClick={previousMonth}>
           <ChevronLeft className="h-4 w-4" />
-          <span className="sr-only">Previous month</span>
+          <span className="sr-only">{TC.DATE_PICKER.PREVIOUS_MONTH}</span>
         </Button>
         <Button variant="ghost" className="h-8 w-8 p-0" onClick={nextMonth}>
           <ChevronRight className="h-4 w-4" />
-          <span className="sr-only">Next month</span>
+          <span className="sr-only">{TC.DATE_PICKER.NEXT_MONTH}</span>
         </Button>
       </div>
     </div>
@@ -267,7 +255,7 @@ function DatePickerGridDays ({
           {day ? (
             <Button
               variant="ghost"
-              title={isToday(day) ? 'Today' : undefined}
+              title={isToday(day) ? TC.DATE_PICKER.SELECT_DATE : undefined}
               className={cn(
                 // Base style
                 'h-8 w-8 p-0 font-normal relative',
@@ -616,7 +604,7 @@ export function DatePicker ({
 
             {mode === 'duo' && (
               <div className='flex justify-between items-center border-t py-2 text-sm font-medium'>
-                Range mode
+                {TC.DATE_PICKER.RANGE_MODE}
                 <Switch
                   checked={isRangeMode}
                   onCheckedChange={handleSwitchMode}
@@ -628,7 +616,7 @@ export function DatePicker ({
           {onReset && ((!isRangeMode && selectedDate) || (isRangeMode && (rangeStart || rangeEnd))) && (
             <div className='border-t'>
               <Button className="w-full mt-2" variant="secondary" onClick={handleReset}>
-                Clear {isRangeMode ? 'range' : 'date'}
+                {TC.DATE_PICKER.CLEAR_DATE_BUTTON.replace('{mode}', isRangeMode ? TC.DATE_PICKER.CLEAR_RANGE : TC.DATE_PICKER.CLEAR_DATE)}
               </Button>
             </div>
           )}

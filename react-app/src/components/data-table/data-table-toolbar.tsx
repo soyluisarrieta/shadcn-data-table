@@ -329,7 +329,7 @@ function DataTableColumnFilter<TData> ({
       <DropdownMenuContent className='min-w-44 p-0'>
         <DropdownMenuGroup>
           <Command className='p-0'>
-            <CommandInput placeholder='Search option' />
+            <CommandInput placeholder={TC.TOOLBAR.SEARCH_OPTION} />
             <CommandList className="max-h-full p-1">
               <CommandEmpty className='text-muted-foreground text-sm p-4'>{TC.FILTERS.FILTER_EMPTY}</CommandEmpty>
               <ScrollArea className='flex max-h-52 flex-col overflow-y-auto'>
@@ -391,7 +391,7 @@ function DataTableColumnFilter<TData> ({
                   disabled={selectedValues.size === 0}
                 >
                   <RotateCwIcon className='size-3.5 text-muted-foreground' />
-                  Reset
+                  {TC.TOOLBAR.RESET}
                 </Button>
                 <span className='h-4 border-r' />
                 <Button
@@ -406,7 +406,7 @@ function DataTableColumnFilter<TData> ({
                   }}
                 >
                   <TrashIcon className='size-3.5 text-muted-foreground' />
-                  Delete
+                  {TC.TOOLBAR.DELETE}
                 </Button>
               </div>
             </CommandList>
@@ -470,13 +470,13 @@ function DataTableLeftToolbar<TData> ({
             >
               <DropdownMenuTrigger>
                 <ListFilterIcon className='size-4' />
-                <span className='font-medium'>Add filter</span>
+                <span className='font-medium'>{TC.TOOLBAR.ADD_FILTER}</span>
               </DropdownMenuTrigger>
             </Button>
             <DropdownMenuContent>
               <DropdownMenuGroup>
                 <DropdownMenuLabel className='text-xs text-muted-foreground font-normal'>
-                  Select column
+                  {TC.TOOLBAR.SELECT_COLUMN}
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {columnFilters?.map(filter => {
@@ -512,7 +512,7 @@ function DataTableLeftToolbar<TData> ({
                     >
                       <DropdownMenuItem>
                         <RotateCwIcon className="size-4" />
-                        Clear filters
+                        {TC.TOOLBAR.CLEAR_FILTERS}
                       </DropdownMenuItem>
                     </Button>
                   </>
@@ -589,7 +589,7 @@ function DataTableRightToolbar<TData> ({
             >
               <PopoverTrigger>
                 <DownloadIcon className='text-muted-foreground'  />
-                Export
+                {TC.EXPORT.BUTTON_LABEL}
               </PopoverTrigger>
             </Button>
             <PopoverContent className='w-auto p-0' align='end'>
