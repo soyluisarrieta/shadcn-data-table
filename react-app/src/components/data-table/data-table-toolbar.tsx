@@ -107,42 +107,42 @@ function DataTableSearchInput<TData> ({
   onSearchByChange: (column: string) => void
 }) {
   return (
-    <div className='min-w-60'>
-      <div className="relative flex-1 flex items-center group">
-        <SearchIcon className='size-4 absolute left-2 text-muted-foreground' />
-        <Input
-          className="w-full md:max-w-52 border-r-0 rounded-r-none focus-visible:ring-0 group-focus-within:border-ring pl-8"
-          placeholder={TC.SEARCH.PLACEHOLDER}
-          value={value}
-          onChange={(e) => onValueChange(e.target.value)}
-        />
-        <Select value={searchBy} onValueChange={onSearchByChange}>
-          <SelectTrigger className="h-7 p-0 px-1 hover:dark:bg-input/30 focus-visible:ring-0 border border-l-0 rounded-l-none text-xs group-focus-within:border-ring text-primary/80 hover:text-primary">
-            <span  className="max-w-16 truncate"><SelectValue /></span>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>{TC.SEARCH.SEARCH_BY_LABEL}</SelectLabel>
-              <SelectSeparator />
-              <SelectItem value="all">{TC.SEARCH.GLOBAL_SEARCH}</SelectItem>
-              {columns.map((column) => {
-                if (!column.getCanFilter()) { return null }
-                const col = column.columnDef as CustomColumnDef<TData>
-                if (col.filterFn === getFilterFn(FILTERS.DATE_PICKER)) { return null }
-                const label = (col?.label) ?? col.header
-                if (!label || typeof label !== 'string') {
-                  return null
-                }
-                return (
-                  <SelectItem key={column.id} value={column.id}>
-                    {label}
-                  </SelectItem>
-                )}
+    <div className="w-full min-w-56 relative flex-1 flex items-center group">
+      <SearchIcon className='size-4 absolute left-2 text-muted-foreground' />
+      <Input
+        className="w-full border-r-0 rounded-r-none focus-visible:ring-0 group-focus-within:border-ring pl-8"
+        placeholder={TC.SEARCH.PLACEHOLDER}
+        value={value}
+        onChange={(e) => onValueChange(e.target.value)}
+      />
+      <Select value={searchBy} onValueChange={onSearchByChange}>
+        <SelectTrigger className="h-7 p-0 px-1 hover:dark:bg-input/30 focus-visible:ring-0 border border-l-0 rounded-l-none text-xs group-focus-within:border-ring text-primary/80 hover:text-primary">
+          <span className="max-w-16 truncate">
+            <SelectValue />
+          </span>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>{TC.SEARCH.SEARCH_BY_LABEL}</SelectLabel>
+            <SelectSeparator />
+            <SelectItem value="all">{TC.SEARCH.GLOBAL_SEARCH}</SelectItem>
+            {columns.map((column) => {
+              if (!column.getCanFilter()) { return null }
+              const col = column.columnDef as CustomColumnDef<TData>
+              if (col.filterFn === getFilterFn(FILTERS.DATE_PICKER)) { return null }
+              const label = (col?.label) ?? col.header
+              if (!label || typeof label !== 'string') {
+                return null
+              }
+              return (
+                <SelectItem key={column.id} value={column.id}>
+                  {label}
+                </SelectItem>
               )}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
+            )}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
     </div>
   )
 }
@@ -179,7 +179,9 @@ function DataTableDropdownView<TData> ({
                 key={column.id}
                 className='flex justify-between items-center capitalize p-2 text-sm'
               >
-                <span className={!column.getIsVisible() ? 'opacity-50' : ''}>{column.id}</span>
+                <span className={!column.getIsVisible() ? 'opacity-50' : ''}>
+                  {column.id}
+                </span>
                 <Switch
                   className='ml-auto scale-90'
                   disabled={!column.getCanHide()}
@@ -271,7 +273,6 @@ function DataTableColumnFilter<TData> ({
 
   const isSingleSelection = filter.type === FILTERS.SINGLE_SELECTION
 
-  // Encontrar la etiqueta de la opción seleccionada para filtros con una sola selección
   let selectedOptionLabel = ''
   if (selectedValues.size === 1 && filter.options) {
     const selectedValue = Array.from(selectedValues)[0]
@@ -451,8 +452,8 @@ function DataTableLeftToolbar<TData> ({
   }
 
   return (
-    <div className='flex-1 flex flex-col gap-2 w-full'>
-      <div className='w-full flex flex-col sm:flex-row gap-2'>
+    <div className='flex-1 flex flex-col gap-1 w-full'>
+      <div className='w-full flex flex-col sm:flex-row items-start sm:items-center gap-2'>
         <DataTableSearchInput
           columns={leafColumns}
           value={searchValue}
@@ -460,10 +461,10 @@ function DataTableLeftToolbar<TData> ({
           searchBy={searchBy}
           onSearchByChange={setSearchBy}
         />
-        <div className='flex-shrink-0 flex justify-start sm:justify-end'>
+        <div className='w-full'>
           <DropdownMenu open={openFilterMenu} onOpenChange={setOpenFilterMenu}>
             <Button
-              className='whitespace-nowrap border border-dashed flex items-center gap-1.5 h-8 text-sm w-full sm:w-auto'
+              className='w-full sm:w-auto whitespace-nowrap border border-dashed flex items-center gap-1.5 h-8 text-sm'
               variant='ghost'
               asChild
             >
@@ -659,7 +660,7 @@ function DataTableToolbar ({
   children?: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col sm:flex-row items-start justify-start py-3 gap-3">
+    <div className="flex flex-col sm:flex-row items-start justify-start py-3 gap-1">
       {children}
     </div>
   )
