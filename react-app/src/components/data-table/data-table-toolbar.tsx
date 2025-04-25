@@ -18,6 +18,7 @@ import { Select,
 } from '@/components/ui/select'
 import {
   CheckIcon,
+  Columns3Icon,
   CopyIcon,
   DownloadIcon,
   ListFilterIcon,
@@ -107,7 +108,7 @@ function DataTableSearchInput<TData> ({
   onSearchByChange: (column: string) => void
 }) {
   return (
-    <div className="w-fit min-w-56 relative flex-1 flex items-center group">
+    <div className="sm:w-fit min-w-56 relative flex-1 flex items-center group">
       <SearchIcon className='size-4 absolute left-2 text-muted-foreground' />
       <Input
         className="border-r-0 rounded-r-none focus-visible:ring-0 group-focus-within:border-ring pl-8"
@@ -144,68 +145,6 @@ function DataTableSearchInput<TData> ({
         </SelectContent>
       </Select>
     </div>
-  )
-}
-
-function DataTableDropdownView<TData> ({
-  table
-}: {
-  table: Table<TData>,
-}) {
-
-  return (
-    <DropdownMenu>
-      <Button
-        variant="outline"
-        className="ml-auto flex"
-        size='icon'
-        asChild
-      >
-        <DropdownMenuTrigger>
-          <SettingsIcon className='text-muted-foreground' />
-        </DropdownMenuTrigger>
-      </Button>
-      <DropdownMenuContent align="end" className="min-w-44">
-        <DropdownMenuLabel className='text-muted-foreground font-normal text-xs'>
-          {TC.COLUMNS.DROPDOWN_LABEL}
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {table
-          .getAllColumns()
-          .filter((column) => column.id !== 'select' && column.id !== 'actions')
-          .map((column) => {
-            return (
-              <div
-                key={column.id}
-                className='flex justify-between items-center capitalize p-2 text-sm'
-              >
-                <span className={!column.getIsVisible() ? 'opacity-50' : ''}>
-                  {column.id}
-                </span>
-                <Switch
-                  className='ml-auto scale-90'
-                  disabled={!column.getCanHide()}
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value: boolean) => column.toggleVisibility(!!value)}
-                />
-              </div>
-            )
-          })}
-        {Object.entries(table.getState().columnVisibility).some(([key, value]) => {
-          const initialValue = table.initialState.columnVisibility?.[key] ?? true
-          return value !== initialValue
-        }) && (
-          <>
-            <DropdownMenuSeparator />
-            <Button className='w-full' size='sm' variant='secondary' asChild>
-              <DropdownMenuItem onClick={() => table.resetColumnVisibility()}>
-                <RotateCwIcon /> {TC.COLUMNS.RESET_BUTTON}
-              </DropdownMenuItem>
-            </Button>
-          </>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
   )
 }
 
@@ -460,7 +399,7 @@ function DataTableLeftToolbar<TData> ({
         searchBy={searchBy}
         onSearchByChange={setSearchBy}
       />
-      <div className='w-full flex items-center gap-1 flex-wrap'>
+      <div className='w-full flex items-center gap-2 flex-wrap'>
         {activeFilters.length > 0 && activeFilters.map(filter => {
           const column = table.getColumn(filter.columnKey)
           if (!column) return null
@@ -483,7 +422,7 @@ function DataTableLeftToolbar<TData> ({
 
         <DropdownMenu open={openFilterMenu} onOpenChange={setOpenFilterMenu}>
           <Button
-            className='w-full sm:w-auto whitespace-nowrap border border-dashed flex items-center gap-1.5 h-8 text-sm'
+            className='whitespace-nowrap border border-dashed flex items-center gap-1.5 h-8 text-sm'
             variant='ghost'
             asChild
           >
@@ -572,77 +511,126 @@ function DataTableRightToolbar<TData> ({
   }
 
   return (
-    <div className='flex gap-1'>
-      <DataTableDropdownView table={table} />
-      {onExport && (
-        <div className='flex items-center'>
-          <Popover open={openExportPopover} onOpenChange={setOpenExportPopover}>
-            <Button
-              variant='outline'
-              asChild
-            >
-              <PopoverTrigger>
-                <DownloadIcon className='text-muted-foreground'  />
-                {TC.EXPORT.BUTTON_LABEL}
-              </PopoverTrigger>
-            </Button>
-            <PopoverContent className='w-auto p-0' align='end'>
-              <div className="space-y-3">
-                <h4 className="font-medium leading-none px-4 mt-4">{TC.EXPORT.FORMAT_LABEL}</h4>
-                <ToggleGroup
-                  className='px-3 [&_button]:px-4'
-                  value={selectedFormat}
-                  type="single"
-                  onValueChange={(format: ExportFormat) => setSelectedFormat(format)}
-                  variant='outline'
+    <div className='w-full flex sm:justify-end gap-1 border-t sm:border-none pt-2 sm:pt-0'>
+      <DropdownMenu>
+        <Button
+          variant="outline"
+          asChild
+        >
+          <DropdownMenuTrigger>
+            <SettingsIcon className='text-muted-foreground' />
+            Settings
+          </DropdownMenuTrigger>
+        </Button>
+        <DropdownMenuContent align="end" className="min-w-44">
+          <DropdownMenuLabel className='text-muted-foreground font-normal text-xs'>
+            {TC.COLUMNS.DROPDOWN_LABEL}
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {table
+            .getAllColumns()
+            .filter((column) => column.id !== 'select' && column.id !== 'actions')
+            .map((column) => {
+              return (
+                <div
+                  key={column.id}
+                  className='flex justify-between items-center capitalize p-2 text-sm'
                 >
-                  <ToggleGroupItem value="pdf">{TC.EXPORT.PDF_LABEL}</ToggleGroupItem>
-                  <ToggleGroupItem value="csv">{TC.EXPORT.CSV_LABEL}</ToggleGroupItem>
-                  <ToggleGroupItem value="xlsx">{TC.EXPORT.EXCEL_LABEL}</ToggleGroupItem>
-                  <ToggleGroupItem value="json">{TC.EXPORT.JSON_LABEL}</ToggleGroupItem>
-                </ToggleGroup>
-
-                <div className='flex justify-between items-center gap-2 px-4 text-sm text-mute'>
-                  <span>
-                    {TC.EXPORT.FILTERED_ONLY_LABEL}
-                    <span className='text-xs text-muted-foreground ml-2'>({getRows().length} rows)</span>
+                  <span className={!column.getIsVisible() ? 'opacity-50' : ''}>
+                    {column.id}
                   </span>
                   <Switch
-                    checked={filteredOnly}
-                    onCheckedChange={setFilteredOnly}
+                    className='ml-auto scale-90'
+                    disabled={!column.getCanHide()}
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value: boolean) => column.toggleVisibility(!!value)}
                   />
                 </div>
+              )
+            })}
+          {Object.entries(table.getState().columnVisibility).some(([key, value]) => {
+            const initialValue = table.initialState.columnVisibility?.[key] ?? true
+            return value !== initialValue
+          }) && (
+            <>
+              <DropdownMenuSeparator />
+              <Button className='w-full' size='sm' variant='secondary' asChild>
+                <DropdownMenuItem onClick={() => table.resetColumnVisibility()}>
+                  <RotateCwIcon /> {TC.COLUMNS.RESET_BUTTON}
+                </DropdownMenuItem>
+              </Button>
+            </>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
 
-                <Separator />
+      {onExport && (
+        <Popover open={openExportPopover} onOpenChange={setOpenExportPopover}>
+          <Button
+            variant='outline'
+            asChild
+          >
+            <PopoverTrigger>
+              <DownloadIcon className='text-muted-foreground'  />
+              {TC.EXPORT.BUTTON_LABEL}
+            </PopoverTrigger>
+          </Button>
+          <PopoverContent className='w-auto p-0' align='end'>
+            <div className="space-y-3">
+              <h4 className="font-medium leading-none px-4 mt-4">{TC.EXPORT.FORMAT_LABEL}</h4>
+              <ToggleGroup
+                className='px-3 [&_button]:px-4'
+                value={selectedFormat}
+                type="single"
+                onValueChange={(format: ExportFormat) => setSelectedFormat(format)}
+                variant='outline'
+              >
+                <ToggleGroupItem value="pdf">{TC.EXPORT.PDF_LABEL}</ToggleGroupItem>
+                <ToggleGroupItem value="csv">{TC.EXPORT.CSV_LABEL}</ToggleGroupItem>
+                <ToggleGroupItem value="xlsx">{TC.EXPORT.EXCEL_LABEL}</ToggleGroupItem>
+                <ToggleGroupItem value="json">{TC.EXPORT.JSON_LABEL}</ToggleGroupItem>
+              </ToggleGroup>
 
-                <div className={cn('w-full px-4 mb-3 flex justify-between gap-1', disableCopyJSON && 'justify-end')}>
-                  {!disableCopyJSON && (
-                    <Button
-                      size='sm'
-                      variant='ghost'
-                      disabled={hasCopied}
-                      onClick={handleCopy}
-                    >
-                      {hasCopied
-                        ? (<><CheckIcon />{TC.EXPORT.COPIED_MESSAGE}</>)
-                        : (<><CopyIcon />{TC.EXPORT.COPY_JSON_BUTTON}</>)
-                      }
-                    </Button>
-                  )}
+              <div className='flex justify-between items-center gap-2 px-4 text-sm text-mute'>
+                <span>
+                  {TC.EXPORT.FILTERED_ONLY_LABEL}
+                  <span className='text-xs text-muted-foreground ml-2'>({getRows().length} rows)</span>
+                </span>
+                <Switch
+                  checked={filteredOnly}
+                  onCheckedChange={setFilteredOnly}
+                />
+              </div>
+
+              <Separator />
+
+              <div className={cn('w-full px-4 mb-3 flex justify-between gap-1', disableCopyJSON && 'justify-end')}>
+                {!disableCopyJSON && (
                   <Button
                     size='sm'
-                    onClick={() => {
-                      onExport?.(getRows(), selectedFormat)
-                      setOpenExportPopover(false)
-                    }}
+                    variant='ghost'
+                    disabled={hasCopied}
+                    onClick={handleCopy}
                   >
-                    {TC.EXPORT.EXPORT_BUTTON}
+                    {hasCopied
+                      ? (<><CheckIcon />{TC.EXPORT.COPIED_MESSAGE}</>)
+                      : (<><CopyIcon />{TC.EXPORT.COPY_JSON_BUTTON}</>)
+                    }
                   </Button>
-                </div>
+                )}
+                <Button
+                  size='sm'
+                  onClick={() => {
+                    onExport?.(getRows(), selectedFormat)
+                    setOpenExportPopover(false)
+                  }}
+                >
+                  {TC.EXPORT.EXPORT_BUTTON}
+                </Button>
               </div>
-            </PopoverContent>
-          </Popover>
-        </div>
+            </div>
+          </PopoverContent>
+        </Popover>
       )}
     </div>
   )
@@ -654,7 +642,7 @@ function DataTableToolbar ({
   children?: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col sm:flex-row items-start justify-start py-3 gap-1">
+    <div className="flex flex-col sm:flex-row items-start justify-start py-3 sm:py-2 gap-2">
       {children}
     </div>
   )
@@ -665,6 +653,5 @@ export {
   DataTableLeftToolbar,
   DataTableRightToolbar,
   DataTableSelectSearch,
-  DataTableSearchInput,
-  DataTableDropdownView
+  DataTableSearchInput
 }
