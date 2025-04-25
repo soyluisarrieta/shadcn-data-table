@@ -107,10 +107,10 @@ function DataTableSearchInput<TData> ({
   onSearchByChange: (column: string) => void
 }) {
   return (
-    <div className="w-full min-w-56 relative flex-1 flex items-center group">
+    <div className="w-fit min-w-56 relative flex-1 flex items-center group">
       <SearchIcon className='size-4 absolute left-2 text-muted-foreground' />
       <Input
-        className="w-full border-r-0 rounded-r-none focus-visible:ring-0 group-focus-within:border-ring pl-8"
+        className="border-r-0 rounded-r-none focus-visible:ring-0 group-focus-within:border-ring pl-8"
         placeholder={TC.SEARCH.PLACEHOLDER}
         value={value}
         onChange={(e) => onValueChange(e.target.value)}
@@ -452,100 +452,94 @@ function DataTableLeftToolbar<TData> ({
   }
 
   return (
-    <div className='flex-1 flex flex-col gap-1 w-full'>
-      <div className='w-full flex flex-col sm:flex-row items-start sm:items-center gap-2'>
-        <DataTableSearchInput
-          columns={leafColumns}
-          value={searchValue}
-          onValueChange={setSearchValue}
-          searchBy={searchBy}
-          onSearchByChange={setSearchBy}
-        />
-        <div className='w-full'>
-          <DropdownMenu open={openFilterMenu} onOpenChange={setOpenFilterMenu}>
-            <Button
-              className='w-full sm:w-auto whitespace-nowrap border border-dashed flex items-center gap-1.5 h-8 text-sm'
-              variant='ghost'
-              asChild
-            >
-              <DropdownMenuTrigger>
-                <ListFilterIcon className='size-4' />
-                <span className='font-medium'>{TC.TOOLBAR.ADD_FILTER}</span>
-              </DropdownMenuTrigger>
-            </Button>
-            <DropdownMenuContent>
-              <DropdownMenuGroup>
-                <DropdownMenuLabel className='text-xs text-muted-foreground font-normal'>
-                  {TC.TOOLBAR.SELECT_COLUMN}
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {columnFilters?.map(filter => {
-                  const column = table.getColumn(filter.columnKey)
-                  if (!column) return null
-                  return (
-                    <Button
-                      key={filter.id}
-                      className='w-full flex justify-between items-center capitalize p-2 text-sm'
-                      variant='ghost'
-                      onClick={() => {
-                        const isFilterActive = activeFilters.some(activeFilter => activeFilter.id === filter.id)
-                        if (!isFilterActive) {
-                          setActiveFilters([...activeFilters, filter])
-                        }
-                        setOpenFilterMenu(false)
-                        handleFilterChange(filter.id, true)
-                      }}
-                    >
-                      {filter.label}
-                    </Button>
-                  )
-                })}
-                {table.getState().columnFilters.length > 0 && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <Button
-                      className="w-full font-normal flex items-center gap-1.5"
-                      variant="ghost"
-                      size='sm'
-                      onClick={() => table.resetColumnFilters()}
-                      asChild
-                    >
-                      <DropdownMenuItem>
-                        <RotateCwIcon className="size-4" />
-                        {TC.TOOLBAR.CLEAR_FILTERS}
-                      </DropdownMenuItem>
-                    </Button>
-                  </>
-                )}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-
-      {activeFilters.length > 0 && (
-        <div className='w-full pb-1 flex flex-wrap items-center gap-1 px-0.5 mt-1'>
-          {activeFilters.map(filter => {
-            const column = table.getColumn(filter.columnKey)
-            if (!column) return null
-            return (
-              <DataTableColumnFilter
-                key={filter.id}
-                column={column}
-                filter={filter}
-                isOpen={openFilterDropdown === filter.id}
-                onOpenChange={(open) => {
-                  handleFilterChange(filter.id, open)
-                }}
-                onRemoveFilter={(filterId) => {
-                  const updatedFilters = activeFilters.filter(f => f.id !== filterId)
-                  setActiveFilters(updatedFilters)
-                }}
-              />
-            )}
+    <div className='w-full flex flex-col gap-2'>
+      <DataTableSearchInput
+        columns={leafColumns}
+        value={searchValue}
+        onValueChange={setSearchValue}
+        searchBy={searchBy}
+        onSearchByChange={setSearchBy}
+      />
+      <div className='w-full flex items-center gap-1 flex-wrap'>
+        {activeFilters.length > 0 && activeFilters.map(filter => {
+          const column = table.getColumn(filter.columnKey)
+          if (!column) return null
+          return (
+            <DataTableColumnFilter
+              key={filter.id}
+              column={column}
+              filter={filter}
+              isOpen={openFilterDropdown === filter.id}
+              onOpenChange={(open) => {
+                handleFilterChange(filter.id, open)
+              }}
+              onRemoveFilter={(filterId) => {
+                const updatedFilters = activeFilters.filter(f => f.id !== filterId)
+                setActiveFilters(updatedFilters)
+              }}
+            />
           )}
-        </div>
-      )}
+        )}
+
+        <DropdownMenu open={openFilterMenu} onOpenChange={setOpenFilterMenu}>
+          <Button
+            className='w-full sm:w-auto whitespace-nowrap border border-dashed flex items-center gap-1.5 h-8 text-sm'
+            variant='ghost'
+            asChild
+          >
+            <DropdownMenuTrigger>
+              <ListFilterIcon className='size-4' />
+              <span className='font-medium'>{TC.TOOLBAR.ADD_FILTER}</span>
+            </DropdownMenuTrigger>
+          </Button>
+          <DropdownMenuContent>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className='text-xs text-muted-foreground font-normal'>
+                {TC.TOOLBAR.SELECT_COLUMN}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {columnFilters?.map(filter => {
+                const column = table.getColumn(filter.columnKey)
+                if (!column) return null
+                return (
+                  <Button
+                    key={filter.id}
+                    className='w-full flex justify-between items-center capitalize p-2 text-sm'
+                    variant='ghost'
+                    onClick={() => {
+                      const isFilterActive = activeFilters.some(activeFilter => activeFilter.id === filter.id)
+                      if (!isFilterActive) {
+                        setActiveFilters([...activeFilters, filter])
+                      }
+                      setOpenFilterMenu(false)
+                      handleFilterChange(filter.id, true)
+                    }}
+                  >
+                    {filter.label}
+                  </Button>
+                )
+              })}
+              {table.getState().columnFilters.length > 0 && (
+                <>
+                  <DropdownMenuSeparator />
+                  <Button
+                    className="w-full font-normal flex items-center gap-1.5"
+                    variant="ghost"
+                    size='sm'
+                    onClick={() => table.resetColumnFilters()}
+                    asChild
+                  >
+                    <DropdownMenuItem>
+                      <RotateCwIcon className="size-4" />
+                      {TC.TOOLBAR.CLEAR_FILTERS}
+                    </DropdownMenuItem>
+                  </Button>
+                </>
+              )}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </div>
   )
 }
