@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { CalendarIcon, ChevronDown, ChevronDownIcon, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronDown, ChevronDownIcon, ChevronLeft, ChevronRight } from 'lucide-react'
 import {
   format,
   addMonths,
@@ -23,6 +23,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Badge } from '@/components/ui/badge'
 
 const DAY_NAMES = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 const MONTHS = [
@@ -99,30 +100,39 @@ function DatePickerTrigger ({
   const formatDisplayText = () => {
     const placeholderText = placeholder ? placeholder : `Pick a ${isRangeMode ? 'date range' : 'date'}`
     if (!isRangeMode) {
-      return selectedDate ? format(selectedDate ? selectedDate : new Date(), 'PPP') : placeholderText
+      return selectedDate ? format(selectedDate ? selectedDate : new Date(), 'dd/MM/yy') : placeholderText
     } else if (isRangeMode) {
       if (rangeStart && rangeEnd) {
-        return `${format(rangeStart, 'PP')} - ${format(rangeEnd, 'PP')}`
+        return `${format(rangeStart, 'dd/MM/yy')} - ${format(rangeEnd, 'dd/MM/yy')}`
       } else if (rangeStart) {
-        return `${format(rangeStart, 'PP')} - ?`
+        return `${format(rangeStart, 'dd/MM/yy')} - ?`
       } else {
         return placeholderText
       }
     }
   }
+
+  const hasValue = (!isRangeMode && selectedDate) || (isRangeMode && rangeStart)
+
   return (
     <Button
-      variant="outline"
-      className={cn(
-        'w-auto min-w-[180px] justify-start text-left font-normal',
-        (!isRangeMode && !selectedDate) || (isRangeMode && !rangeStart) ? 'text-muted-foreground' : '',
-        className
-      )}
+      className={cn('bg-accent/90 dark:hover:bg-accent/70 flex items-center gap-1.5 pr-3', className)}
+      variant='ghost'
+      size='sm'
       asChild
     >
       <DropdownMenuTrigger>
-        <span className="flex-1">{formatDisplayText()}</span>
-        <CalendarIcon className="ml-2 h-4 w-4 text-muted-foreground" />
+        <div className='flex items-center gap-1.5'>
+          <span className='font-normal opacity-70'>{placeholder || 'Date'}:</span>
+          {hasValue && (
+            <Badge
+              className='flex items-center gap-1 px-2 py-0.5 h-5 text-xs'
+              variant='outline'
+            >
+              {formatDisplayText()}
+            </Badge>
+          )}
+        </div>
       </DropdownMenuTrigger>
     </Button>
   )

@@ -242,14 +242,30 @@ function DataTableColumnFilter<TData> ({
 
   if (filter.type === FILTERS.DATE_PICKER) {
     return (
-      <DatePicker
-        open={isOpen}
-        onOpenChange={onOpenChange}
-        value={filterValue ?? undefined}
-        onValueChange={updateFilterValue}
-        onReset={() => updateFilterValue(undefined)}
-        placeholder={filter.label}
-      />
+      <div className='bg-accent/30 border rounded-lg flex items-center h-8'>
+        <DatePicker
+          align='center'
+          open={isOpen}
+          onOpenChange={onOpenChange}
+          value={filterValue ?? undefined}
+          onValueChange={updateFilterValue}
+          placeholder={filter.label}
+        />
+        <Button
+          className='size-4 p-0 hover:dark:bg-transparent text-muted-foreground mx-1.5'
+          variant='ghost'
+          size='icon'
+          onClick={(e) => {
+            e.stopPropagation()
+            updateFilterValue(undefined)
+            if (onRemoveFilter) {
+              onRemoveFilter(filter.id)
+            }
+          }}
+        >
+          <XIcon />
+        </Button>
+      </div>
     )
   }
 
@@ -507,7 +523,7 @@ function DataTableLeftToolbar<TData> ({
       </div>
 
       {activeFilters.length > 0 && (
-        <div className='w-full pb-1 flex flex-wrap items-center gap-1 px-0.5'>
+        <div className='w-full pb-1 flex flex-wrap items-center gap-1 px-0.5 mt-1'>
           {activeFilters.map(filter => {
             const column = table.getColumn(filter.columnKey)
             if (!column) return null
