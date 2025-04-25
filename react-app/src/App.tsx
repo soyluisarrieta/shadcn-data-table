@@ -43,7 +43,7 @@ export default function App () {
         </div>
 
         <div className="container-wrapper p-6">
-          <div className='bg-background p-10 rounded-lg border'>
+          <div className='bg-background p-4 md:p-10 rounded-lg border'>
             <DemoPayments />
           </div>
         </div>

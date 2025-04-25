@@ -40,7 +40,7 @@ export const DATA_TABLE_TEXT_CONTENT = {
   // Pagination
   PAGINATION: {
     ROWS_PER_PAGE: 'Rows per page:',
-    SHOWING_ROWS: 'Showing {start}-{end} of {total} rows',
+    SHOWING_ROWS: '{start}-{end} of {total}',
     PAGE_X_OF_Y: 'Page {current} of {total}',
     GO_TO_FIRST_PAGE: 'Go to first page',
     GO_TO_PREVIOUS_PAGE: 'Go to previous page',
