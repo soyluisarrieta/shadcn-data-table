@@ -112,7 +112,7 @@ function DataTableSearchInput<TData> ({
   ), [table])
 
   return (
-    <div className="sm:w-fit min-w-56 relative flex-1 flex items-center group">
+    <div className="w-full sm:w-fit min-w-48 sm:max-w-60 relative flex-1 flex items-center group">
       <SearchIcon className='size-4 absolute left-2 text-muted-foreground' />
       <Input
         className="border-r-0 rounded-r-none focus-visible:ring-0 group-focus-within:border-ring pl-8"
@@ -383,88 +383,85 @@ function DataTableLeftToolbar<TData> ({
   }
 
   return (
-    <div className='w-full flex flex-col gap-2'>
-      <DataTableSearchInput table={table} />
-      <div className='w-full flex items-center gap-2 flex-wrap'>
-        {activeFilters.length > 0 && activeFilters.map(filter => {
-          const column = table.getColumn(filter.columnKey)
-          if (!column) return null
-          return (
-            <DataTableColumnFilter
-              key={filter.id}
-              column={column}
-              filter={filter}
-              isOpen={openFilterDropdown === filter.id}
-              onOpenChange={(open) => {
-                handleFilterChange(filter.id, open)
-              }}
-              onRemoveFilter={(filterId) => {
-                const updatedFilters = activeFilters.filter(f => f.id !== filterId)
-                setActiveFilters(updatedFilters)
-              }}
-            />
-          )}
+    <div className='w-full flex items-center gap-2 flex-wrap'>
+      {activeFilters.length > 0 && activeFilters.map(filter => {
+        const column = table.getColumn(filter.columnKey)
+        if (!column) return null
+        return (
+          <DataTableColumnFilter
+            key={filter.id}
+            column={column}
+            filter={filter}
+            isOpen={openFilterDropdown === filter.id}
+            onOpenChange={(open) => {
+              handleFilterChange(filter.id, open)
+            }}
+            onRemoveFilter={(filterId) => {
+              const updatedFilters = activeFilters.filter(f => f.id !== filterId)
+              setActiveFilters(updatedFilters)
+            }}
+          />
         )}
+      )}
 
-        <DropdownMenu open={openFilterMenu} onOpenChange={setOpenFilterMenu}>
-          <Button
-            className='whitespace-nowrap border border-dashed flex items-center gap-1.5 h-8 text-sm'
-            variant='ghost'
-            asChild
-          >
-            <DropdownMenuTrigger>
-              <ListFilterIcon className='size-4' />
-              <span className='font-medium'>{TC.TOOLBAR.ADD_FILTER}</span>
-            </DropdownMenuTrigger>
-          </Button>
-          <DropdownMenuContent>
-            <DropdownMenuGroup>
-              <DropdownMenuLabel className='text-xs text-muted-foreground font-normal'>
-                {TC.TOOLBAR.SELECT_COLUMN}
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {columnFilters?.map(filter => {
-                const column = table.getColumn(filter.columnKey)
-                if (!column) return null
-                return (
-                  <Button
-                    key={filter.id}
-                    className='w-full flex justify-between items-center capitalize p-2 text-sm'
-                    variant='ghost'
-                    onClick={() => {
-                      const isFilterActive = activeFilters.some(activeFilter => activeFilter.id === filter.id)
-                      if (!isFilterActive) {
-                        setActiveFilters([...activeFilters, filter])
-                      }
-                      setOpenFilterMenu(false)
-                      handleFilterChange(filter.id, true)
-                    }}
-                  >
-                    {filter.label}
-                  </Button>
-                )
-              })}
-              {table.getState().columnFilters.length > 0 && (
-                <>
-                  <DropdownMenuSeparator />
-                  <Button
-                    className="w-full font-normal flex items-center gap-1.5"
-                    variant="ghost"
-                    size='sm'
-                    onClick={() => table.resetColumnFilters()}
-                    asChild
-                  >
-                    <DropdownMenuItem>
-                      <RotateCwIcon className="size-4" />
-                      {TC.TOOLBAR.CLEAR_FILTERS}
-                    </DropdownMenuItem>
-                  </Button>
-                </>
-              )}
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+      <DropdownMenu open={openFilterMenu} onOpenChange={setOpenFilterMenu}>
+        <Button
+          className='whitespace-nowrap border border-dashed flex items-center gap-1.5 h-8 text-sm'
+          variant='ghost'
+          asChild
+        >
+          <DropdownMenuTrigger>
+            <ListFilterIcon className='size-4' />
+            <span className='font-medium'>{TC.TOOLBAR.ADD_FILTER}</span>
+          </DropdownMenuTrigger>
+        </Button>
+        <DropdownMenuContent>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className='text-xs text-muted-foreground font-normal'>
+              {TC.TOOLBAR.SELECT_COLUMN}
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {columnFilters?.map(filter => {
+              const column = table.getColumn(filter.columnKey)
+              if (!column) return null
+              return (
+                <Button
+                  key={filter.id}
+                  className='w-full flex justify-between items-center capitalize p-2 text-sm'
+                  variant='ghost'
+                  onClick={() => {
+                    const isFilterActive = activeFilters.some(activeFilter => activeFilter.id === filter.id)
+                    if (!isFilterActive) {
+                      setActiveFilters([...activeFilters, filter])
+                    }
+                    setOpenFilterMenu(false)
+                    handleFilterChange(filter.id, true)
+                  }}
+                >
+                  {filter.label}
+                </Button>
+              )
+            })}
+            {table.getState().columnFilters.length > 0 && (
+              <>
+                <DropdownMenuSeparator />
+                <Button
+                  className="w-full font-normal flex items-center gap-1.5"
+                  variant="ghost"
+                  size='sm'
+                  onClick={() => table.resetColumnFilters()}
+                  asChild
+                >
+                  <DropdownMenuItem>
+                    <RotateCwIcon className="size-4" />
+                    {TC.TOOLBAR.CLEAR_FILTERS}
+                  </DropdownMenuItem>
+                </Button>
+              </>
+            )}
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   )
 }
@@ -498,6 +495,7 @@ function DataTableRightToolbar<TData> ({
 
   return (
     <div className='w-full flex sm:justify-end gap-1 border-t sm:border-none pt-2 sm:pt-0'>
+      <DataTableSearchInput table={table} />
       <DropdownMenu>
         <Button
           variant="outline"
@@ -505,7 +503,7 @@ function DataTableRightToolbar<TData> ({
         >
           <DropdownMenuTrigger>
             <SettingsIcon className='text-muted-foreground' />
-            Settings
+            <span className='hidden xl:inline'>Settings</span>
           </DropdownMenuTrigger>
         </Button>
         <DropdownMenuContent align="end" className="min-w-44">
@@ -558,7 +556,7 @@ function DataTableRightToolbar<TData> ({
           >
             <PopoverTrigger>
               <DownloadIcon className='text-muted-foreground'  />
-              {TC.EXPORT.BUTTON_LABEL}
+              <span className='hidden lg:inline'>{TC.EXPORT.BUTTON_LABEL}</span>
             </PopoverTrigger>
           </Button>
           <PopoverContent className='w-auto p-0' align='end'>
