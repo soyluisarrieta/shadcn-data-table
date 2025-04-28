@@ -383,7 +383,7 @@ function DataTableLeftToolbar<TData> ({
   }
 
   return (
-    <div className='w-full flex items-center gap-2 flex-wrap'>
+    <div className='w-full flex items-center gap-1 flex-wrap pt-0.5'>
       {activeFilters.length > 0 && activeFilters.map(filter => {
         const column = table.getColumn(filter.columnKey)
         if (!column) return null
@@ -494,7 +494,7 @@ function DataTableRightToolbar<TData> ({
   }
 
   return (
-    <div className='w-full flex sm:justify-end gap-1 border-t sm:border-none pt-2 sm:pt-0'>
+    <div className='flex sm:justify-end gap-1 border-t sm:border-none pt-2 sm:pt-0'>
       <DataTableSearchInput table={table} />
       <DropdownMenu>
         <Button
