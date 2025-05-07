@@ -39,23 +39,43 @@
       ],
       "files": [
         {
-          "path": "src/components/data-table/data-table.tsx",
-          "target": "components/data-table/data-table.tsx",
-          "type": "registry:component"
-        },
-        {
-          "path": "src/components/data-table/data-table-types.ts",
-          "target": "components/data-table/data-table-types.ts",
+          "path": "src/components/data-table/filters/filter-date-picker.ts",
+          "target": "components/data-table/filters/filter-date-picker.ts",
           "type": "registry:file"
         },
         {
-          "path": "src/components/data-table/data-table-toolbar.tsx",
-          "target": "components/data-table/data-table-toolbar.tsx",
+          "path": "src/components/data-table/filters/filter-global-search.ts",
+          "target": "components/data-table/filters/filter-global-search.ts",
+          "type": "registry:file"
+        },
+        {
+          "path": "src/components/data-table/filters/filter-partial-match.ts",
+          "target": "components/data-table/filters/filter-partial-match.ts",
+          "type": "registry:file"
+        },
+        {
+          "path": "src/components/data-table/filters/filter-selection.ts",
+          "target": "components/data-table/filters/filter-selection.ts",
+          "type": "registry:file"
+        },
+        {
+          "path": "src/components/data-table/filters/index.ts",
+          "target": "components/data-table/filters/index.ts",
+          "type": "registry:file"
+        },
+        {
+          "path": "src/components/data-table/data-table-column-header.tsx",
+          "target": "components/data-table/data-table-column-header.tsx",
           "type": "registry:component"
         },
         {
-          "path": "src/components/data-table/data-table-selection-actions.tsx",
-          "target": "components/data-table/data-table-selection-actions.tsx",
+          "path": "src/components/data-table/data-table-column-selection.tsx",
+          "target": "components/data-table/data-table-column-selection.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/data-table/data-table-date-picker.tsx",
+          "target": "components/data-table/data-table-date-picker.tsx",
           "type": "registry:component"
         },
         {
@@ -64,23 +84,29 @@
           "type": "registry:component"
         },
         {
-          "path": "src/components/data-table/data-table-filters.ts",
-          "target": "components/data-table/data-table-filters.ts",
+          "path": "src/components/data-table/data-table-text-content.ts",
+          "target": "components/data-table/data-table-text-content.ts",
           "type": "registry:file"
         },
         {
-          "path": "src/components/data-table/data-table-column-selection.tsx",
-          "target": "components/data-table/data-table-column-selection.tsx",
+          "path": "src/components/data-table/data-table-toolbar.tsx",
+          "target": "components/data-table/data-table-toolbar.tsx",
           "type": "registry:component"
         },
         {
-          "path": "src/components/data-table/data-table-column-header.tsx",
-          "target": "components/data-table/data-table-column-header.tsx",
-          "type": "registry:component"
+          "path": "src/components/data-table/data-table-types.ts",
+          "target": "components/data-table/data-table-types.ts",
+          "type": "registry:file"
         },
         {
-          "path": "src/components/ui/date-picker.tsx",
-          "type": "registry:ui"
+          "path": "src/components/data-table/data-table-utils.ts",
+          "target": "components/data-table/data-table-utils.ts",
+          "type": "registry:file"
+        },
+        {
+          "path": "src/components/data-table/data-table.tsx",
+          "target": "components/data-table/data-table.tsx",
+          "type": "registry:component"
         }
       ]
     }
