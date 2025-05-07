@@ -112,7 +112,7 @@ function DataTableSearchInput<TData> ({
   ), [table])
 
   return (
-    <div className="w-full sm:w-fit min-w-48 sm:max-w-60 relative flex-1 flex items-center group">
+    <div className="w-full sm:w-fit min-w-56 sm:max-w-60 relative flex-1 flex items-center group">
       <SearchIcon className='size-4 absolute left-2 text-muted-foreground' />
       <Input
         className="border-r-0 rounded-r-none focus-visible:ring-0 group-focus-within:border-ring pl-8"
@@ -494,7 +494,7 @@ function DataTableRightToolbar<TData> ({
   }
 
   return (
-    <div className='flex sm:justify-end gap-1 border-t sm:border-none pt-2 sm:pt-0'>
+    <div className='w-full flex sm:justify-end gap-1 border-t sm:border-none pt-2 sm:pt-0'>
       <DataTableSearchInput table={table} />
       <DropdownMenu>
         <Button
