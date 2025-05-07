@@ -1,4 +1,4 @@
-import { FilterParams } from '@/components/data-table/data-table-types'
+import type { FilterParams } from '@/components/data-table/data-table-types'
 
 export const partialMatchFilter = <TData> ({
   row,

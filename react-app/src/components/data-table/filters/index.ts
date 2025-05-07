@@ -1,4 +1,4 @@
-import { FilterKeys } from '@/components/data-table/data-table-types'
+import type { FilterKeys } from '@/components/data-table/data-table-types'
 import { datePickerFilter } from '@/components/data-table/filters/filter-date-picker'
 import { globalSearchFilter } from '@/components/data-table/filters/filter-global-search'
 import { partialMatchFilter } from '@/components/data-table/filters/filter-partial-match'
