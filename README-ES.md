@@ -48,9 +48,3 @@ Esto instalará el componente de tabla de datos y todas sus dependencias en tu p
 - [x] Esqueleto de carga de datos
 - [x] Pestañas para diferentes tablas
 - [x] Textos centralizados en constantes
-- [ ] Guardar y restaurar filtros en LocalStorage
-- [ ] Cálculos básicos por columnas
-- [ ] Integración con gráficos
-- [ ] Documentación y ejemplos de uso
-- [ ] Pruebas unitarias y de integración
-- [ ] Publicar componente en NPM

@@ -48,9 +48,3 @@ This will install the data table component and all its dependencies to your proj
 - [x] Data loading skeleton
 - [x] Tabs for different tables
 - [x] Texts centralized in constants
-- [ ] Save and restore filters in LocalStorage
-- [ ] Basic calculations by columns
-- [ ] Integration with charts
-- [ ] Documentation and usage examples
-- [ ] Unit and integration tests
-- [ ] Publish component on NPM
