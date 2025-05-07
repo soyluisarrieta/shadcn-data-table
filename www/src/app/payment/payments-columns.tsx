@@ -1,4 +1,3 @@
-import type { CustomColumnDef } from '@/components/data-table/data-table-types'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,6 +8,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { MoreHorizontalIcon, TrendingDownIcon, TrendingUpIcon } from 'lucide-react'
+import { defineColumns } from '@/components/data-table/data-table-utils'
 
 export type Payment = {
   id: string;
@@ -21,7 +21,7 @@ export type Payment = {
   notes?: string;
 }
 
-export const paymentsColumns: CustomColumnDef<Payment>[] = [
+export const paymentsColumns = defineColumns<Payment>([
   {
     accessorKey: 'status',
     header: 'Status',
@@ -87,6 +87,7 @@ export const paymentsColumns: CustomColumnDef<Payment>[] = [
     width: 'auto',
     minWidth: 110,
     header: 'Date',
+    searchable: false,
     cell: ({ row }) => {
       const date = new Date(row.getValue('date'))
       date.setMinutes(date.getMinutes() + date.getTimezoneOffset())
@@ -122,4 +123,4 @@ export const paymentsColumns: CustomColumnDef<Payment>[] = [
       )
     }
   }
-]
+])

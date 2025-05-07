@@ -35,7 +35,7 @@ export default function DemoPayments () {
           }
         }}
       />
-      
+
       <DataTable
         columns={paymentsColumns}
         data={payments}
@@ -48,8 +48,8 @@ export default function DemoPayments () {
           className: '',
           tabs: [
             { value: 'all', label: 'All' },
-            { 
-              value: 'recent', 
+            {
+              value: 'recent',
               label: 'Recent',
               columnVisibility: { category: false },
               // Simulated recent payments in April
@@ -58,17 +58,17 @@ export default function DemoPayments () {
                 return date.getMonth() === 3
               }
             },
-            { 
-              value: 'income', 
+            {
+              value: 'income',
               label: 'Income',
               columnVisibility: { type: false },
-              filter: (payment: Payment) => payment.type === 'Income',
+              filter: (payment: Payment) => payment.type === 'Income'
             },
-            { 
-              value: 'expense', 
+            {
+              value: 'expense',
               label: 'Expense',
               columnVisibility: { status: false,  type: false },
-              filter: (payment: Payment) => payment.type === 'Expense',
+              filter: (payment: Payment) => payment.type === 'Expense'
             }
           ]
         }}

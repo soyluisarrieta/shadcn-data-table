@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {
-  type ColumnDef,
   type Table as TableType,
   type VisibilityState,
   type ColumnFiltersState,
@@ -23,15 +22,21 @@ import {
 import { DataTableLeftToolbar, DataTableRightToolbar, DataTableToolbar } from '@/components/data-table/data-table-toolbar'
 import DataTableFooter from '@/components/data-table/data-table-footer'
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
-import { DataTableColumnSelection } from '@/components/data-table/data-table-column-selection'
-import DataTableSelectionActions from '@/components/data-table/data-table-selection-actions'
-import { FILTERS } from '@/components/data-table/data-table-filters'
-import type { CustomColumnDef, CustomColumnDefProps, DataTableActions, DataTableTabsConfig, FilterableColumn } from '@/components/data-table/data-table-types'
+import { DataTableColumnSelection, DataTableSelectionActions } from '@/components/data-table/data-table-column-selection'
+import type {
+  CustomColumnDef,
+  DataTableActions,
+  DataTableTabsConfig,
+  FilterColumnExtended as FilterColumnExt,
+  FilterFunction
+} from '@/components/data-table/data-table-types'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { createFilterFn, getFilterFn } from '@/components/data-table/data-table-utils'
+import { FILTERS } from '@/components/data-table/filters'
 
-export function DataTable<TData, TValue> ({
+export function DataTable<TData> ({
   columns,
   data,
   mock,
@@ -42,12 +47,12 @@ export function DataTable<TData, TValue> ({
   isLoading = false,
   tabs: tabsConfig
 }: {
-  columns: Array<ColumnDef<TData, TValue> & CustomColumnDefProps<TData>>;
+  columns: CustomColumnDef<TData>[];
   data: TData[] | undefined;
   mock?: TData[];
   disableRowSelection?: boolean;
   actions?: DataTableActions<TData>;
-  filterableColumns?: Array<FilterableColumn<TData>>;
+  filterableColumns?: FilterColumnExt<TData>[];
   disableCopyJSON?: boolean;
   isLoading?: boolean;
   tabs?: DataTableTabsConfig<TData>;
@@ -57,26 +62,37 @@ export function DataTable<TData, TValue> ({
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   const [activeTab, setActiveTab] = React.useState<string>(tabsConfig?.defaultTab || tabsConfig?.tabs?.[0]?.value || 'all')
-  
+
   React.useEffect(() => {
     if (tabsConfig) {
-      const activeTabConfig = tabsConfig.tabs.find(tab => tab.value === activeTab);
+      const activeTabConfig = tabsConfig.tabs.find(tab => tab.value === activeTab)
       if (activeTabConfig?.columnVisibility) {
-        setColumnVisibility(activeTabConfig.columnVisibility);
+        setColumnVisibility(activeTabConfig.columnVisibility)
       } else {
-        setColumnVisibility({});
+        setColumnVisibility({})
       }
     }
   }, [activeTab, tabsConfig])
 
   const extendedColumn = React.useMemo(() => {
     return columns.map(column => {
-      const filter = filterableColumns?.find((field) => field.columnKey === column.accessorKey)
-      if (filter) {
-        column.filterFn = FILTERS[filter.type]
-      } else if (!column.filterFn) {
-        column.filterFn = FILTERS.partialMatch
+      column.filterFn = (row, columnId, filterValue) => {
+        if (!filterValue) return true
+
+        return Object
+          .entries(filterValue)
+          .every(([filterId, value]) => {
+            const filterConfig = filterableColumns?.find(f => f.id === filterId)
+            if (!filterConfig) return true
+
+            const filterFunction: FilterFunction<TData> = filterConfig.filterFn
+              ? createFilterFn(filterConfig.filterFn)
+              : getFilterFn(filterConfig.type)
+
+            return filterFunction(row, columnId, value)
+          })
       }
+
       const accessorFn = (originalRow: TData) =>
         originalRow[column.accessorKey as keyof TData]?.toString()
       return {
@@ -97,19 +113,19 @@ export function DataTable<TData, TValue> ({
   }, [extendedColumn, disableRowSelection])
 
   const filteredData = React.useMemo(() => {
-    if (!tabsConfig || !data) return data;
-    
-    const activeTabConfig = tabsConfig.tabs.find(tab => tab.value === activeTab);
-    if (!activeTabConfig || !activeTabConfig.filter) return data;
-    
-    return data.filter(activeTabConfig.filter);
-  }, [data, tabsConfig, activeTab]);
+    if (!tabsConfig || !data) return data
+
+    const activeTabConfig = tabsConfig.tabs.find(tab => tab.value === activeTab)
+    if (!activeTabConfig || !activeTabConfig.filter) return data
+
+    return data.filter(activeTabConfig.filter)
+  }, [data, tabsConfig, activeTab])
 
   const table = useReactTable({
     data: filteredData ?? mock ?? [],
     columns: memorizedColumns,
-    globalFilterFn: FILTERS.globalSearch,
-    defaultColumn: { filterFn: FILTERS.partialMatch },
+    defaultColumn: { filterFn: getFilterFn(FILTERS.PARTIAL_MATCH) },
+    globalFilterFn: getFilterFn(FILTERS.GLOBAL_SEARCH),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
@@ -133,23 +149,14 @@ export function DataTable<TData, TValue> ({
 
   return (
     <>
-      <DataTableToolbar>
-        <DataTableLeftToolbar table={table} />
-        <DataTableRightToolbar
-          table={table}
-          onExport={actions?.onExport}
-          disableCopyJSON={disableCopyJSON}
-        />
-      </DataTableToolbar>
-
       {tabsConfig && (
-        <Tabs 
-          defaultValue={tabsConfig.defaultTab || tabsConfig.tabs[0].value} 
+        <Tabs
+          defaultValue={tabsConfig.defaultTab || tabsConfig.tabs[0].value}
           className={tabsConfig.className}
           value={activeTab}
           onValueChange={setActiveTab}
         >
-          <TabsList className='w-full pb-0 rounded-none bg-transparent justify-start [&>button]:grow-0 [&>button]:px-3 [&>button]:border-0 [&>button]:rounded-none [&>button]:dark:data-[state=active]:bg-transparent [&>button]:dark:data-[state=active]:border-b-2 [&>button]:dark:data-[state=active]:border-primary [&>button]:dark:data-[state=active]:text-primary [&>button]:hover:text-primary/90'>
+          <TabsList className='w-full pb-0 rounded-none bg-transparent justify-start border-b [&>button]:grow-0 [&>button]:px-3 [&>button]:border-0 [&>button]:rounded-none [&>button]:dark:data-[state=active]:bg-transparent [&>button]:dark:data-[state=active]:border-b-2 [&>button]:dark:data-[state=active]:border-primary [&>button]:dark:data-[state=active]:text-primary [&>button]:hover:text-primary/90'>
             {tabsConfig.tabs.map((tab) => (
               <TabsTrigger key={tab.value} value={tab.value}>{tab.label}</TabsTrigger>
             ))}
@@ -157,14 +164,25 @@ export function DataTable<TData, TValue> ({
         </Tabs>
       )}
 
-      <div className="rounded-md border relative [&>div]:overflow-clip [&>div]:rounded-t-md">
+      <DataTableToolbar>
+        <DataTableLeftToolbar
+          table={table}
+          columnFilters={filterableColumns}
+        />
+        <DataTableRightToolbar
+          table={table}
+          onExport={actions?.onExport}
+          disableCopyJSON={disableCopyJSON}
+        />
+      </DataTableToolbar>
+
+      <div className="relative">
         <ScrollArea type='always'>
           <Table className={!widthExists ? 'w-auto' : 'w-full'}>
             <DataTableHeader
               table={table}
               widthExists={widthExists}
               minWidthExists={minWidthExists}
-              filterableColumns={filterableColumns}
             />
             <TableBody>
               {table.getRowModel().rows?.length ? (
@@ -203,36 +221,29 @@ export function DataTable<TData, TValue> ({
 function DataTableHeader<TData> ({
   table,
   widthExists,
-  minWidthExists,
-  filterableColumns
+  minWidthExists
 }: {
   table: TableType<TData>;
   widthExists: boolean;
   minWidthExists: boolean;
-  filterableColumns?: Array<FilterableColumn<TData>>;
 }) {
   return (
-    <TableHeader className='bg-background/30 backdrop-blur-lg border-0 [&_tr]:border-0 outline outline-border sticky top-0 z-10'>
+    <TableHeader className='border-0 outline-0 [&_tr]:border-0'>
       {table.getHeaderGroups().map((headerGroup) => (
-        <TableRow key={headerGroup.id}>
+        <TableRow key={headerGroup.id} className='[&>th]:first:rounded-l-lg [&>th]:last:rounded-r-lg'>
           {headerGroup.headers.map((header) => {
             const column = header.column.columnDef as CustomColumnDef<TData>
             const columnStyle: React.CSSProperties = {
               width: widthExists ? (column.width === 'auto' ? '0%' : column.width) : '100%',
               minWidth: minWidthExists ? column.minWidth : undefined
             }
-            const filterableColumn = filterableColumns?.find((field) => field.columnKey === header.column.id)
             return (
               <TableHead
                 key={header.id}
-                className='px-0'
+                className='px-0 bg-muted hover:muted dark:bg-border'
                 style={columnStyle}
               >
-                <DataTableColumnHeader
-                  className='mr-1'
-                  header={header}
-                  filterableColumn={filterableColumn}
-                />
+                <DataTableColumnHeader header={header} />
               </TableHead>
             )
           })}
@@ -258,6 +269,7 @@ function DataTableRow<TData> ({
     table.getRowModel().rows.map((row) => (
       <TableRow
         key={row.id}
+        className='hover:bg-muted/20 data-[state=selected]:bg-muted/40 data-[state=selected]:hover:bg-muted/40'
         data-state={row.getIsSelected() && 'selected'}
       >
         {row.getVisibleCells().map((cell, i) => {
@@ -271,7 +283,7 @@ function DataTableRow<TData> ({
           return (
             <TableCell
               key={cell.id}
-              className='px-3'
+              className='p-3'
               style={columnStyle}
             >
               {isLoading && i !== 0 && i !== totalColumns - 1 ? (

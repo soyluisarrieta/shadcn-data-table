@@ -1,14 +1,23 @@
-import { type FilterType } from '@/components/data-table/data-table-filters'
-import { type ColumnDef } from '@tanstack/react-table'
+import type { FILTER_FUNCTIONS } from '@/components/data-table/filters'
+import type { Row, ColumnDef } from '@tanstack/react-table'
 
 type OnClickActionBase<TData, TReturn = void> = (rows: TData[], cleanRowSelection: () => void) => TReturn
 
-export type CustomColumnDefProps<TData> = {
+export type FilterFunction<TData,TValue = any> = (row: Row<TData>, columnId: string, filterValue: TValue) => boolean;
+
+export interface FilterParams<TData, TValue> {
+  row: Row<TData>;
+  columnId: string;
+  filterValue: TValue;
+}
+
+export type CustomColumnDef<TData> = ColumnDef<TData> & {
   accessorKey?: keyof TData;
   width?: string | number;
   align?: 'left' | 'right' | 'center';
   minWidth?: string | number;
   label?: string;
+  searchable?: boolean;
 }
 
 export type DataTableTab<TData> = {
@@ -25,11 +34,18 @@ export type FilterableOption = {
   count?: number;
 }
 
-export interface FilterableColumn<TData> {
-  columnKey: keyof TData;
-  label?: string;
-  type: `${FilterType}`;
+export type FilterKeys = keyof typeof FILTER_FUNCTIONS;
+
+export interface FilterColumn<TData> {
+  columnKey: Extract<keyof TData, string>;
+  label: string;
+  type: `${FilterKeys}`;
   options?: FilterableOption[]
+  filterFn?: (params: FilterParams<TData, string[] | number[] | null>) => boolean;
+}
+
+export interface FilterColumnExtended<TData> extends FilterColumn<TData> {
+  readonly id: string
 }
 
 export type SelectionActionProps<TData> = {
@@ -53,5 +69,3 @@ export interface DataTableTabsConfig<TData> {
   defaultTab?: string;
   className?: string;
 }
-
-export type CustomColumnDef<TData> = ColumnDef<TData> & CustomColumnDefProps<TData>
